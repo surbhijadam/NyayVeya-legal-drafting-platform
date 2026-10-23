@@ -37,3 +37,8 @@ build/
 .pytest_cache/
 
 # Migration versions are tracked, but not the SQLite database
+
+# Production runtime logs and backups
+logs/
+*.log
+backups/

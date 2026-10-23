@@ -75,31 +75,24 @@ def create_admin_command(email, password, name):
         click.echo(f"Success: Administrator account created for '{email}'.")
 
 
-def create_app(test_config=None):
+def create_app(test_config=None, config_name=None):
     """Application factory: creates and configures the Flask app."""
 
     app = Flask(__name__)
 
     # Ensure instance directory exists
     os.makedirs(app.instance_path, exist_ok=True)
-    default_db_path = os.path.join(app.instance_path, 'app.db').replace('\\', '/')
 
-    # --- Configuration ---
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-dev-key')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', f'sqlite:///{default_db_path}'
-    )
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # --- Load Configuration from config.py ---
+    from config import config_by_name
+    env_name = config_name or os.environ.get('FLASK_ENV', 'development').lower()
+    selected_config = config_by_name.get(env_name, config_by_name['default'])
+    app.config.from_object(selected_config)
 
-    # Where generated documents are saved (outside the static folder for privacy)
-    docs_folder = os.path.abspath(os.path.join(app.root_path, '..', 'generated_documents'))
-    os.makedirs(docs_folder, exist_ok=True)
-    app.config['GENERATED_DOCUMENTS_FOLDER'] = docs_folder
-
-    # Razorpay Gateway Configuration
-    app.config['RAZORPAY_KEY_ID'] = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_sample_key')
-    app.config['RAZORPAY_KEY_SECRET'] = os.environ.get('RAZORPAY_KEY_SECRET', 'sample_secret_key_12345')
-    app.config['PAYMENT_MODE'] = os.environ.get('PAYMENT_MODE', 'test')
+    # Ensure generated documents storage directory exists
+    docs_folder = app.config.get('GENERATED_DOCUMENTS_FOLDER')
+    if docs_folder:
+        os.makedirs(docs_folder, exist_ok=True)
 
     # Apply test config BEFORE initializing db extension if provided
     if test_config:
@@ -172,5 +165,24 @@ def create_app(test_config=None):
                 admin_user.is_admin = True
                 admin_user.is_active = True
                 db.session.commit()
+
+        # Phase 10: Production Logging
+        if not app.debug and not app.testing:
+            import logging
+            from logging.handlers import RotatingFileHandler
+            logs_dir = os.path.abspath(os.path.join(app.root_path, '..', 'logs'))
+            os.makedirs(logs_dir, exist_ok=True)
+            file_handler = RotatingFileHandler(
+                os.path.join(logs_dir, 'nyayveya.log'),
+                maxBytes=2 * 1024 * 1024,  # 2MB
+                backupCount=5
+            )
+            file_handler.setFormatter(logging.Formatter(
+                '%(asctime)s %(levelname)s [%(pathname)s:%(lineno)d]: %(message)s'
+            ))
+            file_handler.setLevel(logging.INFO)
+            app.logger.addHandler(file_handler)
+            app.logger.setLevel(logging.INFO)
+            app.logger.info('NyayVeya Online Legal Drafting Platform initialized successfully')
 
     return app

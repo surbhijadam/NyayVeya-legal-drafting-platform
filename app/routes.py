@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort, request, flash, redirect, url_for
+from flask import Blueprint, render_template, abort, request, flash, redirect, url_for, jsonify
 from app import db
 from app.models import SupportInquiry
 from app.security import rate_limit
@@ -79,6 +79,27 @@ def contact():
         flash('Thank you for reaching out! We have received your message and will respond shortly.', 'success')
         return redirect(url_for('main.contact'))
     return render_template('contact.html')
+
+
+@main_bp.route('/health')
+def health():
+    """Production health check endpoint for monitoring, load balancers, and container orchestrators."""
+    from sqlalchemy import text
+    try:
+        db.session.execute(text("SELECT 1"))
+        db_status = 'connected'
+    except Exception as e:
+        return jsonify({
+            'status': 'degraded',
+            'database': f"unhealthy: {str(e)}",
+            'platform': 'NyayVeya Online Legal Drafting Platform'
+        }), 503
+
+    return jsonify({
+        'status': 'healthy',
+        'database': db_status,
+        'platform': 'NyayVeya Online Legal Drafting Platform'
+    }), 200
 
 
 # --- Error Handlers ---
