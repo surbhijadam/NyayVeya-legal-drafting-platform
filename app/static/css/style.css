@@ -519,6 +519,13 @@ p {
     text-decoration: underline;
 }
 
+.category-strip a.active-category-link {
+    opacity: 1;
+    color: var(--gold) !important;
+    text-decoration: underline;
+    font-weight: 700;
+}
+
 /* ===== Mobile Navigation Hamburger & Drawer ===== */
 .mobile-menu {
     display: none;

@@ -69,6 +69,24 @@ def test_document_list_shows_price(client):
     assert '₹199'.encode('utf-8') in response.data
 
 
+def test_document_list_syncs_agreements_category(client):
+    """Navigating with ?category=Agreements activates agreements filter chip."""
+    for query in ['Agreements', 'agreements']:
+        response = client.get(f'/documents?category={query}')
+        assert response.status_code == 200
+        assert b'data-category="agreements"' in response.data
+        # Verify the agreements button has the 'active' class
+        assert b'chip category-filter-btn active" data-category="agreements"' in response.data
+
+
+def test_document_list_syncs_notices_category(client):
+    """Navigating with ?category=notices activates notices filter chip."""
+    for query in ['Legal+Notices', 'notices']:
+        response = client.get(f'/documents?category={query}')
+        assert response.status_code == 200
+        assert b'chip category-filter-btn active" data-category="notices"' in response.data
+
+
 # --- Document Detail Page ---
 
 def test_document_detail_loads(client):

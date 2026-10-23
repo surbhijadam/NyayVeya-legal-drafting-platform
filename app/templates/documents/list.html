@@ -27,10 +27,12 @@
     </div>
 
     <!-- Category Filter Chips -->
+    {% set req_cat = request.args.get('category', 'all') | lower | trim %}
+    {% set active_cat_key = 'agreements' if 'agreement' in req_cat else ('notices' if 'notice' in req_cat else ('affidavits' if 'affidavit' in req_cat else ('applications' if 'application' in req_cat else ('other' if 'other' in req_cat else 'all')))) %}
     <div id="filters" role="group" aria-label="Filter documents by category" class="chip-container flex-wrap sm:flex-nowrap my-6 pb-2 reveal-on-scroll reveal-delay-100">
-        <button class="chip active category-filter-btn" data-category="all">All Documents</button>
+        <button class="chip category-filter-btn {% if active_cat_key == 'all' %}active{% endif %}" data-category="all">All Documents</button>
         {% for cat_key, category in categories.items() %}
-        <button class="chip category-filter-btn" data-category="{{ cat_key }}">{{ category.name }}</button>
+        <button class="chip category-filter-btn {% if active_cat_key == cat_key %}active{% endif %}" data-category="{{ cat_key }}">{{ category.name }}</button>
         {% endfor %}
     </div>
 
@@ -40,7 +42,8 @@
             {% for doc in category.documents %}
             <article class="canva-card card overflow-hidden flex flex-col doc-card-item reveal-on-scroll reveal-delay-{{ (loop.index0 % 3) * 100 + 100 }}"
                      data-category="{{ cat_key }}"
-                     data-title="{{ doc.title | lower }} {{ doc.short_description | lower }} {{ doc.category | lower }}">
+                     data-title="{{ doc.title | lower }} {{ doc.short_description | lower }} {{ doc.category | lower }}"
+                     style="display: {{ 'flex' if active_cat_key == 'all' or active_cat_key == cat_key else 'none' }};">
                 <div class="doc-photo relative">
                     <img class="canva-image w-full h-44 object-cover" loading="lazy"
                          src="{{ doc.image_url }}" alt="{{ doc.title }}">
@@ -109,11 +112,77 @@ document.addEventListener('DOMContentLoaded', function() {
     const docCards = document.querySelectorAll('.doc-card-item');
     const noResults = document.getElementById('no-results');
     const clearBtn = document.getElementById('clear-filters');
+    const headerCategoryLinks = document.querySelectorAll('.category-strip a');
+
+    function resolveCategoryKey(raw) {
+        if (!raw) return 'all';
+        const norm = raw.toLowerCase().trim();
+        if (norm === 'all' || norm === 'all documents') return 'all';
+        if (norm.includes('notice')) return 'notices';
+        if (norm.includes('agreement') || norm.includes('contract')) return 'agreements';
+        if (norm.includes('affidavit') || norm.includes('declaration')) return 'affidavits';
+        if (norm.includes('application')) return 'applications';
+        if (norm.includes('other')) return 'other';
+        return norm;
+    }
 
     let currentCategory = 'all';
 
+    function setCategory(targetCategory, updateUrl = true, shouldScroll = false) {
+        currentCategory = resolveCategoryKey(targetCategory);
+
+        // Update active class on filter chips
+        let matchedBtn = null;
+        filterButtons.forEach(btn => {
+            const btnCat = btn.getAttribute('data-category');
+            if (btnCat === currentCategory) {
+                btn.classList.add('active');
+                matchedBtn = btn;
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update active class on sub-nav header strip
+        headerCategoryLinks.forEach(link => {
+            const linkCat = resolveCategoryKey(link.getAttribute('data-category') || link.textContent);
+            if (linkCat === currentCategory && currentCategory !== 'all') {
+                link.classList.add('active-category-link');
+            } else {
+                link.classList.remove('active-category-link');
+            }
+        });
+
+        // Mobile swipeable container: scroll matched chip into view
+        if (matchedBtn && window.innerWidth < 768) {
+            matchedBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+
+        // Filter the document cards
+        filterDocs();
+
+        // Update browser URL query without reloading the page
+        if (updateUrl) {
+            const url = new URL(window.location);
+            if (currentCategory === 'all') {
+                url.searchParams.delete('category');
+            } else {
+                url.searchParams.set('category', currentCategory);
+            }
+            window.history.pushState({ category: currentCategory }, '', url);
+        }
+
+        // Smooth scroll to catalogue if triggered from header
+        if (shouldScroll) {
+            const filtersElem = document.getElementById('filters');
+            if (filtersElem) {
+                filtersElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }
+
     function filterDocs() {
-        const query = (searchInput.value || '').toLowerCase().trim();
+        const query = (searchInput ? searchInput.value || '' : '').toLowerCase().trim();
         let visibleCount = 0;
 
         docCards.forEach(card => {
@@ -130,10 +199,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (visibleCount === 0) {
-            noResults.style.display = 'block';
-        } else {
-            noResults.style.display = 'none';
+        if (noResults) {
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
         }
     }
 
@@ -143,27 +210,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
     filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentCategory = this.getAttribute('data-category');
-            filterDocs();
+            const cat = this.getAttribute('data-category');
+            setCategory(cat, true, false);
+        });
+    });
+
+    // In-page navigation: clicking sub-nav links when on /documents filters in-place
+    headerCategoryLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (window.location.pathname.startsWith('/documents')) {
+                e.preventDefault();
+                const linkHref = this.getAttribute('href') || '';
+                let catVal = this.getAttribute('data-category') || '';
+                if (!catVal && linkHref.includes('category=')) {
+                    catVal = linkHref.split('category=')[1].split('&')[0];
+                }
+                if (!catVal) {
+                    catVal = this.textContent;
+                }
+                setCategory(decodeURIComponent(catVal), true, true);
+            }
         });
     });
 
     if (clearBtn) {
         clearBtn.addEventListener('click', function() {
             if (searchInput) searchInput.value = '';
-            currentCategory = 'all';
-            filterButtons.forEach(b => {
-                if (b.getAttribute('data-category') === 'all') {
-                    b.classList.add('active');
-                } else {
-                    b.classList.remove('active');
-                }
-            });
-            filterDocs();
+            setCategory('all', true, false);
         });
     }
+
+    // Read initial category from URL parameter on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCategory = urlParams.get('category');
+    if (initialCategory) {
+        setCategory(initialCategory, false, false);
+    } else {
+        filterDocs();
+    }
+
+    // Handle browser back and forward navigation
+    window.addEventListener('popstate', function(event) {
+        const params = new URLSearchParams(window.location.search);
+        setCategory(params.get('category') || 'all', false, false);
+    });
 
     if (window.lucide) {
         lucide.createIcons();

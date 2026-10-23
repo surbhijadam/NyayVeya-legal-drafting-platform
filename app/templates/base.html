@@ -121,11 +121,11 @@
         <!-- Sub-Header Category Strip -->
         <nav aria-label="Document categories" class="category-strip bg-[#142D4E] text-white">
             <div class="shell flex gap-8 py-2.5 text-sm overflow-x-auto">
-                <a href="{{ url_for('main.document_list') }}?category=Legal+Notices">Legal Notices</a>
-                <a href="{{ url_for('main.document_list') }}?category=Agreements">Agreements</a>
-                <a href="{{ url_for('main.document_list') }}?category=Affidavits">Affidavits</a>
-                <a href="{{ url_for('main.document_list') }}?category=Applications">Applications</a>
-                <a href="{{ url_for('main.document_list') }}?category=Other+Documents">Other Documents</a>
+                <a href="{{ url_for('main.document_list') }}?category=notices" data-category="notices">Legal Notices</a>
+                <a href="{{ url_for('main.document_list') }}?category=agreements" data-category="agreements">Agreements</a>
+                <a href="{{ url_for('main.document_list') }}?category=affidavits" data-category="affidavits">Affidavits</a>
+                <a href="{{ url_for('main.document_list') }}?category=applications" data-category="applications">Applications</a>
+                <a href="{{ url_for('main.document_list') }}?category=other" data-category="other">Other Documents</a>
             </div>
         </nav>
     </header>
