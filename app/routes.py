@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, request, flash, redirect, url_for
 
 from app.catalogue import (
     get_all_documents,
@@ -38,6 +38,15 @@ def document_detail(doc_id):
 def about():
     """About page - information about the platform."""
     return render_template('about.html')
+
+
+@main_bp.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """Contact page - platform support and inquiries."""
+    if request.method == 'POST':
+        flash('Thank you for reaching out! We have received your message and will respond shortly.', 'success')
+        return redirect(url_for('main.contact'))
+    return render_template('contact.html')
 
 
 # --- Error Handlers ---

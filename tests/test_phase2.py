@@ -131,3 +131,26 @@ def test_about_page_has_disclaimer(client):
     """About page clarifies what the service does NOT do."""
     response = client.get('/about')
     assert b'do not provide legal advice' in response.data
+
+
+# --- Contact Page Tests ---
+
+def test_contact_page_loads(client):
+    """Contact page returns 200."""
+    response = client.get('/contact')
+    assert response.status_code == 200
+    assert b'Contact Us' in response.data
+    assert b'Send Us a Message' in response.data
+    assert b'support@nyayadraft.in' in response.data
+
+
+def test_contact_form_submission(client):
+    """Submitting contact inquiry form redirects and flashes success."""
+    response = client.post('/contact', data={
+        'name': 'Rahul Verma',
+        'email': 'rahul@example.com',
+        'subject': 'General Inquiry',
+        'message': 'Need assistance with statutory cheque bounce notice format.'
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Thank you for reaching out' in response.data

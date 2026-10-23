@@ -51,6 +51,7 @@
                 <a href="{{ url_for('main.document_list') }}" class="navlink {% if request.endpoint == 'main.document_list' %}active{% endif %}">Legal Documents</a>
                 <a href="{{ url_for('main.home') }}#how-section" class="navlink">How It Works</a>
                 <a href="{{ url_for('main.about') }}" class="navlink {% if request.endpoint == 'main.about' %}active{% endif %}">About Us</a>
+                <a href="{{ url_for('main.contact') }}" class="navlink {% if request.endpoint == 'main.contact' %}active{% endif %}">Contact Us</a>
             </nav>
 
             <!-- Desktop Auth Links -->
@@ -104,6 +105,7 @@
             <a href="{{ url_for('main.document_list') }}" class="navlink">Legal Documents</a>
             <a href="{{ url_for('main.home') }}#how-section" class="navlink">How It Works</a>
             <a href="{{ url_for('main.about') }}" class="navlink">About Us</a>
+            <a href="{{ url_for('main.contact') }}" class="navlink">Contact Us</a>
             <hr class="my-2 border-slate-200">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('auth.dashboard') }}" class="navlink font-bold">Dashboard ({{ current_user.full_name }})</a>
@@ -171,6 +173,7 @@
                     <a href="{{ url_for('main.document_list') }}" class="text-white/80 hover:text-white text-decoration-none">Legal Documents</a>
                     <a href="{{ url_for('main.home') }}#how-section" class="text-white/80 hover:text-white text-decoration-none">How It Works</a>
                     <a href="{{ url_for('main.about') }}" class="text-white/80 hover:text-white text-decoration-none">About Us</a>
+                    <a href="{{ url_for('main.contact') }}" class="text-white/80 hover:text-white text-decoration-none">Contact Us</a>
                 </nav>
 
                 <!-- Col 3: Policies -->
