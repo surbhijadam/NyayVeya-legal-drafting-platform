@@ -443,6 +443,27 @@ p {
     border-bottom: none;
 }
 
+/* Mobile & Tablet Drawer Auth Buttons */
+.mobile-auth-actions {
+    padding-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.mobile-auth-btn {
+    min-height: 36px !important;
+    padding: 7px 18px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    width: auto !important;
+    display: inline-flex !important;
+    border-radius: 4px !important;
+    white-space: nowrap !important;
+}
+
 /* ===== Unified Responsive Grid System ===== */
 .grid {
     display: grid;
@@ -554,6 +575,14 @@ p {
     .footer-grid {
         grid-template-columns: 1fr 1fr !important;
         gap: 28px;
+    }
+}
+
+/* --- Mobile Views Only (<= 768px) --- */
+@media (max-width: 768px) {
+    /* Remove navy blue category strip on mobile views */
+    .category-strip {
+        display: none !important;
     }
 }
 
