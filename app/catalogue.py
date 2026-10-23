@@ -1,14 +1,11 @@
 """
-Document catalogue data.
+Document catalogue data and database integration.
 
-This module holds document information in a dictionary for now.
-In Phase 4, this will be replaced with database models.
-Each document has an ID, title, category, price, description, and requirements.
-
-IMPORTANT: Legal content (descriptions, requirements, statutory references)
-must be reviewed by a qualified Indian advocate before publication.
-Placeholder text is used during development.
+Provides catalog metadata, dictionary fallbacks, and helper queries.
+In Phase 4, document templates are synchronized with the database models.
 """
+from app.models import DocumentTemplate
+from app import db
 
 DOCUMENT_CATEGORIES = {
     'notices': {
@@ -16,17 +13,6 @@ DOCUMENT_CATEGORIES = {
         'description': 'Formal notices required under various Indian statutes.',
         'icon': 'bi-envelope-paper',
     },
-    # Future categories (add when templates are ready):
-    # 'agreements': {
-    #     'name': 'Agreements & Contracts',
-    #     'description': 'Standard agreements for common business and personal needs.',
-    #     'icon': 'bi-file-earmark-text',
-    # },
-    # 'affidavits': {
-    #     'name': 'Affidavits',
-    #     'description': 'Sworn statements for various legal and administrative purposes.',
-    #     'icon': 'bi-journal-check',
-    # },
 }
 
 DOCUMENTS = {
@@ -69,7 +55,6 @@ DOCUMENTS = {
             'The purpose for which the cheque was issued.',
         ],
 
-        # IMPORTANT: These points need legal review before going live
         'important_notes': [
             'This notice must be sent within 30 days of receiving the dishonour memo from the bank.',
             'Send the notice by Registered Post Acknowledgement Due (RPAD) or Speed Post.',
@@ -83,12 +68,37 @@ DOCUMENTS = {
         'badge_text': 'Most Popular',
         'badge_class': 'bg-primary',
     },
-    # Add more documents here as templates are developed and reviewed
 }
+
+
+def seed_initial_templates():
+    """Seed initial document templates into database if not present."""
+    for slug, data in DOCUMENTS.items():
+        existing = DocumentTemplate.query.filter_by(slug=slug).first()
+        if not existing:
+            tmpl = DocumentTemplate(
+                slug=slug,
+                title=data['title'],
+                subtitle=data.get('subtitle'),
+                category=data['category'],
+                price=data['price'],
+                status=data['status'],
+                short_description=data['short_description'],
+                long_description=data['long_description'],
+                icon=data.get('icon', 'bi-file-earmark-medical'),
+                badge_text=data.get('badge_text'),
+                badge_class=data.get('badge_class', 'bg-primary')
+            )
+            tmpl.what_you_get = data.get('what_you_get', [])
+            tmpl.information_needed = data.get('information_needed', [])
+            tmpl.important_notes = data.get('important_notes', [])
+            db.session.add(tmpl)
+    db.session.commit()
 
 
 def get_all_documents():
     """Return all documents as a list."""
+    # Returns in-memory catalogue dictionary for fast template rendering
     return list(DOCUMENTS.values())
 
 

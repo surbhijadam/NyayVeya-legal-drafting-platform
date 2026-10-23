@@ -61,5 +61,7 @@ def create_app():
     with app.app_context():
         from app import models
         db.create_all()
+        from app.catalogue import seed_initial_templates
+        seed_initial_templates()
 
     return app
