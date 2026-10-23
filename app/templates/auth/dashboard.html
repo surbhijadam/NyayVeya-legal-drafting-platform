@@ -46,7 +46,7 @@
     </div>
 
     <!-- Dashboard Tabs -->
-    <div id="dashboard-tabs" role="tablist" aria-label="Dashboard sections" class="flex flex-wrap gap-2 border-b border-slate-200 pb-4 mb-6">
+    <div id="dashboard-tabs" role="tablist" aria-label="Dashboard sections" class="chip-container flex-wrap sm:flex-nowrap border-b border-slate-200 pb-4 mb-6">
         <button class="chip active dashboard-tab-btn" role="tab" aria-selected="true" data-tab="documents">My Documents</button>
         <button class="chip dashboard-tab-btn" role="tab" aria-selected="false" data-tab="orders">My Orders</button>
         <button class="chip dashboard-tab-btn" role="tab" aria-selected="false" data-tab="payments">Payment History</button>
@@ -108,8 +108,8 @@
     <!-- TAB 2: My Orders -->
     <div id="tab-orders" class="tab-panel space-y-4" style="display: none;">
         {% if current_user.orders %}
-            <div class="card overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-700">
+            <div class="card overflow-x-auto table-responsive">
+                <table class="w-full text-left text-sm text-slate-700 min-w-[580px]">
                     <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase">
                         <tr>
                             <th class="p-4">Order Number</th>

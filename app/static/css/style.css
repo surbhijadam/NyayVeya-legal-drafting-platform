@@ -1,4 +1,4 @@
-/* NyayaDraft - Core Brand Styling */
+/* NyayaDraft - Core Brand Styling & Responsive Design System */
 
 :root {
     --navy: #142d4e;
@@ -12,17 +12,19 @@
     --slate: #526478;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
 html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
     margin: 0;
     width: 100%;
+    overflow-x: hidden;
     font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--ink);
     background: #ffffff;
@@ -33,6 +35,13 @@ body {
 
 main {
     flex: 1;
+    width: 100%;
+}
+
+img, svg, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 h1, h2, h3, h4, h5, h6, .brand-font {
@@ -42,6 +51,10 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     font-weight: 700;
 }
 
+h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); }
+h2 { font-size: clamp(1.35rem, 3vw, 2rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
+
 p {
     line-height: 1.65;
 }
@@ -50,12 +63,21 @@ p {
 .shell {
     width: 100%;
     max-width: 1200px;
-    margin: auto;
-    padding-inline: 24px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3.5vw, 24px);
 }
 
 .section-pad {
-    padding-block: 60px;
+    padding-block: clamp(36px, 6vw, 64px);
+}
+
+/* Utility Hidden */
+.hidden {
+    display: none !important;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 /* ===== Buttons ===== */
@@ -69,15 +91,22 @@ p {
     border: 1px solid transparent;
     border-radius: 4px;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    line-height: 1.2;
     text-align: center;
+    white-space: nowrap;
     text-decoration: none !important;
-    transition: background 0.15s, transform 0.15s, border-color 0.15s;
+    transition: background 0.15s, transform 0.15s, border-color 0.15s, box-shadow 0.15s;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .button:hover {
     transform: translateY(-1px);
+}
+
+.button:active {
+    transform: translateY(0);
 }
 
 .button.primary, .btn-nyaya-primary {
@@ -89,6 +118,7 @@ p {
 .button.primary:hover, .btn-nyaya-primary:hover {
     background: var(--maroon-hover) !important;
     border-color: var(--maroon-hover) !important;
+    color: #ffffff !important;
 }
 
 .button.secondary, .btn-nyaya-secondary {
@@ -136,19 +166,15 @@ p {
     box-shadow: 0 8px 24px rgba(20, 45, 78, 0.1);
 }
 
-.document-card {
+.doc-card-item {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.document-card:hover {
-    transform: translateY(-2px);
+    height: 100%;
 }
 
 /* ===== Visual Badges & Rules ===== */
 .eyebrow {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 900;
@@ -168,6 +194,7 @@ p {
     padding: 16px 20px;
     border-radius: 4px;
     font-size: 0.92rem;
+    line-height: 1.6;
 }
 
 /* ===== Photos & Overlays ===== */
@@ -175,6 +202,7 @@ p {
     position: relative;
     overflow: hidden;
     border-radius: 6px;
+    background: #e5e9ed;
 }
 
 .photo img {
@@ -237,7 +265,7 @@ p {
     color: var(--ink);
     padding: 11px 14px;
     font-weight: 400;
-    font-size: 0.95rem;
+    font-size: 16px; /* 16px prevents iOS Safari zoom on focus */
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -260,22 +288,36 @@ p {
 
 /* ===== Category Chips & Pills ===== */
 .chip {
+    display: inline-flex;
+    align-items: center;
     border: 1px solid #b9c7d2;
     border-radius: 4px;
     background: #ffffff;
     color: var(--navy);
-    padding: 8px 16px;
+    padding: 8px 14px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
     cursor: pointer;
     text-decoration: none !important;
     transition: all 0.15s ease;
+    touch-action: manipulation;
 }
 
 .chip.active, .chip:hover {
     background: var(--navy);
     border-color: var(--navy);
     color: #ffffff !important;
+}
+
+/* Swipeable horizontal container for chips on mobile */
+.chip-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
 
 /* ===== Stepper Progress ===== */
@@ -287,6 +329,9 @@ p {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--slate);
+    border: none;
+    background: transparent;
+    padding: 6px 0;
 }
 
 .number {
@@ -312,15 +357,16 @@ p {
 
 /* ===== Realistic Simulated Legal Document Page ===== */
 .legal-page {
+    width: 100%;
     max-width: 794px;
-    margin: auto;
-    min-height: 900px;
+    margin-inline: auto;
+    min-height: 850px;
     background: #ffffff;
     border: 1px solid var(--line);
     box-shadow: 0 12px 35px rgba(20, 45, 78, 0.08);
-    padding: clamp(24px, 6vw, 64px);
+    padding: clamp(20px, 5vw, 64px);
     font-family: 'Merriweather', Georgia, serif;
-    font-size: 0.92rem;
+    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
     line-height: 1.85;
     color: #26323c;
     border-radius: 4px;
@@ -340,14 +386,16 @@ p {
 .category-strip {
     background: var(--navy);
     color: #ffffff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .category-strip a, .category-strip button {
     color: #ffffff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 0.88rem;
     font-weight: 500;
+    white-space: nowrap;
     opacity: 0.9;
     background: transparent;
     border: none;
@@ -361,62 +409,231 @@ p {
     text-decoration: underline;
 }
 
-/* ===== Mobile Navigation ===== */
+/* ===== Mobile Navigation Hamburger & Drawer ===== */
 .mobile-menu {
     display: none;
     background: transparent;
     border: none;
     cursor: pointer;
+    padding: 8px;
+    color: var(--navy);
 }
 
 .mobile-links {
     background: #ffffff;
     border-top: 1px solid var(--line);
-    padding: 12px 24px 20px;
+    padding: 16px 24px 24px;
+    box-shadow: 0 10px 25px rgba(20, 45, 78, 0.08);
 }
 
 .mobile-links a, .mobile-links button {
     display: block;
     text-align: left;
     width: 100%;
-    padding: 10px 0;
+    padding: 12px 0;
     color: var(--navy);
     font-weight: 700;
     text-decoration: none;
     border: none;
     background: transparent;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-/* ===== Responsive Breakpoints ===== */
-@media (max-width: 900px) {
-    .desktop-nav, .category-strip {
+.mobile-links a:last-child {
+    border-bottom: none;
+}
+
+/* ===== Unified Responsive Grid System ===== */
+.grid {
+    display: grid;
+}
+
+/* 3-Column Catalogue / Document Card Grid */
+.small-grid, .catalogue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* 2-Column Work / Form / Detail Grid */
+.work-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 36px;
+    align-items: start;
+}
+
+/* Hero 2-Column Grid */
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+}
+
+/* 4-Stat Metric Grid */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+/* Footer Grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 36px;
+}
+
+/* ======================================================== */
+/* ===== RESPONSIVE MEDIA QUERIES ===== */
+/* ======================================================== */
+
+/* --- Tablet Landscape / Small Desktop (<= 1024px) --- */
+@media (max-width: 1024px) {
+    .desktop-nav {
         display: none !important;
     }
+
     .mobile-menu {
-        display: block;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
     }
-    .hero-grid, .work-grid {
-        grid-template-columns: 1fr !important;
+
+    .work-grid {
+        grid-template-columns: 1fr 320px;
+        gap: 28px;
     }
-    .hero-photo {
-        height: 280px;
-        margin-top: 0;
+
+    .hero-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+    }
+
+    .small-grid, .catalogue-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
     }
 }
 
+/* --- Tablet Portrait / Mobile Landscape (<= 860px) --- */
+@media (max-width: 860px) {
+    .work-grid {
+        grid-template-columns: 1fr !important;
+        gap: 32px;
+    }
+
+    .work-grid aside {
+        order: -1; /* Place action card / price above or neatly stacked */
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
+    }
+
+    .hero-photo {
+        height: 300px;
+        margin-top: 0;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 28px;
+    }
+}
+
+/* --- Mobile Phones (<= 640px) --- */
 @media (max-width: 640px) {
     .shell {
         padding-inline: 16px;
     }
+
     .section-pad {
-        padding-block: 40px;
+        padding-block: 36px;
     }
+
+    /* Cards stack to 1 column */
+    .small-grid, .catalogue-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px;
+    }
+
+    .dashboard-stats .card {
+        padding: 12px;
+    }
+
+    .dashboard-stats strong {
+        font-size: 1.5rem !important;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr !important;
+        gap: 24px;
     }
+
+    /* Stepper scrolls cleanly horizontally */
+    .steps {
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Buttons go full width on small screens when stacked */
+    .hero-actions {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    .hero-actions .button {
+        width: 100% !important;
+    }
+
+    /* Legal page adjusts padding for smaller screens */
     .legal-page {
-        min-height: 0;
-        font-size: 0.85rem;
-        padding: 20px;
+        min-height: auto;
+        padding: 18px;
+        font-size: 0.84rem;
+        box-shadow: none;
+        border-radius: 2px;
+    }
+
+    /* Form wizard actions */
+    #draft-form .flex.justify-between {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    #draft-form .flex.justify-between .button {
+        width: 100%;
+    }
+
+    /* Tables scroll gracefully with touch indicator */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* --- Small Mobile Phones (<= 400px) --- */
+@media (max-width: 400px) {
+    .dashboard-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    .brand-tagline {
+        display: none !important;
     }
 }

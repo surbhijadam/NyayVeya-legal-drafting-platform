@@ -24,7 +24,7 @@
     </div>
 
     <!-- Category Filter Chips -->
-    <div id="filters" role="group" aria-label="Filter documents by category" class="flex flex-wrap gap-2 my-8">
+    <div id="filters" role="group" aria-label="Filter documents by category" class="chip-container flex-wrap sm:flex-nowrap my-6 pb-2">
         <button class="chip active category-filter-btn" data-category="all">All Documents</button>
         {% for cat_key, category in categories.items() %}
         <button class="chip category-filter-btn" data-category="{{ cat_key }}">{{ category.name }}</button>
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Catalogue Cards Grid -->
-    <div id="catalogue-grid" class="grid small-grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div id="catalogue-grid" class="small-grid catalogue-grid">
         {% for cat_key, category in categories.items() %}
             {% for doc in category.documents %}
             <article class="canva-card card overflow-hidden flex flex-col doc-card-item"
@@ -48,25 +48,28 @@
                 <div class="p-5 flex flex-col flex-1">
                     <div class="flex justify-between items-baseline mb-1">
                         <p class="eyebrow">{{ doc.category | upper }}</p>
-                        <span class="font-bold text-[#142D4E]">₹{{ doc.price }}</span>
+                        <span class="font-bold text-[#142D4E] text-lg">₹{{ doc.price }}</span>
                     </div>
-                    <h3 class="canva-text mt-2 font-serif font-bold text-lg text-[#142D4E]">
+                    <h3 class="canva-text mt-1.5 font-serif font-bold text-lg text-[#142D4E] leading-snug">
                         {{ doc.title }}
                     </h3>
                     {% if doc.id == 'cheque-bounce-notice' %}
                     <p class="text-xs text-slate-500 mb-1">Cheque Bounce Notice under Sec. 138 NI Act</p>
                     {% endif %}
-                    <p class="canva-text text-sm text-slate-600 mt-2 flex-1 line-clamp-3">
+                    <p class="canva-text text-sm text-slate-600 mt-2 flex-1 line-clamp-3 leading-relaxed">
                         {{ doc.short_description }}
                     </p>
-                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                        <span class="text-xs text-slate-500">Includes Word & PDF</span>
+                    <div class="mt-5 pt-3.5 border-t border-slate-100 flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between text-xs text-slate-500">
+                            <span>Includes Word & PDF</span>
+                            <span class="font-semibold text-emerald-700">{{ 'Ready to Draft' if doc.status == 'active' else 'Sample Format' }}</span>
+                        </div>
                         {% if doc.status == 'active' %}
-                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button primary text-sm py-2 px-4">
-                            Draft Now
+                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button primary w-full text-center text-sm py-2.5 font-bold">
+                            Start Guided Drafting
                         </a>
                         {% else %}
-                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button secondary text-sm py-2 px-4">
+                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button secondary w-full text-center text-sm py-2.5 font-semibold">
                             View Details
                         </a>
                         {% endif %}
