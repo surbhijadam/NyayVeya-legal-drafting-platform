@@ -1021,3 +1021,55 @@ header.header-scrolled {
         transform: none !important;
     }
 }
+
+/* ==========================================================================
+   ===== Global Print Stylesheets (Clean Official Document Printing) =====
+   ========================================================================== */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+    }
+
+    header,
+    footer,
+    nav,
+    aside,
+    .sticky-top,
+    .header-container,
+    .category-strip,
+    .sub-header,
+    #mobile-links,
+    #menu-toggle,
+    .desktop-nav,
+    .screen-only,
+    .no-print,
+    .btn,
+    .button,
+    .flash-messages {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        min-height: auto !important;
+        font-size: 10.5pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    main, .shell, .section-pad {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}

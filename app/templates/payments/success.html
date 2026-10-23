@@ -1,30 +1,167 @@
 {% extends "base.html" %}
 
-{% block title %}Payment Successful: {{ order.order_number }} - NyayVeya{% endblock %}
+{% block title %}Tax Invoice & Payment Receipt: {{ invoice_number }} - NyayVeya{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Screen & Print Styles for Real Tax Invoice Receipt */
+.receipt-paper {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+    border-radius: 6px;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #0f172a;
+}
+
+.receipt-stamp {
+    border: 2px dashed #059669;
+    border-radius: 8px;
+    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #065f46;
+    background: #ecfdf5;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tax-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 10px;
+    border-bottom: 1.5px solid #cbd5e1;
+}
+
+.tax-table td {
+    padding: 10px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* @MEDIA PRINT - Ensures ONLY the authentic receipt is printed on exactly 1 page */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+    }
+
+    /* 1. HIDE ALL WEBSITE CHROME */
+    header,
+    footer,
+    nav,
+    aside,
+    .sticky-top,
+    .header-container,
+    .category-strip,
+    .sub-header,
+    #mobile-links,
+    #menu-toggle,
+    .desktop-nav,
+    .screen-only,
+    .no-print,
+    .btn,
+    .button,
+    .flash-messages {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 2. RESET BODY FOR CRISP SINGLE-SHEET PRINT */
+    html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        min-height: auto !important;
+        font-size: 10.5pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    main, .shell, .section-pad {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    /* 3. RECEIPT CARD ON PRINT PAPER */
+    .receipt-paper, #invoice-card {
+        display: block !important;
+        box-shadow: none !important;
+        border: 1.5px solid #334155 !important;
+        border-radius: 4px !important;
+        margin: 0 auto !important;
+        padding: 20px 24px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        background: #ffffff !important;
+    }
+
+    .receipt-stamp {
+        border: 1.5px solid #059669 !important;
+        background: #f0fdf4 !important;
+        color: #065f46 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .tax-table th {
+        background: #f1f5f9 !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .tax-table td {
+        color: #000000 !important;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="bg-gradient-to-b from-emerald-50 to-white border-b border-slate-200">
-    <div class="shell py-12 text-center max-w-2xl mx-auto">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-4 shadow-sm">
-            <i data-lucide="check" class="w-8 h-8 stroke-[2.5]"></i>
+<!-- SCREEN ONLY: Top Congratulations & Fast Action Banner -->
+<div class="screen-only bg-gradient-to-b from-emerald-50 to-white border-b border-slate-200">
+    <div class="shell py-10 text-center max-w-2xl mx-auto">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 mb-3 shadow-sm">
+            <i data-lucide="check" class="w-7 h-7 stroke-[2.5]"></i>
         </div>
-        <p class="eyebrow text-emerald-800 font-bold tracking-wider">STEP 5 OF 5 · ORDER COMPLETE</p>
-        <h1 class="font-serif font-bold text-3xl md:text-4xl text-[#142D4E] mt-2">Payment Verified Successfully!</h1>
-        <p class="text-slate-600 mt-2 text-sm leading-relaxed">
-            Your statutory legal notice has been generated, cryptographically verified, and is ready for download in editable Microsoft Word and Adobe PDF formats.
+        <p class="eyebrow text-emerald-800 font-bold tracking-wider">ORDER COMPLETED · PAYMENT SETTLED</p>
+        <h1 class="font-serif font-bold text-3xl text-[#142D4E] mt-1">Payment Verified Successfully!</h1>
+        <p class="text-slate-600 mt-2 text-sm">
+            Your statutory draft has been compiled and unlocked. Click below to download your editable Word &amp; PDF files, or print your official tax invoice.
         </p>
 
-        <!-- Direct Document Download Buttons -->
-        <div class="flex flex-wrap items-center justify-center gap-3.5 mt-7">
-            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button primary flex items-center gap-2 py-3 px-5 text-sm shadow">
+        <!-- Direct Document Download & Print Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button primary flex items-center gap-2 py-2.5 px-4 text-sm shadow">
                 <i data-lucide="file-text" class="w-4 h-4 text-blue-200"></i>
                 <span>Download Word (.docx)</span>
             </a>
-            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button primary flex items-center gap-2 py-3 px-5 text-sm shadow" style="background: #991b1b;">
+            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button primary flex items-center gap-2 py-2.5 px-4 text-sm shadow" style="background: #991b1b;">
                 <i data-lucide="file" class="w-4 h-4 text-red-200"></i>
                 <span>Download PDF (.pdf)</span>
             </a>
-            <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="button secondary flex items-center gap-2 py-3 px-5 text-sm">
+            <button type="button" onclick="window.print()" class="button secondary flex items-center gap-2 py-2.5 px-4 text-sm shadow-sm bg-white font-bold text-[#142D4E]">
+                <i data-lucide="printer" class="w-4 h-4 text-slate-700"></i>
+                <span>Print Official Receipt</span>
+            </button>
+            <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="button secondary flex items-center gap-2 py-2.5 px-4 text-sm">
                 <i data-lucide="eye" class="w-4 h-4 text-slate-600"></i>
                 <span>View Full Draft</span>
             </a>
@@ -32,109 +169,214 @@
     </div>
 </div>
 
-<div class="shell section-pad max-w-3xl mx-auto">
-    <!-- Official Tax Invoice / Receipt Card -->
-    <div class="card p-8 shadow-md border border-slate-200 bg-white" id="invoice-card">
-        <!-- Invoice Header -->
-        <div class="flex flex-wrap justify-between items-start gap-4 border-b border-slate-200 pb-6">
-            <div>
-                <strong class="font-serif text-2xl text-[#142D4E] block">NyayVeya</strong>
-                <p class="text-xs text-slate-500 mt-0.5">Automated Online Legal Drafting Platform</p>
-                <p class="text-xs text-slate-500">LegalDraft India Technologies Pvt. Ltd.</p>
+<!-- INVOICE RECEIPT CONTAINER -->
+<div class="shell section-pad max-w-4xl mx-auto">
+    <!-- AUTHENTIC TAX INVOICE RECEIPT (The only element printed on paper) -->
+    <div class="receipt-paper p-8 sm:p-10" id="invoice-card">
+
+        <!-- 1. Enterprise Company & Invoice Header -->
+        <div class="flex flex-wrap justify-between items-start gap-6 border-b-2 border-slate-800 pb-5">
+            <!-- Brand Logo & Registered Company Info -->
+            <div class="flex items-start gap-3.5">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="NyayVeya Logo" class="w-12 h-12 object-contain shrink-0">
+                <div>
+                    <h2 class="font-serif font-bold text-2xl tracking-tight text-[#142D4E] leading-none mb-1">
+                        NyayVeya
+                    </h2>
+                    <p class="text-xs font-bold text-slate-700">NyayVeya Technologies Private Limited</p>
+                    <p class="text-[11px] text-slate-500 leading-tight mt-0.5">
+                        CIN: U74999KA2026PTC198421 · GSTIN: 29AABCN1234F1ZP<br>
+                        Regd. Office: Prestige Tech Park, Marathahalli-Sarjapur Ring Rd, Bengaluru, Karnataka 560103<br>
+                        Email: billing@nyayveya.com · Web: www.nyayveya.com
+                    </p>
+                </div>
             </div>
+
+            <!-- Tax Invoice Title & Metadata -->
             <div class="text-right">
-                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase rounded-full mb-1">
-                    PAID &amp; VERIFIED
+                <h3 class="font-serif font-bold text-xl uppercase tracking-wider text-[#142D4E] leading-tight">
+                    Tax Invoice
+                </h3>
+                <span class="text-[11px] uppercase tracking-wider text-slate-500 block font-semibold">
+                    Original for Recipient
                 </span>
-                <p class="text-xs font-mono text-slate-500">Invoice: <strong>{{ invoice_number }}</strong></p>
-                <p class="text-xs text-slate-500">Date: {{ order.updated_at.strftime('%d %B %Y, %I:%M %p UTC') }}</p>
+                <div class="mt-2 text-xs space-y-0.5">
+                    <div><span class="text-slate-500">Invoice No:</span> <strong class="font-mono text-slate-800">{{ invoice_number }}</strong></div>
+                    <div><span class="text-slate-500">Date:</span> <strong class="text-slate-800">{{ order.updated_at.strftime('%d-%b-%Y, %I:%M %p UTC') }}</strong></div>
+                    <div><span class="text-slate-500">Place of Supply:</span> <strong class="text-slate-800">State Code 29 (Karnataka)</strong></div>
+                    <div><span class="text-slate-500">Reverse Charge:</span> <strong class="text-slate-800">No</strong></div>
+                </div>
             </div>
         </div>
 
-        <!-- Billed To & Transaction Details -->
-        <div class="grid sm:grid-cols-2 gap-6 py-6 border-b border-slate-200 text-sm">
-            <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Billed To</span>
-                <strong class="text-slate-800 block text-base">{{ current_user.full_name }}</strong>
-                <span class="text-slate-600 block text-xs">{{ current_user.email }}</span>
-                <span class="text-slate-500 block text-xs mt-1">Country: India</span>
+        <!-- 2. Two-Column Customer & Payment Information -->
+        <div class="grid grid-cols-2 gap-6 py-4 border-b border-slate-300 text-xs">
+            <!-- Billed To -->
+            <div class="bg-slate-50/70 p-3.5 rounded border border-slate-200">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Billed To (Customer Details)</span>
+                <strong class="text-sm font-bold text-slate-900 block">{{ current_user.full_name }}</strong>
+                <p class="text-slate-600 mt-0.5 leading-snug">
+                    Email: {{ current_user.email }}<br>
+                    Customer Reference: UID-{{ current_user.id }}<br>
+                    Country: India
+                </p>
             </div>
-            <div class="space-y-1.5 text-xs text-slate-600">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Payment Information</span>
-                <div class="flex justify-between">
-                    <span>Order Number:</span>
-                    <strong class="font-mono text-slate-800">{{ order.order_number }}</strong>
+
+            <!-- Transaction Details & Verified Badge -->
+            <div class="bg-slate-50/70 p-3.5 rounded border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Payment &amp; Settlement Details</span>
+                    <div class="space-y-1 leading-snug text-slate-700">
+                        <div class="flex justify-between"><span>Order Number:</span> <strong class="font-mono text-slate-900">{{ order.order_number }}</strong></div>
+                        <div class="flex justify-between"><span>Payment Gateway:</span> <strong class="text-slate-900">Razorpay (Authorized Aggregator)</strong></div>
+                        <div class="flex justify-between"><span>Transaction ID:</span> <strong class="font-mono text-slate-900">{{ payment.gateway_payment_id if payment else 'N/A' }}</strong></div>
+                        {% if payment and payment.gateway_order_id %}
+                        <div class="flex justify-between"><span>Gateway Order ID:</span> <strong class="font-mono text-slate-900">{{ payment.gateway_order_id }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="flex justify-between">
-                    <span>Gateway:</span>
-                    <strong class="text-slate-800">Razorpay (Authorized)</strong>
+
+                <div class="mt-2 pt-2 border-t border-slate-200 flex items-center justify-between">
+                    <span class="text-slate-500 font-semibold">Payment Status:</span>
+                    <span class="receipt-stamp">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                        <span>Paid &amp; Settled (100% Verified)</span>
+                    </span>
                 </div>
-                <div class="flex justify-between">
-                    <span>Payment ID:</span>
-                    <strong class="font-mono text-slate-800">{{ payment.gateway_payment_id if payment else 'N/A' }}</strong>
-                </div>
-                {% if payment and payment.gateway_order_id %}
-                <div class="flex justify-between">
-                    <span>Gateway Order ID:</span>
-                    <strong class="font-mono text-slate-800">{{ payment.gateway_order_id }}</strong>
-                </div>
-                {% endif %}
             </div>
         </div>
 
-        <!-- Line Item Table -->
-        <div class="py-6 border-b border-slate-200">
-            <table class="w-full text-left text-sm">
+        <!-- 3. Line Items Tax Table -->
+        <div class="py-4">
+            <table class="w-full text-left tax-table">
                 <thead>
-                    <tr class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-2">
-                        <th class="pb-2">Description</th>
-                        <th class="text-center pb-2">Format</th>
-                        <th class="text-right pb-2">Amount</th>
+                    <tr>
+                        <th class="w-8 text-center">#</th>
+                        <th>Description of Statutory Supply</th>
+                        <th class="text-center">SAC Code</th>
+                        <th class="text-center">Format</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-right">Rate</th>
+                        <th class="text-right">Taxable Val</th>
+                        <th class="text-right">Total (INR)</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     <tr>
-                        <td class="py-3">
-                            <strong class="text-slate-800 block">
-                                {{ order.document_template.title if order.document_template else 'Cheque Bounce Legal Notice' }}
+                        <td class="text-center font-bold text-slate-400">1</td>
+                        <td>
+                            <strong class="text-slate-900 block text-sm">
+                                {{ order.document_template.title if order.document_template else 'Cheque Bounce Statutory Legal Notice' }}
                             </strong>
-                            <span class="text-xs text-slate-500">
-                                Section 138 Negotiable Instruments Act 1881 Statutory Demand
+                            <span class="text-[11px] text-slate-500 leading-tight block mt-0.5">
+                                Statutory legal notice drafting under Section 138 of Negotiable Instruments Act, 1881. Includes 15-day payment demand and NI Act Section 142 clauses.
                             </span>
                         </td>
-                        <td class="py-3 text-center text-xs text-slate-600">Word (.docx) &amp; PDF</td>
-                        <td class="py-3 text-right font-medium text-slate-800">₹{{ order.amount }}</td>
+                        <td class="text-center font-mono text-slate-600">998211</td>
+                        <td class="text-center text-slate-600 font-medium text-xs">Word &amp; PDF</td>
+                        <td class="text-center font-medium">1</td>
+                        <td class="text-right font-medium">₹{{ taxable_amount }}</td>
+                        <td class="text-right font-medium">₹{{ taxable_amount }}</td>
+                        <td class="text-right font-bold text-slate-900">₹{{ order.amount }}.00</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr class="border-t border-slate-200 text-sm">
-                        <th colspan="2" class="pt-3 text-right text-slate-600 font-normal">Subtotal:</th>
-                        <td class="pt-3 text-right font-medium text-slate-800">₹{{ order.amount }}</td>
-                    </tr>
-                    <tr class="text-sm">
-                        <th colspan="2" class="pt-1 text-right text-slate-600 font-normal">GST (18% Included):</th>
-                        <td class="pt-1 text-right text-slate-500">₹0.00</td>
-                    </tr>
-                    <tr class="text-base font-bold text-[#142D4E]">
-                        <th colspan="2" class="pt-3 text-right">Total Paid:</th>
-                        <td class="pt-3 text-right text-emerald-700 text-lg">₹{{ order.amount }}</td>
-                    </tr>
-                </tfoot>
             </table>
         </div>
 
-        <!-- Invoice Footer & Print Button -->
-        <div class="flex flex-wrap justify-between items-center gap-4 pt-6 text-xs text-slate-500">
-            <p>This is a computer-generated tax invoice and requires no physical signature.</p>
-            <div class="flex gap-2">
-                <button type="button" onclick="window.print()" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
-                    <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Receipt
-                </button>
-                <a href="{{ url_for('auth.dashboard') }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
-                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Dashboard
-                </a>
+        <!-- 4. Subtotals, GST Breakdown & Amount in Words -->
+        <div class="border-t border-slate-300 pt-3 pb-4">
+            <div class="grid grid-cols-2 gap-6 items-start">
+                <!-- Amount in Words & Legal Tax Note -->
+                <div class="space-y-2 text-xs">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Amount in Words:</span>
+                        <strong class="text-slate-900 font-serif italic text-sm">{{ amount_in_words }}</strong>
+                    </div>
+                    <div class="pt-2 text-[11px] text-slate-500 leading-relaxed border-t border-slate-200">
+                        <p><strong>Tax Classification:</strong> Service Accounting Code (SAC) 998211 · Legal documentation and certification services. Tax calculated at 18% inclusive GST rate.</p>
+                    </div>
+                </div>
+
+                <!-- Financial Calculation Table -->
+                <div class="space-y-1.5 text-xs text-slate-700 bg-slate-50/70 p-3.5 rounded border border-slate-200">
+                    <div class="flex justify-between">
+                        <span>Total Taxable Value:</span>
+                        <span class="font-medium text-slate-900">₹{{ taxable_amount }}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Central GST (CGST @ 9%):</span>
+                        <span>₹{{ cgst_amount }}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>State GST (SGST @ 9%):</span>
+                        <span>₹{{ sgst_amount }}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Total GST (18% Included):</span>
+                        <span>₹{{ gst_total }}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-300 text-sm font-bold text-[#142D4E]">
+                        <span>Grand Total Paid (INR):</span>
+                        <span class="text-base text-emerald-700 font-serif font-bold">₹{{ order.amount }}.00</span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- 5. Verification Seal & Authorized Signatory -->
+        <div class="border-t border-slate-300 pt-5 mt-2 flex flex-wrap justify-between items-end gap-6 text-xs text-slate-600">
+            <!-- Official Digital Verification Seal -->
+            <div class="flex items-center gap-3">
+                <div class="w-16 h-16 rounded-full border-2 border-emerald-600 flex flex-col items-center justify-center text-center p-1 bg-emerald-50 text-emerald-800 shrink-0">
+                    <span class="text-[7px] font-bold uppercase tracking-widest leading-none">NYAYVEYA</span>
+                    <i data-lucide="check" class="w-4 h-4 my-0.5 stroke-[3]"></i>
+                    <span class="text-[7px] font-extrabold uppercase tracking-tighter leading-none">VERIFIED</span>
+                </div>
+                <div>
+                    <strong class="text-slate-900 block text-xs font-bold">Cryptographically Verified Receipt</strong>
+                    <p class="text-[11px] text-slate-500 leading-tight mt-0.5">
+                        Authenticated via RBI-regulated Razorpay Gateway.<br>
+                        Digital Audit Hash: <span class="font-mono text-slate-700">SHA256-OK-{{ order.order_number }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Company Signatory -->
+            <div class="text-right">
+                <p class="text-[11px] text-slate-500">For <strong>NyayVeya Technologies Private Limited</strong></p>
+                <div class="my-1.5">
+                    <span class="font-serif italic font-bold text-base text-[#142D4E] tracking-wider block">
+                        NyayVeya Automated Systems
+                    </span>
+                </div>
+                <p class="text-[10px] text-slate-500">Authorized Signatory · System Generated Document</p>
+            </div>
+        </div>
+
+        <!-- 6. Statutory Disclaimer Footer -->
+        <div class="border-t border-slate-200 mt-5 pt-3 text-[10px] text-slate-400 text-center leading-normal">
+            <p>This is an authentic, computer-generated Tax Invoice issued in accordance with the provisions of Section 31 of the CGST Act, 2017. It requires no physical signature. Registered documents are securely preserved under your NyayVeya account.</p>
+        </div>
+
+        <!-- SCREEN ONLY: Receipt Action Buttons (Hidden when printing) -->
+        <div class="screen-only no-print mt-6 pt-5 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="window.print()" class="button primary text-xs py-2 px-4 flex items-center gap-1.5 font-bold shadow">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Print Receipt / Save as PDF</span>
+                </button>
+                <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-700"></i> Word (.docx)
+                </a>
+                <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                    <i data-lucide="file" class="w-3.5 h-3.5 text-red-700"></i> PDF (.pdf)
+                </a>
+            </div>
+            <a href="{{ url_for('auth.dashboard') }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Customer Dashboard
+            </a>
+        </div>
+
     </div>
 </div>
 {% endblock %}

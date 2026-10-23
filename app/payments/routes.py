@@ -168,11 +168,58 @@ def payment_success(order_id):
 
     invoice_number = f"INV-{order.order_number.replace('ORD-', '')}"
 
+    # Calculate GST Tax Breakdown (18% inclusive)
+    total_amount = float(order.amount)
+    taxable_amount = round(total_amount / 1.18, 2)
+    gst_total = round(total_amount - taxable_amount, 2)
+    cgst_amount = round(gst_total / 2, 2)
+    sgst_amount = round(gst_total - cgst_amount, 2)
+
+    def number_to_words(amt_int):
+        units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+                 "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                 "Seventeen", "Eighteen", "Nineteen"]
+        tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+
+        def sub_1000(n):
+            if n == 0:
+                return ""
+            elif n < 20:
+                return units[n]
+            elif n < 100:
+                return tens[n // 10] + (" " + units[n % 10] if n % 10 != 0 else "")
+            else:
+                return units[n // 100] + " Hundred" + (" " + sub_1000(n % 100) if n % 100 != 0 else "")
+
+        n = int(amt_int)
+        if n == 0:
+            return "Rupees Zero Only"
+        parts = []
+        if n >= 10000000:
+            parts.append(sub_1000(n // 10000000) + " Crore")
+            n %= 10000000
+        if n >= 100000:
+            parts.append(sub_1000(n // 100000) + " Lakh")
+            n %= 100000
+        if n >= 1000:
+            parts.append(sub_1000(n // 1000) + " Thousand")
+            n %= 1000
+        if n > 0:
+            parts.append(sub_1000(n))
+        return "Rupees " + " ".join(parts).strip() + " Only"
+
+    amount_in_words = number_to_words(order.amount)
+
     return render_template(
         'payments/success.html',
         order=order,
         payment=latest_payment,
-        invoice_number=invoice_number
+        invoice_number=invoice_number,
+        taxable_amount=f"{taxable_amount:.2f}",
+        cgst_amount=f"{cgst_amount:.2f}",
+        sgst_amount=f"{sgst_amount:.2f}",
+        gst_total=f"{gst_total:.2f}",
+        amount_in_words=amount_in_words
     )
 
 
