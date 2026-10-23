@@ -12,6 +12,7 @@ import time
 import threading
 from functools import wraps
 from datetime import timedelta
+from typing import Optional
 from flask import (
     request, jsonify, render_template, abort, current_app,
     make_response, Response
@@ -63,7 +64,7 @@ class InMemoryRateLimiter:
 limiter = InMemoryRateLimiter()
 
 
-def rate_limit(max_requests: int = 10, window_seconds: int = 60, error_message: str = None):
+def rate_limit(max_requests: int = 10, window_seconds: int = 60, error_message: Optional[str] = None):
     """
     Decorator to apply sliding-window rate limiting to Flask route functions.
     Identifies clients by remote IP address.
