@@ -239,12 +239,11 @@ p {
     background: #f8fafc;
 }
 
-/* Header Specific Responsive Shell & Spacing */
-.header-shell {
+/* Header Corner-to-Corner Container */
+.header-container {
     width: 100%;
-    max-width: 1200px;
-    margin-inline: auto;
-    padding-inline: clamp(16px, 3vw, 24px);
+    margin: 0;
+    padding-inline: clamp(16px, 3.5vw, 40px);
     box-sizing: border-box;
 }
 
@@ -743,7 +742,8 @@ p {
         gap: 16px;
     }
 
-    .category-strip .shell {
+    .category-strip .shell,
+    .category-strip .header-container {
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
