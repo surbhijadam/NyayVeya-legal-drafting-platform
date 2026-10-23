@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Draft Preview: {{ order.order_number }} - LegalDraft India{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Draft Preview</li>
+        </ol>
+    </nav>
+
+    <!-- Top Action Banner -->
+    <div class="card border-0 bg-light p-4 mb-4 shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge bg-primary">{{ order.order_number }}</span>
+                    <span class="badge bg-warning text-dark">Draft Preview</span>
+                </div>
+                <h3 class="fw-bold mb-1">Cheque Bounce Legal Notice Draft</h3>
+                <p class="text-muted small mb-0">
+                    Review your generated draft below. You can download the draft files or proceed to payment.
+                </p>
+            </div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <div class="d-inline-flex gap-2">
+                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-file-earmark-word"></i> Word (.docx)
+                    </a>
+                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF (.pdf)
+                    </a>
+                    <a href="{{ url_for('generator.cheque_bounce_form') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i> Edit Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Legal Document Simulation Paper -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border shadow-sm p-4 p-md-5 bg-white legal-paper" style="font-family: 'Times New Roman', Times, serif; font-size: 1.05rem; line-height: 1.6; color: #222;">
+
+                <!-- Notice Header -->
+                <div class="text-center mb-3">
+                    <h6 class="fw-bold tracking-wide text-uppercase" style="letter-spacing: 1px;">
+                        {{ notice.header }}
+                    </h6>
+                    <hr class="my-2 border-dark">
+                </div>
+
+                <!-- Date -->
+                <div class="text-end mb-4">
+                    <strong>Date:</strong> {{ notice.notice_date }}
+                </div>
+
+                <!-- Sender Block (if Advocate) -->
+                {% if 'Advocate' in notice.sender_block %}
+                <div class="mb-4 text-start">
+                    {% for line in notice.sender_block.split('\n') %}
+                    <div>{{ line }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Recipient Block -->
+                <div class="mb-4 text-start">
+                    {% for line in notice.recipient_block.split('\n') %}
+                        {% if loop.first %}
+                            <strong class="d-block">{{ line }}</strong>
+                        {% else %}
+                            <div>{{ line }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Subject -->
+                <div class="mb-4 text-justify">
+                    <strong>{{ notice.subject }}</strong>
+                </div>
+
+                <!-- Salutation -->
+                <div class="mb-3">
+                    Sir / Madam,
+                </div>
+
+                <!-- Numbered Legal Paragraphs -->
+                {% for para in notice.paragraphs %}
+                <p class="text-justify mb-3" style="text-align: justify; text-justify: inter-word;">
+                    {{ para }}
+                </p>
+                {% endfor %}
+
+                <!-- Signoff -->
+                <div class="text-end mt-5 pt-3">
+                    {% for line in notice.signoff.split('\n') %}
+                    <div>{{ line }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Checkout Bar (Prepares for Phase 7: Payments) -->
+    <div class="card border-0 bg-light p-4 mt-4 shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="fw-bold mb-1">Satisfied with this legal draft?</h5>
+                <p class="text-muted small mb-0">
+                    Pay <strong>₹{{ order.amount }}</strong> to permanently save this completed document, unlock advocate dispatch guidelines, and register the order in your permanent account history.
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <!-- Links to Phase 7 Checkout -->
+                <a href="{{ url_for('auth.dashboard') }}" class="btn btn-success btn-lg fw-semibold px-4">
+                    <i class="bi bi-credit-card me-1"></i> Proceed to Pay ₹{{ order.amount }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -136,11 +136,11 @@
 
                     {% if document.status == 'active' %}
                         {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('main.document_list') }}#ready-for-generator" class="btn btn-success btn-lg w-100 mb-2 fw-semibold">
+                            <a href="{{ url_for('generator.cheque_bounce_form') }}" class="btn btn-success btn-lg w-100 mb-2 fw-semibold">
                                 <i class="bi bi-pencil-square"></i> Start Drafting Now
                             </a>
                         {% else %}
-                            <a href="{{ url_for('auth.login', next=request.path) }}" class="btn btn-primary btn-lg w-100 mb-2 fw-semibold">
+                            <a href="{{ url_for('auth.login', next=url_for('generator.cheque_bounce_form')) }}" class="btn btn-primary btn-lg w-100 mb-2 fw-semibold">
                                 <i class="bi bi-box-arrow-in-right"></i> Log in to Draft
                             </a>
                         {% endif %}

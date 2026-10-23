@@ -188,7 +188,7 @@ class Order(db.Model):
 
     @form_data.setter
     def form_data(self, value):
-        self.form_data_json = json.dumps(value or {})
+        self.form_data_json = json.dumps(value or {}, default=str)
 
     def __repr__(self):
         return f'<Order {self.order_number} ({self.status})>'

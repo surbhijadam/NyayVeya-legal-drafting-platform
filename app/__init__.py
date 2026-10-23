@@ -57,6 +57,9 @@ def create_app():
     from app.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from app.generator import generator_bp
+    app.register_blueprint(generator_bp)
+
     # Ensure models are imported and tables are created in development
     with app.app_context():
         from app import models
