@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - LegalDraft India{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">About LegalDraft India</h1>
+        <p class="lead text-muted">
+            Making legal document drafting accessible, affordable, and simple.
+        </p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <!-- Mission -->
+            <div class="mb-5">
+                <h3 class="fw-bold"><i class="bi bi-bullseye text-primary"></i> Our Mission</h3>
+                <p class="text-secondary">
+                    Access to legal documentation should not be limited by geography, cost, or
+                    complexity. LegalDraft India helps individuals and small businesses generate
+                    properly formatted legal documents quickly and affordably.
+                </p>
+                <p class="text-secondary">
+                    We provide standard legal document templates that have been reviewed by
+                    qualified Indian advocates. Users fill in a guided form, preview the
+                    generated draft, and download it in editable Word or PDF format.
+                </p>
+            </div>
+
+            <!-- What We Do -->
+            <div class="mb-5">
+                <h3 class="fw-bold"><i class="bi bi-gear text-primary"></i> What We Do</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold"><i class="bi bi-file-earmark-text text-primary"></i> Standard Templates</h6>
+                                <p class="small text-muted mb-0">
+                                    Pre-reviewed legal document templates for common needs
+                                    such as legal notices, agreements, and affidavits.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold"><i class="bi bi-ui-checks text-primary"></i> Guided Forms</h6>
+                                <p class="small text-muted mb-0">
+                                    Step-by-step forms that ask the right questions and
+                                    validate your input before generating the document.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold"><i class="bi bi-eye text-primary"></i> Preview & Download</h6>
+                                <p class="small text-muted mb-0">
+                                    Review your completed draft before paying. Download in
+                                    Word format for further editing or in PDF for printing.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold"><i class="bi bi-shield-check text-primary"></i> Secure & Private</h6>
+                                <p class="small text-muted mb-0">
+                                    Your personal and legal information is kept secure.
+                                    Documents are accessible only through your account.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What We Don't Do -->
+            <div class="mb-5">
+                <h3 class="fw-bold"><i class="bi bi-exclamation-circle text-warning"></i> What We Don't Do</h3>
+                <div class="alert alert-light border">
+                    <ul class="mb-0">
+                        <li class="mb-2">
+                            We <strong>do not provide legal advice</strong>. Our templates are
+                            standard formats, not personalised legal opinions.
+                        </li>
+                        <li class="mb-2">
+                            We <strong>do not replace advocates</strong>. For disputed matters,
+                            court proceedings, or complex legal questions, consult a qualified advocate.
+                        </li>
+                        <li class="mb-2">
+                            We <strong>do not guarantee legal outcomes</strong>. A properly drafted
+                            document is a necessary step, but outcomes depend on many factors.
+                        </li>
+                        <li class="mb-0">
+                            We <strong>do not file documents</strong> on your behalf. You are
+                            responsible for sending, filing, or executing the generated document.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Contact Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold"><i class="bi bi-envelope text-primary"></i> Contact Us</h5>
+                    <p class="text-muted small">
+                        Have questions, suggestions, or need help? Reach out to us.
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2 text-primary"></i>
+                            support@legaldraftindia.com
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        We typically respond within 24 hours on business days.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CTA Card -->
+            <div class="card border-0 bg-primary text-white">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-file-earmark-plus display-4 mb-3"></i>
+                    <h5 class="fw-bold">Ready to Get Started?</h5>
+                    <p class="small opacity-75">
+                        Browse our document templates and generate your first draft today.
+                    </p>
+                    <a href="{{ url_for('main.document_list') }}"
+                       class="btn btn-light fw-bold">
+                        Browse Documents
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
