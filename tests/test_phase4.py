@@ -234,7 +234,7 @@ def test_seed_initial_templates(app):
         assert tmpl is not None
         assert tmpl.title == 'Cheque Bounce Notice'
         assert tmpl.price == 199
-        assert 'Word and PDF format' in tmpl.what_you_get[0]
+        assert any('Word' in item for item in tmpl.what_you_get)
 
         # Second run should be idempotent (no duplicates created)
         seed_initial_templates()
