@@ -9,11 +9,10 @@ from app.models import User
 @pytest.fixture
 def app():
     """Create application configured for testing with an in-memory database."""
-    app = create_app()
-    app.config.update({
+    app = create_app(test_config={
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
-        'WTF_CSRF_ENABLED': False,  # Disable CSRF in tests for easier form submissions
+        'WTF_CSRF_ENABLED': False,
     })
 
     with app.app_context():

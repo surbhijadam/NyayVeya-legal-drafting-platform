@@ -10,8 +10,7 @@ from app.catalogue import seed_initial_templates
 @pytest.fixture
 def app():
     """Create test application with isolated in-memory SQLite database."""
-    app = create_app()
-    app.config.update({
+    app = create_app(test_config={
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
         'WTF_CSRF_ENABLED': False,

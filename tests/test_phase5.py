@@ -14,8 +14,7 @@ from app.catalogue import (
 @pytest.fixture
 def client():
     """Create test client for app."""
-    app = create_app()
-    app.config.update({
+    app = create_app(test_config={
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
         'WTF_CSRF_ENABLED': False,

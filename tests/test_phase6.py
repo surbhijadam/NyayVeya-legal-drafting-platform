@@ -16,11 +16,10 @@ from app.generator.pdf_builder import build_cheque_bounce_pdf
 @pytest.fixture
 def app(tmp_path):
     """Create test application with in-memory DB and isolated temp storage."""
-    app = create_app()
     docs_folder = str(tmp_path / "test_generated_docs")
     os.makedirs(docs_folder, exist_ok=True)
 
-    app.config.update({
+    app = create_app(test_config={
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
         'WTF_CSRF_ENABLED': False,

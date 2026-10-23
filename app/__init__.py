@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env file explicitly
 load_dotenv()
 
 # Create extension instances (not tied to any app yet)
@@ -16,22 +16,30 @@ login_manager = LoginManager()
 csrf = CSRFProtect()
 
 
-def create_app():
+def create_app(test_config=None):
     """Application factory: creates and configures the Flask app."""
 
     app = Flask(__name__)
 
+    # Ensure instance directory exists
+    os.makedirs(app.instance_path, exist_ok=True)
+    default_db_path = os.path.join(app.instance_path, 'app.db').replace('\\', '/')
+
     # --- Configuration ---
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-dev-key')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'sqlite:///app.db'
+        'DATABASE_URL', f'sqlite:///{default_db_path}'
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Where generated documents are saved (outside the static folder for privacy)
-    app.config['GENERATED_DOCUMENTS_FOLDER'] = os.path.join(
-        app.root_path, '..', 'generated_documents'
-    )
+    docs_folder = os.path.abspath(os.path.join(app.root_path, '..', 'generated_documents'))
+    os.makedirs(docs_folder, exist_ok=True)
+    app.config['GENERATED_DOCUMENTS_FOLDER'] = docs_folder
+
+    # Apply test config BEFORE initializing db extension if provided
+    if test_config:
+        app.config.update(test_config)
 
     # --- Initialise extensions with this app ---
     db.init_app(app)
