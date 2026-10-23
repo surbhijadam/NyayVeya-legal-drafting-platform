@@ -27,6 +27,9 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+        # Clear any lingering session so the user must log in explicitly
+        logout_user()
+
         # Create new user with hashed password
         user = User(
             full_name=form.full_name.data.strip(),
@@ -38,7 +41,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        flash('Account created successfully! Please log in.', 'success')
+        flash('Account created successfully! Please log in with your email and password.', 'success')
         return redirect(url_for('auth.login'))
 
     return render_template('auth/register.html', form=form)
