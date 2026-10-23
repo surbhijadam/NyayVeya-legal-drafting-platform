@@ -1,4 +1,4 @@
-/* NyayaDraft - Core Brand Styling & Responsive Design System */
+/* NyayVeya - Core Brand Styling & Responsive Design System */
 
 :root {
     --navy: #142d4e;
@@ -49,6 +49,57 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     color: var(--navy);
     line-height: 1.35;
     font-weight: 700;
+}
+
+/* White text utility reinforcement for dark banner headings */
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6,
+.banner-heading,
+.text-white .banner-heading,
+.text-white .font-serif {
+    color: #ffffff !important;
+}
+
+/* ===== NyayVeya Brand Identity & Gradients ===== */
+.brand-nyay {
+    background: linear-gradient(135deg, #061A35 0%, #07396B 50%, #0878C9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #061A35;
+    display: inline-block;
+}
+
+.brand-veya {
+    background: linear-gradient(135deg, #A87518 0%, #D9AD48 50%, #F4D47A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #D9AD48;
+    display: inline-block;
+}
+
+.brand-tagline {
+    color: #061A35 !important;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.25;
+}
+
+.brand-logo-img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.18s ease;
+}
+
+.brand-logo-link:hover .brand-logo-img {
+    transform: scale(1.03);
 }
 
 h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); }
@@ -664,12 +715,28 @@ p {
     }
 }
 
+/* --- Mobile Phones (<= 480px) --- */
+@media (max-width: 480px) {
+    .brand-logo-img {
+        height: 38px;
+    }
+
+    .brand-tagline {
+        font-size: 0.63rem;
+        letter-spacing: 0;
+        white-space: nowrap;
+    }
+}
+
 /* --- Small Mobile Phones (<= 400px) --- */
 @media (max-width: 400px) {
     .dashboard-stats {
         grid-template-columns: 1fr !important;
     }
+}
 
+/* --- Ultra-Narrow Mobile Phones (< 350px) --- */
+@media (max-width: 349px) {
     .brand-tagline {
         display: none !important;
     }

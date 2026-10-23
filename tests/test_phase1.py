@@ -25,6 +25,10 @@ def test_home_page_contains_brand(client):
     """Test that the home page contains our brand name."""
     response = client.get('/')
     assert b'LegalDraft India' in response.data
+    assert b'Nyay' in response.data
+    assert b'Veya' in response.data
+    assert b'Your Words. Your Rights. Your Documents.' in response.data
+    assert b'logo.png' in response.data
 
 
 def test_home_page_contains_disclaimer(client):
