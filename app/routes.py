@@ -40,6 +40,16 @@ def about():
     return render_template('about.html')
 
 
+@main_bp.route('/policies')
+@main_bp.route('/privacy')
+@main_bp.route('/terms')
+@main_bp.route('/refunds')
+@main_bp.route('/disclaimer')
+def policies():
+    """Information & Policies page (Legal Disclaimer, Privacy Policy, Terms, Refund Policy)."""
+    return render_template('policies.html')
+
+
 @main_bp.route('/contact', methods=['GET', 'POST'])
 def contact():
     """Contact page - platform support and inquiries."""

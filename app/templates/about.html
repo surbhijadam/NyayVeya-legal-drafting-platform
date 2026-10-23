@@ -67,7 +67,7 @@
             </div>
 
             <!-- What We Don't Do -->
-            <div class="mb-8">
+            <div id="disclaimer" class="mb-8">
                 <h3 class="font-serif font-bold text-xl text-[#6F1D2C] mb-4">Platform Transparency: What We Do NOT Do</h3>
                 <div class="notice">
                     <ul class="space-y-2 text-xs text-slate-700 list-disc pl-4 m-0">
@@ -81,6 +81,32 @@
                             We <strong>do not guarantee legal outcomes</strong>. A properly drafted demand notice is a mandatory procedural step under statutes such as the NI Act, but legal determinations rest with judicial forums.
                         </li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Information & Policies Section -->
+            <div id="policies-overview" class="mb-8 reveal-on-scroll">
+                <h3 class="font-serif font-bold text-xl text-[#142D4E] mb-3">Information &amp; Policies</h3>
+                <p class="text-sm text-slate-600 mb-4">
+                    Review our complete statutory compliance guidelines, data security commitments, and customer protections:
+                </p>
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <a href="{{ url_for('main.policies') }}#disclaimer" class="card p-4 hover:border-[#142D4E] text-decoration-none block">
+                        <strong class="text-sm text-[#142D4E] block">Legal Disclaimer</strong>
+                        <span class="text-xs text-slate-500 mt-1 block">Scope of automated software &amp; statutory compliance.</span>
+                    </a>
+                    <a href="{{ url_for('main.policies') }}#privacy" id="privacy" class="card p-4 hover:border-[#142D4E] text-decoration-none block">
+                        <strong class="text-sm text-[#142D4E] block">Privacy Policy</strong>
+                        <span class="text-xs text-slate-500 mt-1 block">Data confidentiality, encryption &amp; secure storage.</span>
+                    </a>
+                    <a href="{{ url_for('main.policies') }}#terms" id="terms" class="card p-4 hover:border-[#142D4E] text-decoration-none block">
+                        <strong class="text-sm text-[#142D4E] block">Terms of Service</strong>
+                        <span class="text-xs text-slate-500 mt-1 block">Permitted use, user obligations &amp; licensing.</span>
+                    </a>
+                    <a href="{{ url_for('main.policies') }}#refunds" id="refunds" class="card p-4 hover:border-[#142D4E] text-decoration-none block">
+                        <strong class="text-sm text-[#142D4E] block">Refund Policy</strong>
+                        <span class="text-xs text-slate-500 mt-1 block">Consumer protection &amp; technical resolution guarantees.</span>
+                    </a>
                 </div>
             </div>
         </div>

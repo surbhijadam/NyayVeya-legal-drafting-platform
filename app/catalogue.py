@@ -100,6 +100,29 @@ DOCUMENTS = {
             'Disclaimer: This is a standard template generator and does not constitute personalised legal advice.',
         ],
 
+        'faqs': [
+            {
+                'question': 'What is the mandatory 15-day notice period under Section 138?',
+                'answer': 'Under Section 138(c) of the Negotiable Instruments Act, 1881, the legal notice demands payment within 15 days of its receipt by the cheque drawer. The cause of action to file a criminal complaint before the Judicial Magistrate arises only after this 15-day window expires without payment.'
+            },
+            {
+                'question': 'Within how many days of the cheque return memo must the notice be sent?',
+                'answer': 'The notice must be dispatched within exactly 30 days of receiving the bank dishonour memo. If you miss this statutory 30-day deadline, you forfeit your right to initiate criminal proceedings under Section 138, leaving only a civil recovery suit.'
+            },
+            {
+                'question': 'Is an advocate mandatory to send a Section 138 legal notice?',
+                'answer': 'No. An aggrieved payee can issue a Section 138 notice directly under their own signature. However, if you prefer advocate representation, our generator supports advocate particulars and generates an editable Word (.docx) file that an advocate can print on their legal letterhead.'
+            },
+            {
+                'question': 'Which dispatch method is recognized as valid proof of service in court?',
+                'answer': 'The notice must be sent via Registered Post Acknowledgement Due (RPAD) or Speed Post with delivery tracking. In Indian courts, postal receipts and online delivery confirmations constitute statutory proof of service under Section 27 of the General Clauses Act.'
+            },
+            {
+                'question': 'What documents must be preserved after dispatching the notice?',
+                'answer': 'Keep the original dishonoured cheque, original bank return memo, signed copy of this legal notice, the postal dispatch receipt, and the printed delivery tracking report showing delivery or refusal.'
+            }
+        ],
+
         'badge_text': 'Available Now',
         'badge_class': 'bg-success',
     },
@@ -141,6 +164,25 @@ DOCUMENTS = {
             'Must be executed on appropriate state non-judicial stamp paper.',
         ],
 
+        'faqs': [
+            {
+                'question': 'Why is an 11-month duration standard for rental agreements in India?',
+                'answer': 'Under Section 17 of the Registration Act, 1908, leases of immovable property for a term exceeding 11 months require mandatory registration with sub-registrar offices. An 11-month agreement on appropriate stamp paper is standard for residential tenancies to simplify execution.'
+            },
+            {
+                'question': 'Who is responsible for paying stamp duty and registration charges?',
+                'answer': 'By standard convention across Indian states, stamp duty and notarization fees are divided equally (50:50) between the landlord and tenant, unless agreed otherwise in writing.'
+            },
+            {
+                'question': 'How is the security deposit refund timeline enforced?',
+                'answer': 'Our agreement template contains explicit covenants requiring the landlord to refund the interest-free security deposit within 7 to 15 days of peaceful key handover, subject to deduction of actual unpaid utilities or documented physical damages.'
+            },
+            {
+                'question': 'Can the landlord arbitrarily increase rent during the agreement term?',
+                'answer': 'No. The monthly rent remains fixed for the entire 11-month tenure. Any mutually agreed rent escalation (typically 5% to 10%) takes effect only upon execution of a formal renewal agreement.'
+            }
+        ],
+
         'badge_text': 'Coming Soon',
         'badge_class': 'bg-secondary',
     },
@@ -177,6 +219,21 @@ DOCUMENTS = {
 
         'important_notes': [
             'Must be printed on stamp paper and notarized to be legally valid.',
+        ],
+
+        'faqs': [
+            {
+                'question': 'What stamp paper value is required for an affidavit in India?',
+                'answer': 'Non-judicial stamp paper denominations vary by state (commonly ₹10, ₹20, ₹50, or ₹100 e-stamp). Verify your local state revenue department or notary requirements before printing.'
+            },
+            {
+                'question': 'Who is legally authorized to attest or notarize an affidavit?',
+                'answer': 'Under Section 139 of the Code of Civil Procedure, an affidavit must be sworn before an Oath Commissioner, an appointed Notary Public, or a Judicial/Executive Magistrate.'
+            },
+            {
+                'question': 'What is the consequence of making a false statement in an affidavit?',
+                'answer': 'Making a false sworn statement in an affidavit is a criminal offence punishable under Section 193 of the Indian Penal Code (perjury), carrying imprisonment of up to 7 years.'
+            }
         ],
 
         'badge_text': 'Coming Soon',
@@ -218,6 +275,21 @@ DOCUMENTS = {
             'Template under professional legal review.',
         ],
 
+        'faqs': [
+            {
+                'question': 'What is the limitation period for filing a money recovery suit?',
+                'answer': 'Under the Limitation Act, 1963, the limitation period to file a civil suit for debt recovery or unpaid dues is 3 years from the date the payment fell due or from the last written acknowledgment of debt.'
+            },
+            {
+                'question': 'Can I claim interest on outstanding dues in the legal notice?',
+                'answer': 'Yes. You can demand interest as per contract terms, the Interest Act 1978, or under Section 16 of the MSMED Act for registered MSME suppliers (which mandates compound interest at 3 times RBI bank rate).'
+            },
+            {
+                'question': 'How much time should I grant the recipient to comply?',
+                'answer': 'The standard practice is granting 15 to 30 days from delivery receipt for the recipient to remedy the breach or pay the outstanding dues before formal civil litigation is initiated.'
+            }
+        ],
+
         'badge_text': 'Coming Soon',
         'badge_class': 'bg-secondary',
     },
@@ -257,6 +329,21 @@ DOCUMENTS = {
             'Coming soon.',
         ],
 
+        'faqs': [
+            {
+                'question': 'What is the standard confidentiality duration under Indian law?',
+                'answer': 'Commercial NDAs typically specify a confidentiality period of 2 to 5 years from disclosure. However, trade secrets and proprietary source code can be protected indefinitely as long as they remain non-public.'
+            },
+            {
+                'question': 'Are electronic and digital signatures legally enforceable on an NDA?',
+                'answer': 'Yes. Under Section 10A of the Information Technology Act, 2000, agreements executed via electronic or digital signatures have equal legal validity and evidentiary enforceability in Indian courts.'
+            },
+            {
+                'question': 'What happens if a party breaches the NDA?',
+                'answer': 'The aggrieved party can seek an immediate interim court injunction under the Specific Relief Act, 1963, to restrain further unauthorized disclosure and claim monetary damages for financial losses.'
+            }
+        ],
+
         'badge_text': 'Coming Soon',
         'badge_class': 'bg-secondary',
     },
@@ -291,6 +378,21 @@ DOCUMENTS = {
 
         'important_notes': [
             'Coming soon.',
+        ],
+
+        'faqs': [
+            {
+                'question': 'Who owns intellectual property created under this agreement?',
+                'answer': 'Under Indian copyright law, the creator retains ownership unless a written contract explicitly assigns the IP. This draft includes comprehensive Work Made for Hire and assignment clauses that transfer ownership upon full payment.'
+            },
+            {
+                'question': 'Are non-compete clauses enforceable in India?',
+                'answer': 'Post-termination non-compete clauses are void under Section 27 of the Indian Contract Act, 1872. However, non-solicitation covenants, non-disclosure of confidential trade secrets, and non-compete restrictions during the active contract period are enforceable.'
+            },
+            {
+                'question': 'How are contract disputes resolved under this draft?',
+                'answer': 'The agreement provides for standard tiered dispute resolution: initial amicable executive negotiations, followed by expedited binding arbitration under the Arbitration and Conciliation Act, 1996.'
+            }
         ],
 
         'badge_text': 'Coming Soon',
@@ -329,6 +431,17 @@ DOCUMENTS = {
             'Coming soon.',
         ],
 
+        'faqs': [
+            {
+                'question': 'What are the essential ingredients of an official Indian administrative application?',
+                'answer': 'An official application must clearly state the recipient authority designation, subject line with reference numbers, applicant particulars, chronological facts, specific relief or request, and verification date/signature.'
+            },
+            {
+                'question': 'How should an application be delivered to government departments?',
+                'answer': 'Deliver by Registered Post/Speed Post with acknowledgement or submit in-person at the departmental receiving counter and obtain an official stamped acknowledgement (dairy number).'
+            }
+        ],
+
         'badge_text': 'Coming Soon',
         'badge_class': 'bg-secondary',
     },
@@ -363,6 +476,17 @@ DOCUMENTS = {
 
         'important_notes': [
             'Coming soon.',
+        ],
+
+        'faqs': [
+            {
+                'question': 'When is a self-declaration letter accepted in lieu of an affidavit in India?',
+                'answer': 'Under the Government of India self-attestation reforms, most administrative and educational institutions accept self-declaration letters without requiring executive magistrate stamps, unless specifically mandated by statutory rules.'
+            },
+            {
+                'question': 'Does a declaration letter require witness signatures?',
+                'answer': 'While not always compulsory, having one or two credible witnesses attest the declarant signature significantly enhances its evidentiary value before private entities, banks, and academic institutions.'
+            }
         ],
 
         'badge_text': 'Coming Soon',

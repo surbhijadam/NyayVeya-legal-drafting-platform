@@ -103,6 +103,29 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <!-- Frequently Asked Questions (FAQs) -->
+            {% if document.faqs %}
+            <div class="mb-8 reveal-on-scroll">
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-[#6F1D2C]"></i>
+                    <h2 class="font-serif font-bold text-xl text-[#142D4E] m-0">Frequently Asked Questions</h2>
+                </div>
+                <div class="space-y-3" id="documentFaqs">
+                    {% for faq in document.faqs %}
+                    <details class="card p-4 transition-all duration-200 group bg-white cursor-pointer border border-slate-200" {% if loop.first %}open{% endif %}>
+                        <summary class="font-bold text-sm text-[#142D4E] flex justify-between items-center list-none select-none">
+                            <span>{{ faq.question }}</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="text-xs sm:text-sm text-slate-700 mt-3 pt-3 border-t border-slate-100 leading-relaxed m-0">
+                            {{ faq.answer }}
+                        </p>
+                    </details>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Sidebar / Action Card -->

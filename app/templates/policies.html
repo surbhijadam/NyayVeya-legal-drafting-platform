@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Information & Policies - NyayVeya{% endblock %}
+
+{% block content %}
+<!-- Top Architectural Banner from Prototype -->
+<div class="relative h-64 overflow-hidden">
+    <img class="canva-image w-full h-full object-cover" loading="lazy"
+         src="https://images.pexels.com/photos/37726708/pexels-photo-37726708.jpeg?auto=compress&cs=tinysrgb&w=1280"
+         alt="Warm wooden legal library interior with bookshelves">
+    <div class="absolute inset-0 bg-gradient-to-t from-[#142D4E] via-[#142D4E]/75 to-transparent flex items-end">
+        <div class="shell pb-8 text-white">
+            <p class="text-xs uppercase tracking-widest text-[#c5a253] font-bold">PLATFORM GOVERNANCE</p>
+            <h1 class="font-serif font-bold text-3xl mt-1 text-white banner-heading">Information &amp; Policies</h1>
+            <p class="text-white/80 text-sm mt-1 max-w-xl">
+                Statutory disclaimers, data protection standards, terms of service, and transparent consumer refund policies for NyayVeya.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="shell section-pad max-w-5xl">
+    <div class="grid work-grid xl:grid-cols-[1fr_320px] gap-10">
+        <!-- Main Policies Content -->
+        <div class="space-y-12">
+
+            <!-- 1. Legal Disclaimer -->
+            <section id="disclaimer" class="scroll-mt-24 card p-6 md:p-8 shadow-sm reveal-on-scroll">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700"></i>
+                    </div>
+                    <div>
+                        <span class="eyebrow !text-amber-800">STATUTORY NOTICE</span>
+                        <h2 class="font-serif font-bold text-2xl text-[#142D4E] m-0">Legal Disclaimer</h2>
+                    </div>
+                </div>
+
+                <div class="text-sm text-slate-700 space-y-4 leading-relaxed">
+                    <p>
+                        <strong>1. Not a Law Firm or Legal Representation:</strong>
+                        NyayVeya is an automated software and legal documentation technology platform developed by LegalDraft India. NyayVeya is not a law firm, advocate, solicitor, or licensed advocate chamber. The software and materials available on this website do not constitute personalised legal advice, case opinion, or court representation under the Advocates Act, 1961.
+                    </p>
+
+                    <p>
+                        <strong>2. No Advocate-Client Relationship:</strong>
+                        Transacting on NyayVeya, filling out guided questionnaires, or downloading statutory drafts does not establish an advocate-client relationship. If your matter involves disputed facts, complex financial stakes, or immediate court litigation, we strongly recommend retaining an independent enrolled advocate.
+                    </p>
+
+                    <p>
+                        <strong>3. Statutory Precedent Limitations:</strong>
+                        Document templates are engineered according to relevant Indian statutes (such as the Negotiable Instruments Act, 1881, the Indian Contract Act, 1872, and the General Clauses Act, 1897). However, users are strictly responsible for verifying the factual accuracy of party names, amounts, transaction dates, and limitation periods entered into forms.
+                    </p>
+
+                    <div class="notice mt-4" style="background: #fff7ed; border-left: 4px solid #ea580c;">
+                        <strong style="color: #9a3412;">Statutory Limitation Timelines</strong>
+                        <p class="mt-1 text-xs text-slate-700 m-0">
+                            Users must strictly observe procedural limitation periods prescribed under Indian law (e.g. 30 days for Section 138 NI Act notices from receipt of the bank return memo). NyayVeya assumes no liability for claims barred by limitation due to delayed dispatch or incomplete service.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Privacy Policy -->
+            <section id="privacy" class="scroll-mt-24 card p-6 md:p-8 shadow-sm reveal-on-scroll">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <i data-lucide="lock" class="w-5 h-5 text-blue-700"></i>
+                    </div>
+                    <div>
+                        <span class="eyebrow !text-blue-800">DATA PROTECTION</span>
+                        <h2 class="font-serif font-bold text-2xl text-[#142D4E] m-0">Privacy Policy</h2>
+                    </div>
+                </div>
+
+                <div class="text-sm text-slate-700 space-y-4 leading-relaxed">
+                    <p>
+                        <strong>1. Information We Collect:</strong>
+                        To facilitate automated document generation and account security, we collect:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li><strong>Account Details:</strong> Full name, verified email address, and encrypted password credentials.</li>
+                        <li><strong>Drafting Particulars:</strong> Specific facts entered into guided forms, including party names, postal addresses, cheque numbers, amounts, and transaction summaries.</li>
+                        <li><strong>Transaction Logs:</strong> Secure payment reference IDs and timestamps from certified payment gateways.</li>
+                    </ul>
+
+                    <p>
+                        <strong>2. Confidentiality & Security of Legal Drafts:</strong>
+                        Your drafting particulars and generated files are strictly private. All generated Word (.docx) and PDF (.pdf) files are stored in protected application directories outside public web roots and are accessible solely by your authenticated user session.
+                    </p>
+
+                    <p>
+                        <strong>3. Payment Card Privacy:</strong>
+                        All financial transactions are handled via PCI-DSS compliant Indian payment gateways. NyayVeya never collects, views, or stores your credit card numbers, debit card PINs, CVVs, or net banking passwords.
+                    </p>
+
+                    <p>
+                        <strong>4. Data Retention & Deletion Rights:</strong>
+                        You retain permanent access to your past orders and downloads from your account dashboard. You may request complete account deletion and data anonymization at any time by contacting our privacy desk at <strong class="text-[#142D4E]">privacy@nyayveya.in</strong>.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 3. Terms of Service -->
+            <section id="terms" class="scroll-mt-24 card p-6 md:p-8 shadow-sm reveal-on-scroll">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                        <i data-lucide="file-check" class="w-5 h-5 text-emerald-700"></i>
+                    </div>
+                    <div>
+                        <span class="eyebrow !text-emerald-800">USER AGREEMENT</span>
+                        <h2 class="font-serif font-bold text-2xl text-[#142D4E] m-0">Terms of Service</h2>
+                    </div>
+                </div>
+
+                <div class="text-sm text-slate-700 space-y-4 leading-relaxed">
+                    <p>
+                        <strong>1. Acceptance of Terms:</strong>
+                        By accessing NyayVeya, creating an account, or purchasing legal draft preparation services, you agree to be bound by these Terms of Service and all applicable laws of India.
+                    </p>
+
+                    <p>
+                        <strong>2. Permitted Use & License:</strong>
+                        Documents generated through NyayVeya are licensed for the personal, commercial, or professional use of the purchasing user. You may edit, print, dispatch, or have an advocate endorse the drafted document. Re-selling, scraping, or redistributing the software templates as a competing automated service is strictly prohibited.
+                    </p>
+
+                    <p>
+                        <strong>3. User Representations & Warranties:</strong>
+                        You warrant that all factual particulars entered into the platform (including names, addresses, cheque numbers, and transaction background) are lawful, genuine, and truthful to the best of your knowledge.
+                    </p>
+
+                    <p>
+                        <strong>4. Limitation of Liability:</strong>
+                        To the maximum extent permitted by Indian law, NyayVeya's aggregate liability for any claim arising out of or related to the use of this website or generated documents shall not exceed the exact drafting fee paid for the specific order.
+                    </p>
+
+                    <p>
+                        <strong>5. Jurisdiction & Dispute Resolution:</strong>
+                        These Terms are governed by the laws of India. Any legal dispute or proceeding arising under these Terms shall be subject to the exclusive jurisdiction of the competent courts in New Delhi, India.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 4. Refund Policy -->
+            <section id="refunds" class="scroll-mt-24 card p-6 md:p-8 shadow-sm reveal-on-scroll">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                        <i data-lucide="receipt" class="w-5 h-5 text-rose-700"></i>
+                    </div>
+                    <div>
+                        <span class="eyebrow !text-rose-800">CONSUMER PROTECTION</span>
+                        <h2 class="font-serif font-bold text-2xl text-[#142D4E] m-0">Refund Policy</h2>
+                    </div>
+                </div>
+
+                <div class="text-sm text-slate-700 space-y-4 leading-relaxed">
+                    <p>
+                        <strong>1. Nature of Digital Goods:</strong>
+                        NyayVeya delivers instantly generated digital legal drafts (.docx and .pdf files). Because file generation and downloads occur immediately upon payment, completed orders are generally non-cancellable once files have been generated.
+                    </p>
+
+                    <p>
+                        <strong>2. When Refunds Are Issued:</strong>
+                        We provide a <strong>100% full refund</strong> in the following scenarios:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li><strong>Technical Delivery Failure:</strong> If a technical server error prevents the generation or download of your files after payment, and our support desk cannot resolve the issue within 48 business hours.</li>
+                        <li><strong>Duplicate Charges:</strong> If an unintended double payment occurs for the same order due to a network timeout, the duplicate charge is refunded immediately.</li>
+                    </ul>
+
+                    <p>
+                        <strong>3. Non-Refundable Scenarios:</strong>
+                        Refunds are not granted for changes of mind after successful file generation, or for typographical mistakes made by the user in the form (as users can freely edit their particulars and re-download their drafts from the dashboard).
+                    </p>
+
+                    <p>
+                        <strong>4. How to Request a Refund:</strong>
+                        To submit a refund request, email <strong class="text-[#142D4E]">support@nyayveya.in</strong> with your <strong>Order Number</strong>, registered email, and a description or screenshot of the technical error. Approved refunds are credited to the original payment source within 5 to 7 banking days.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Sidebar Navigation Card -->
+        <aside class="self-start sticky top-6 space-y-6">
+            <div class="card p-6 shadow-sm reveal-on-scroll reveal-delay-150">
+                <p class="eyebrow">TABLE OF CONTENTS</p>
+                <h3 class="font-serif font-bold text-lg text-[#142D4E] mt-2 mb-4">Information &amp; Policies</h3>
+
+                <nav class="space-y-2 text-sm">
+                    <a href="#disclaimer" class="flex items-center gap-2.5 p-2 rounded text-slate-700 hover:text-[#142D4E] hover:bg-slate-50 text-decoration-none transition-colors">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700"></i>
+                        <span class="font-medium">Legal Disclaimer</span>
+                    </a>
+                    <a href="#privacy" class="flex items-center gap-2.5 p-2 rounded text-slate-700 hover:text-[#142D4E] hover:bg-slate-50 text-decoration-none transition-colors">
+                        <i data-lucide="lock" class="w-4 h-4 text-blue-700"></i>
+                        <span class="font-medium">Privacy Policy</span>
+                    </a>
+                    <a href="#terms" class="flex items-center gap-2.5 p-2 rounded text-slate-700 hover:text-[#142D4E] hover:bg-slate-50 text-decoration-none transition-colors">
+                        <i data-lucide="file-check" class="w-4 h-4 text-emerald-700"></i>
+                        <span class="font-medium">Terms of Service</span>
+                    </a>
+                    <a href="#refunds" class="flex items-center gap-2.5 p-2 rounded text-slate-700 hover:text-[#142D4E] hover:bg-slate-50 text-decoration-none transition-colors">
+                        <i data-lucide="receipt" class="w-4 h-4 text-rose-700"></i>
+                        <span class="font-medium">Refund Policy</span>
+                    </a>
+                </nav>
+
+                <div class="border-t border-slate-200 mt-6 pt-4 text-xs text-slate-500">
+                    Last updated: October 2026<br>
+                    Governed by the Laws of the Republic of India.
+                </div>
+            </div>
+
+            <!-- Help Contact Card -->
+            <div class="card p-6 shadow-sm reveal-on-scroll reveal-delay-200">
+                <p class="eyebrow">POLICY INQUIRIES</p>
+                <h4 class="font-serif font-bold text-base text-[#142D4E] mt-2 mb-2">Have a Question?</h4>
+                <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                    If you have questions regarding our compliance, data security, or terms, our legal desk is here to assist.
+                </p>
+                <a href="{{ url_for('main.contact') }}" class="button secondary w-full text-xs font-bold py-2">
+                    <i data-lucide="mail" class="w-4 h-4 mr-1.5"></i> Contact Support
+                </a>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

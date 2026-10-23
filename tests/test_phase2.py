@@ -154,3 +154,30 @@ def test_contact_form_submission(client):
     }, follow_redirects=True)
     assert response.status_code == 200
     assert b'Thank you for reaching out' in response.data
+
+
+# --- FAQs & Policies Tests ---
+
+def test_document_detail_shows_faqs(client):
+    """Document detail page renders frequently asked questions accordion."""
+    response = client.get('/documents/cheque-bounce-notice')
+    assert response.status_code == 200
+    assert b'Frequently Asked Questions' in response.data
+    assert b'What is the mandatory 15-day notice period' in response.data
+
+
+def test_policies_page_loads(client):
+    """Policies page loads and contains all 4 statutory governance sections."""
+    response = client.get('/policies')
+    assert response.status_code == 200
+    assert b'Legal Disclaimer' in response.data
+    assert b'Privacy Policy' in response.data
+    assert b'Terms of Service' in response.data
+    assert b'Refund Policy' in response.data
+
+
+def test_individual_policy_routes_load(client):
+    """Direct routes for privacy, terms, refunds, and disclaimer return 200."""
+    for endpoint in ['/privacy', '/terms', '/refunds', '/disclaimer']:
+        response = client.get(endpoint)
+        assert response.status_code == 200
