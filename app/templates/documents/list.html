@@ -1,121 +1,96 @@
 {% extends "base.html" %}
 
-{% block title %}Legal Document Catalogue - LegalDraft India{% endblock %}
+{% block title %}Browse Legal Documents - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Page Header -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Legal Document Catalogue</h1>
-        <p class="lead text-muted">
-            Select a legal document to draft. Fill out the guided details, preview your draft, and download.
+<!-- Page Header -->
+<div class="bg-[#F3F5F7] border-b">
+    <div class="shell py-11">
+        <p class="eyebrow">THE DOCUMENT LIBRARY</p>
+        <h1 class="canva-text mt-3 font-serif font-bold text-3xl text-[#142D4E]">Browse Legal Documents</h1>
+        <p class="mt-2 text-slate-600 max-w-2xl">
+            Explore illustrative statutory formats for guided legal document preparation in India. Every draft follows legal precedents and standard procedural requirements.
         </p>
+    </div>
+</div>
 
-        <!-- Search Bar and Category Filter Controls -->
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-6 mb-3">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                    <input type="text" id="docSearchInput" class="form-control border-start-0 ps-0"
-                           placeholder="Search documents (e.g., cheque bounce, notice, agreement)...">
-                </div>
-            </div>
-        </div>
-
-        <!-- Category Pills -->
-        <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <button class="btn btn-sm btn-outline-primary active category-filter-btn" data-category="all">
-                All Categories
-            </button>
-            {% for cat_key, category in categories.items() %}
-            <button class="btn btn-sm btn-outline-primary category-filter-btn" data-category="{{ cat_key }}">
-                {{ category.name }}
-            </button>
-            {% endfor %}
-        </div>
+<div class="shell section-pad">
+    <!-- Search Bar -->
+    <label for="docSearchInput" class="canva-text block font-semibold mb-2 text-[#142D4E]">Search the catalogue</label>
+    <div class="relative max-w-xl">
+        <i data-lucide="search" class="absolute left-4 top-3.5 text-slate-500 w-5 h-5 pointer-events-none"></i>
+        <input id="docSearchInput" class="canva-input search pl-12 w-full py-2.5 px-4 border border-slate-300 rounded text-slate-800 focus:outline-none focus:border-[#142D4E]"
+               type="search" placeholder="Search legal documents (e.g., cheque bounce notice, rent, affidavit)...">
     </div>
 
-    <!-- Document Categories Loop -->
-    {% for cat_key, category in categories.items() %}
-    <section class="category-section mb-5" data-category="{{ cat_key }}">
-        <div class="d-flex align-items-center mb-4">
-            <i class="bi {{ category.icon }} display-6 text-primary me-3"></i>
-            <div>
-                <h2 class="mb-0 fw-bold">{{ category.name }}</h2>
-                <p class="text-muted mb-0">{{ category.description }}</p>
-            </div>
-        </div>
+    <!-- Category Filter Chips -->
+    <div id="filters" role="group" aria-label="Filter documents by category" class="flex flex-wrap gap-2 my-8">
+        <button class="chip active category-filter-btn" data-category="all">All Documents</button>
+        {% for cat_key, category in categories.items() %}
+        <button class="chip category-filter-btn" data-category="{{ cat_key }}">{{ category.name }}</button>
+        {% endfor %}
+    </div>
 
-        <div class="row g-4">
+    <!-- Catalogue Cards Grid -->
+    <div id="catalogue-grid" class="grid small-grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cat_key, category in categories.items() %}
             {% for doc in category.documents %}
-            <div class="col-md-6 col-lg-4 doc-card-item" data-category="{{ cat_key }}" data-title="{{ doc.title | lower }}">
-                <div class="card h-100 border-0 shadow-sm document-card">
-                    <div class="card-body p-4 d-flex flex-column">
-                        <!-- Badge & Version -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge {{ doc.badge_class }}">{{ doc.badge_text }}</span>
-                            {% if doc.version %}
-                            <small class="text-muted">{{ doc.version }}</small>
-                            {% endif %}
-                        </div>
-
-                        <!-- Icon & Title -->
-                        <div class="text-center my-2">
-                            <i class="bi {{ doc.icon }} display-4 text-primary"></i>
-                        </div>
-                        <h5 class="card-title text-center fw-bold mt-2">{{ doc.title }}</h5>
-                        <p class="card-text text-muted small text-center flex-grow-1">
-                            {{ doc.short_description }}
-                        </p>
-
-                        <!-- Price Tag -->
-                        <div class="text-center my-3 pt-2 border-top">
-                            <span class="h4 text-success fw-bold">₹{{ doc.price }}</span>
-                            <span class="text-muted small"> / document draft</span>
-                        </div>
-
-                        <!-- Action Button -->
-                        <div class="text-center mt-auto">
-                            {% if doc.status == 'active' %}
-                                <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}"
-                                   class="btn btn-primary w-100 fw-semibold">
-                                    View Details & Draft <i class="bi bi-arrow-right"></i>
-                                </a>
-                            {% else %}
-                                <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}"
-                                   class="btn btn-outline-secondary w-100">
-                                    Preview Details <i class="bi bi-arrow-right"></i>
-                                </a>
-                            {% endif %}
-                        </div>
+            <article class="canva-card card overflow-hidden flex flex-col doc-card-item"
+                     data-category="{{ cat_key }}"
+                     data-title="{{ doc.title | lower }} {{ doc.short_description | lower }} {{ doc.category | lower }}">
+                <div class="doc-photo relative">
+                    <img class="canva-image w-full h-44 object-cover" loading="lazy"
+                         src="{{ doc.image_url }}" alt="{{ doc.title }}">
+                    <span class="absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded {{ 'bg-emerald-700 text-white' if doc.status == 'active' else 'bg-slate-700 text-white' }}">
+                        {{ 'ACTIVE' if doc.status == 'active' else 'COMING SOON' }}
+                    </span>
+                </div>
+                <div class="p-5 flex flex-col flex-1">
+                    <div class="flex justify-between items-baseline mb-1">
+                        <p class="eyebrow">{{ doc.category | upper }}</p>
+                        <span class="font-bold text-[#142D4E]">₹{{ doc.price }}</span>
+                    </div>
+                    <h3 class="canva-text mt-2 font-serif font-bold text-lg text-[#142D4E]">
+                        {{ doc.title }}
+                    </h3>
+                    {% if doc.id == 'cheque-bounce-notice' %}
+                    <p class="text-xs text-slate-500 mb-1">Cheque Bounce Notice under Sec. 138 NI Act</p>
+                    {% endif %}
+                    <p class="canva-text text-sm text-slate-600 mt-2 flex-1 line-clamp-3">
+                        {{ doc.short_description }}
+                    </p>
+                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <span class="text-xs text-slate-500">Includes Word & PDF</span>
+                        {% if doc.status == 'active' %}
+                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button primary text-sm py-2 px-4">
+                            Draft Now
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('main.document_detail', doc_id=doc.id) }}" class="button secondary text-sm py-2 px-4">
+                            View Details
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
+            </article>
             {% endfor %}
-        </div>
-    </section>
-    {% endfor %}
+        {% endfor %}
+    </div>
 
-    <!-- Guidance Banner -->
-    <div class="card border-0 bg-light mt-4 shadow-sm">
-        <div class="card-body p-4">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5><i class="bi bi-shield-check text-primary"></i> Lawyer-Reviewed Templates</h5>
-                    <p class="text-muted mb-0 small">
-                        Every document generated adheres to statutory templates under Indian law.
-                        Download includes both editable Word (.docx) and print-ready PDF formats.
-                    </p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{{ url_for('main.about') }}" class="btn btn-outline-primary btn-sm">
-                        Learn About Our Drafting Process
-                    </a>
-                </div>
-            </div>
-        </div>
+    <!-- No Results Placeholder -->
+    <div id="no-results" class="card text-center py-14" style="display: none;">
+        <i data-lucide="file-question" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
+        <h2 class="font-serif font-bold text-xl text-[#142D4E]">No matching documents</h2>
+        <p class="mt-2 text-slate-600">Try searching with a different term or clear the category filter.</p>
+        <button id="clear-filters" class="button secondary mt-5 inline-block">Clear filters</button>
+    </div>
+
+    <!-- Assurance Notice Banner -->
+    <div class="notice mt-12">
+        <strong class="text-[#142D4E]">Statutory Legal Precedents</strong>
+        <p class="mt-1 text-sm text-slate-700">
+            Every legal document in NyayaDraft is engineered according to relevant Indian legal provisions, procedural court practices, and statutory limitation timelines. Editable Word (.docx) and print-ready PDF formats are prepared for immediate use or professional review.
+        </p>
     </div>
 </div>
 {% endblock %}
@@ -126,40 +101,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('docSearchInput');
     const filterButtons = document.querySelectorAll('.category-filter-btn');
     const docCards = document.querySelectorAll('.doc-card-item');
-    const categorySections = document.querySelectorAll('.category-section');
+    const noResults = document.getElementById('no-results');
+    const clearBtn = document.getElementById('clear-filters');
 
     let currentCategory = 'all';
 
     function filterDocs() {
-        const query = searchInput.value.toLowerCase().trim();
+        const query = (searchInput.value || '').toLowerCase().trim();
+        let visibleCount = 0;
 
         docCards.forEach(card => {
-            const title = card.getAttribute('data-title');
-            const category = card.getAttribute('data-category');
+            const title = card.getAttribute('data-title') || '';
+            const category = card.getAttribute('data-category') || '';
             const matchesCategory = (currentCategory === 'all' || category === currentCategory);
-            const matchesSearch = title.includes(query);
+            const matchesSearch = !query || title.includes(query);
 
             if (matchesCategory && matchesSearch) {
-                card.style.display = 'block';
+                card.style.display = 'flex';
+                visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
 
-        // Hide empty category sections
-        categorySections.forEach(section => {
-            const catKey = section.getAttribute('data-category');
-            if (currentCategory !== 'all' && catKey !== currentCategory) {
-                section.style.display = 'none';
-            } else {
-                // Check if any children are visible
-                const visibleCards = section.querySelectorAll('.doc-card-item[style*="display: block"]');
-                section.style.display = (visibleCards.length > 0 || query === '') ? 'block' : 'none';
-            }
-        });
+        if (visibleCount === 0) {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
     }
 
-    searchInput.addEventListener('input', filterDocs);
+    if (searchInput) {
+        searchInput.addEventListener('input', filterDocs);
+    }
 
     filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -169,6 +143,25 @@ document.addEventListener('DOMContentLoaded', function() {
             filterDocs();
         });
     });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            if (searchInput) searchInput.value = '';
+            currentCategory = 'all';
+            filterButtons.forEach(b => {
+                if (b.getAttribute('data-category') === 'all') {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+            filterDocs();
+        });
+    }
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 });
 </script>
 {% endblock %}

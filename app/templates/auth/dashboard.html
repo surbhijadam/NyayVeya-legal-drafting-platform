@@ -1,68 +1,245 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - LegalDraft India{% endblock %}
+{% block title %}Dashboard - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Welcome Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-speedometer2 text-primary"></i> Dashboard
-            </h2>
-            <p class="text-muted mb-0">
-                Welcome back, <strong>{{ current_user.full_name }}</strong>!
-            </p>
-        </div>
-        <a href="{{ url_for('main.document_list') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New Document
-        </a>
-    </div>
-
-    <div class="row g-4">
-        <!-- Account Info -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">
-                        <i class="bi bi-person text-primary"></i> Account
-                    </h5>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2">
-                            <small class="text-muted d-block">Name</small>
-                            <strong>{{ current_user.full_name }}</strong>
-                        </li>
-                        <li class="mb-2">
-                            <small class="text-muted d-block">Email</small>
-                            <strong>{{ current_user.email }}</strong>
-                        </li>
-                        <li>
-                            <small class="text-muted d-block">Member Since</small>
-                            <strong>{{ current_user.created_at.strftime('%d %B %Y') }}</strong>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Orders (placeholder for Phase 7) -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">
-                        <i class="bi bi-clock-history text-primary"></i> Recent Orders
-                    </h5>
-                    <div class="text-center text-muted py-5">
-                        <i class="bi bi-inbox display-4"></i>
-                        <p class="mt-3">No orders yet.</p>
-                        <a href="{{ url_for('main.document_list') }}"
-                           class="btn btn-outline-primary btn-sm">
-                            Browse Documents
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Page Header -->
+<div class="bg-[#F3F5F7] border-b">
+    <div class="shell py-11">
+        <p class="eyebrow">ACCOUNT DASHBOARD</p>
+        <h1 class="canva-text mt-3 font-serif font-bold text-3xl text-[#142D4E]">
+            Welcome back, {{ current_user.full_name }}!
+        </h1>
+        <p class="text-slate-600 mt-2">
+            Manage your legal drafts, download completed documents, and view your account information.
+        </p>
     </div>
 </div>
+
+<div class="shell section-pad">
+    <!-- Dashboard Stats Grid -->
+    <div class="dashboard-stats grid grid-cols-2 md:grid-cols-4 gap-4 mb-9">
+        <div class="card p-5">
+            <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Active drafts</p>
+            <strong class="text-3xl text-[#142D4E] mt-1 block">
+                {{ current_user.orders | selectattr('status', 'equalto', 'pending') | list | length }}
+            </strong>
+        </div>
+        <div class="card p-5">
+            <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Completed documents</p>
+            <strong class="text-3xl text-[#142D4E] mt-1 block">
+                {{ current_user.orders | selectattr('status', 'equalto', 'paid') | list | length }}
+            </strong>
+        </div>
+        <div class="card p-5">
+            <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Total orders</p>
+            <strong class="text-3xl text-[#142D4E] mt-1 block">
+                {{ current_user.orders | length }}
+            </strong>
+        </div>
+        <div class="card p-5">
+            <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Account status</p>
+            <strong class="text-xl text-emerald-700 mt-2 block">
+                Verified User
+            </strong>
+        </div>
+    </div>
+
+    <!-- Dashboard Tabs -->
+    <div id="dashboard-tabs" role="tablist" aria-label="Dashboard sections" class="flex flex-wrap gap-2 border-b border-slate-200 pb-4 mb-6">
+        <button class="chip active dashboard-tab-btn" role="tab" aria-selected="true" data-tab="documents">My Documents</button>
+        <button class="chip dashboard-tab-btn" role="tab" aria-selected="false" data-tab="orders">My Orders</button>
+        <button class="chip dashboard-tab-btn" role="tab" aria-selected="false" data-tab="payments">Payment History</button>
+        <button class="chip dashboard-tab-btn" role="tab" aria-selected="false" data-tab="settings">Account Settings</button>
+    </div>
+
+    <!-- TAB 1: My Documents -->
+    <div id="tab-documents" class="tab-panel space-y-4">
+        {% if current_user.orders %}
+            {% for order in current_user.orders %}
+            <div class="card p-5 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded {{ 'bg-emerald-100 text-emerald-800' if order.status == 'paid' else 'bg-amber-100 text-amber-800' }}">
+                            {{ order.status | upper }}
+                        </span>
+                        <span class="text-xs text-slate-500 font-mono">{{ order.order_number }}</span>
+                        <span class="text-xs text-slate-400">·</span>
+                        <span class="text-xs text-slate-500">{{ order.created_at.strftime('%d %B %Y') }}</span>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-[#142D4E]">
+                        {{ order.document_template.title if order.document_template else 'Cheque Bounce Legal Notice' }}
+                    </h3>
+                    <p class="text-xs text-slate-600 mt-0.5">Fee: ₹{{ order.amount }} · Word & PDF Formats</p>
+                </div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <a href="{{ url_for('generator.preview_draft', order_id=order.id) }}" class="button secondary text-xs py-2 px-3">
+                        <i data-lucide="eye" class="w-3.5 h-3.5 inline mr-1"></i> Preview
+                    </a>
+                    {% if order.docx_filename %}
+                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button secondary text-xs py-2 px-3">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1 text-blue-700"></i> Word (.docx)
+                    </a>
+                    {% endif %}
+                    {% if order.pdf_filename %}
+                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button secondary text-xs py-2 px-3">
+                        <i data-lucide="file" class="w-3.5 h-3.5 inline mr-1 text-red-700"></i> PDF (.pdf)
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card p-10 text-center">
+                <i data-lucide="folder-plus" class="w-12 h-12 text-slate-400 mx-auto mb-3"></i>
+                <h3 class="font-serif font-bold text-xl text-[#142D4E]">No documents drafted yet</h3>
+                <p class="text-slate-600 mt-2 max-w-md mx-auto text-sm">
+                    Select a statutory document template from our library to start your first guided draft.
+                </p>
+                <div class="mt-5">
+                    <a href="{{ url_for('main.document_list') }}" class="button primary">
+                        Browse Document Catalogue
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- TAB 2: My Orders -->
+    <div id="tab-orders" class="tab-panel space-y-4" style="display: none;">
+        {% if current_user.orders %}
+            <div class="card overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-700">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase">
+                        <tr>
+                            <th class="p-4">Order Number</th>
+                            <th class="p-4">Document</th>
+                            <th class="p-4">Date</th>
+                            <th class="p-4">Amount</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for order in current_user.orders %}
+                        <tr>
+                            <td class="p-4 font-mono font-bold text-[#142D4E]">{{ order.order_number }}</td>
+                            <td class="p-4">{{ order.document_template.title if order.document_template else 'Cheque Bounce Notice' }}</td>
+                            <td class="p-4 text-slate-500">{{ order.created_at.strftime('%d/%m/%Y') }}</td>
+                            <td class="p-4 font-semibold">₹{{ order.amount }}</td>
+                            <td class="p-4">
+                                <span class="text-xs font-bold px-2 py-0.5 rounded {{ 'bg-emerald-100 text-emerald-800' if order.status == 'paid' else 'bg-amber-100 text-amber-800' }}">
+                                    {{ order.status | upper }}
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                <a href="{{ url_for('generator.preview_draft', order_id=order.id) }}" class="textlink text-xs">
+                                    View Draft
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card p-8 text-center text-slate-600">
+                <p>No orders recorded yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- TAB 3: Payment History -->
+    <div id="tab-payments" class="tab-panel" style="display: none;">
+        <div class="card p-7">
+            <h3 class="font-serif font-bold text-lg text-[#142D4E]">Payment History</h3>
+            <p class="mt-2 text-slate-600 text-sm">
+                In prototype mode, document drafts are generated instantly with free preview and draft downloads.
+            </p>
+            <div class="notice mt-5 text-xs text-slate-700">
+                Payment gateway integration will securely process transactions via Razorpay / UPI in production.
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: Account Settings -->
+    <div id="tab-settings" class="tab-panel" style="display: none;">
+        <div class="card p-7 max-w-2xl">
+            <h3 class="font-serif font-bold text-lg text-[#142D4E] mb-4">Account Profile</h3>
+            <div class="space-y-4 text-sm text-slate-700">
+                <div class="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-500 font-medium">Full Name</span>
+                    <strong class="text-slate-800">{{ current_user.full_name }}</strong>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-500 font-medium">Email Address</span>
+                    <strong class="text-slate-800">{{ current_user.email }}</strong>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-slate-100">
+                    <span class="text-slate-500 font-medium">Member Since</span>
+                    <strong class="text-slate-800">{{ current_user.created_at.strftime('%d %B %Y') }}</strong>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-2">
+                    <span class="text-slate-500 font-medium">Security</span>
+                    <span class="text-emerald-700 font-semibold">Password Protected (PBKDF2 SHA-256)</span>
+                </div>
+            </div>
+            <div class="mt-6 pt-5 border-t border-slate-200">
+                <a href="{{ url_for('auth.logout') }}" class="button secondary text-sm">
+                    <i data-lucide="log-out" class="w-4 h-4 inline mr-1 text-slate-600"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA at bottom -->
+    <div class="mt-8">
+        <a href="{{ url_for('main.document_list') }}" class="button primary">
+            <i data-lucide="plus" class="w-4 h-4 inline mr-1"></i> Draft New Document
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.dashboard-tab-btn');
+    const tabPanels = {
+        'documents': document.getElementById('tab-documents'),
+        'orders': document.getElementById('tab-orders'),
+        'payments': document.getElementById('tab-payments'),
+        'settings': document.getElementById('tab-settings'),
+    };
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+
+            // Switch button active styles
+            tabButtons.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+
+            // Switch panels
+            Object.keys(tabPanels).forEach(key => {
+                if (tabPanels[key]) {
+                    if (key === targetTab) {
+                        tabPanels[key].style.display = (key === 'settings' || key === 'payments') ? 'block' : 'block';
+                    } else {
+                        tabPanels[key].style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
 {% endblock %}

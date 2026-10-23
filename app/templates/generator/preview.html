@@ -1,128 +1,159 @@
 {% extends "base.html" %}
 
-{% block title %}Draft Preview: {{ order.order_number }} - LegalDraft India{% endblock %}
+{% block title %}Draft Preview: {{ order.order_number }} - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Draft Preview</li>
-        </ol>
-    </nav>
-
-    <!-- Top Action Banner -->
-    <div class="card border-0 bg-light p-4 mb-4 shadow-sm">
-        <div class="row align-items-center">
-            <div class="col-md-7">
-                <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="badge bg-primary">{{ order.order_number }}</span>
-                    <span class="badge bg-warning text-dark">Draft Preview</span>
-                </div>
-                <h3 class="fw-bold mb-1">Cheque Bounce Legal Notice Draft</h3>
-                <p class="text-muted small mb-0">
-                    Review your generated draft below. You can download the draft files or proceed to payment.
+<!-- Page Header -->
+<div class="bg-[#F3F5F7] border-b">
+    <div class="shell py-10">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <p class="eyebrow">STEP 3 OF 5 · REVIEW · DRAFT PREVIEW</p>
+                <h1 class="canva-text mt-2 font-serif font-bold text-3xl text-[#142D4E]">Review your statutory draft</h1>
+                <p class="text-slate-600 mt-1">
+                    Order <strong>{{ order.order_number }}</strong> · Cheque Bounce Notice under Section 138 of the Negotiable Instruments Act, 1881.
                 </p>
             </div>
-            <div class="col-md-5 text-md-end mt-3 mt-md-0">
-                <div class="d-inline-flex gap-2">
-                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-file-earmark-word"></i> Word (.docx)
-                    </a>
-                    <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-file-earmark-pdf"></i> PDF (.pdf)
-                    </a>
-                    <a href="{{ url_for('generator.cheque_bounce_form') }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-pencil"></i> Edit Details
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Legal Document Simulation Paper -->
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border shadow-sm p-4 p-md-5 bg-white legal-paper" style="font-family: 'Times New Roman', Times, serif; font-size: 1.05rem; line-height: 1.6; color: #222;">
-
-                <!-- Notice Header -->
-                <div class="text-center mb-3">
-                    <h6 class="fw-bold tracking-wide text-uppercase" style="letter-spacing: 1px;">
-                        {{ notice.header }}
-                    </h6>
-                    <hr class="my-2 border-dark">
-                </div>
-
-                <!-- Date -->
-                <div class="text-end mb-4">
-                    <strong>Date:</strong> {{ notice.notice_date }}
-                </div>
-
-                <!-- Sender Block (if Advocate) -->
-                {% if 'Advocate' in notice.sender_block %}
-                <div class="mb-4 text-start">
-                    {% for line in notice.sender_block.split('\n') %}
-                    <div>{{ line }}</div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <!-- Recipient Block -->
-                <div class="mb-4 text-start">
-                    {% for line in notice.recipient_block.split('\n') %}
-                        {% if loop.first %}
-                            <strong class="d-block">{{ line }}</strong>
-                        {% else %}
-                            <div>{{ line }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <!-- Subject -->
-                <div class="mb-4 text-justify">
-                    <strong>{{ notice.subject }}</strong>
-                </div>
-
-                <!-- Salutation -->
-                <div class="mb-3">
-                    Sir / Madam,
-                </div>
-
-                <!-- Numbered Legal Paragraphs -->
-                {% for para in notice.paragraphs %}
-                <p class="text-justify mb-3" style="text-align: justify; text-justify: inter-word;">
-                    {{ para }}
-                </p>
-                {% endfor %}
-
-                <!-- Signoff -->
-                <div class="text-end mt-5 pt-3">
-                    {% for line in notice.signoff.split('\n') %}
-                    <div>{{ line }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Checkout Bar (Prepares for Phase 7: Payments) -->
-    <div class="card border-0 bg-light p-4 mt-4 shadow-sm">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h5 class="fw-bold mb-1">Satisfied with this legal draft?</h5>
-                <p class="text-muted small mb-0">
-                    Pay <strong>₹{{ order.amount }}</strong> to permanently save this completed document, unlock advocate dispatch guidelines, and register the order in your permanent account history.
-                </p>
-            </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <!-- Links to Phase 7 Checkout -->
-                <a href="{{ url_for('auth.dashboard') }}" class="btn btn-success btn-lg fw-semibold px-4">
-                    <i class="bi bi-credit-card me-1"></i> Proceed to Pay ₹{{ order.amount }}
+            <!-- Download & Edit Action Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button secondary flex items-center gap-1.5 text-sm">
+                    <i data-lucide="file-text" class="w-4 h-4 text-blue-700"></i> Word (.docx)
+                </a>
+                <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button secondary flex items-center gap-1.5 text-sm">
+                    <i data-lucide="file" class="w-4 h-4 text-red-700"></i> PDF (.pdf)
+                </a>
+                <a href="{{ url_for('generator.cheque_bounce_form') }}" class="button secondary flex items-center gap-1.5 text-sm">
+                    <i data-lucide="edit" class="w-4 h-4 text-slate-600"></i> Edit Details
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<div class="shell grid work-grid lg:grid-cols-[1fr_290px] gap-8 section-pad">
+    <div>
+        <!-- Legal Simulation Document -->
+        <article class="legal-page shadow-md border border-slate-200" aria-label="Statutory legal notice preview">
+            <!-- Header -->
+            <div class="text-center border-b border-slate-300 pb-5 mb-8">
+                <strong class="tracking-widest text-[#142D4E] text-base block">{{ notice.header }}</strong>
+                <p class="!text-center text-xs text-slate-500 mt-1 uppercase tracking-wider">
+                    Statutory Demand Notice under Section 138 of the Negotiable Instruments Act, 1881
+                </p>
+            </div>
+
+            <!-- Date -->
+            <div class="text-right mb-6">
+                <strong>Date:</strong> <span>{{ notice.notice_date }}</span>
+            </div>
+
+            <!-- Sender Block (if Advocate) -->
+            {% if 'Advocate' in notice.sender_block %}
+            <div class="mb-6 text-left text-sm text-slate-700">
+                {% for line in notice.sender_block.split('\n') %}
+                <div>{{ line }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Recipient Block -->
+            <div class="mb-6 text-left">
+                <strong>To,</strong><br>
+                {% for line in notice.recipient_block.split('\n') %}
+                    {% if loop.first %}
+                        <strong>{{ line }}</strong><br>
+                    {% else %}
+                        <span>{{ line }}</span><br>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Subject -->
+            <div class="font-bold border-y border-slate-300 py-3 my-6 text-[#142D4E]">
+                {{ notice.subject }}
+            </div>
+
+            <p class="mb-4">Sir / Madam,</p>
+
+            <!-- Numbered Paragraphs -->
+            <div class="space-y-4 text-justify leading-relaxed">
+                {% for para in notice.paragraphs %}
+                <p>{{ para }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Signoff -->
+            <div class="mt-12 pt-6 border-t border-slate-300 text-right">
+                {% for line in notice.signoff.split('\n') %}
+                <div>{{ line }}</div>
+                {% endfor %}
+            </div>
+        </article>
+
+        <!-- Compliance Notice -->
+        <div class="notice mt-6">
+            <strong>Mandatory Dispatch Guidelines</strong>
+            <p class="mt-1 text-xs text-slate-700">
+                Under Section 138(b) of the Negotiable Instruments Act, 1881, this notice must be dispatched via <strong>Registered Post Acknowledgement Due (RPAD)</strong> or <strong>Speed Post</strong> within 30 days of the bank return memo. Preserve the postal booking receipt and tracking delivery report for court filing.
+            </p>
+        </div>
+
+        <!-- Next Actions Bar -->
+        <div class="card p-6 mt-6 bg-[#F8FAFC] border flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h4 class="font-serif font-bold text-lg text-[#142D4E]">Ready to save or download?</h4>
+                <p class="text-xs text-slate-600 mt-1">
+                    Download your drafts now or proceed to dashboard to manage your orders.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button primary flex items-center gap-1.5">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download Word & PDF
+                </a>
+                <a href="{{ url_for('auth.dashboard') }}" class="button secondary">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Progress -->
+    <aside class="self-start sticky top-6">
+        <div class="card p-6 shadow-sm">
+            <p class="eyebrow">YOUR PROGRESS</p>
+            <h3 class="font-serif font-bold text-lg text-[#142D4E] mt-2">Draft Review</h3>
+            <p class="text-xs text-slate-500 mt-2">Details → Parties → <strong>Review</strong> → Save → Download</p>
+            <div class="bg-slate-200 h-2 mt-4 rounded-full overflow-hidden">
+                <div class="bg-[#6F1D2C] h-full w-3/5"></div>
+            </div>
+            <div class="border-t border-slate-200 mt-5 pt-4 text-xs text-slate-600 space-y-2">
+                <div class="flex justify-between">
+                    <span>Order:</span>
+                    <strong>{{ order.order_number }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Status:</span>
+                    <span class="text-amber-700 font-bold uppercase">{{ order.status }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Amount:</span>
+                    <strong>₹{{ order.amount }}</strong>
+                </div>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-200 text-xs text-slate-500 leading-normal">
+                Files generated with statutory formatting standards. You can download and edit them anytime.
+            </div>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
 {% endblock %}

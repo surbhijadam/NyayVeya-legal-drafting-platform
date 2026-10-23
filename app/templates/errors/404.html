@@ -1,24 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Page Not Found - LegalDraft India{% endblock %}
+{% block title %}Page Not Found - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5 text-center">
-    <div class="py-5">
-        <i class="bi bi-file-earmark-x display-1 text-muted"></i>
-        <h1 class="display-4 fw-bold mt-3">404</h1>
-        <h3 class="text-muted">Page Not Found</h3>
-        <p class="text-secondary mt-3">
-            The page you are looking for does not exist or may have been moved.
+<div class="shell section-pad text-center max-w-lg mx-auto py-16">
+    <div class="card p-10 shadow-md">
+        <i data-lucide="file-question" class="w-16 h-16 text-slate-400 mx-auto mb-4"></i>
+        <h1 class="font-serif font-bold text-4xl text-[#142D4E]">404</h1>
+        <h2 class="font-serif font-semibold text-xl text-slate-700 mt-2">Page Not Found</h2>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+            The legal document or page you are looking for does not exist or has been moved.
         </p>
-        <div class="mt-4">
-            <a href="{{ url_for('main.home') }}" class="btn btn-primary me-2">
-                <i class="bi bi-house"></i> Go Home
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a href="{{ url_for('main.home') }}" class="button primary">
+                Go Home
             </a>
-            <a href="{{ url_for('main.document_list') }}" class="btn btn-outline-secondary">
+            <a href="{{ url_for('main.document_list') }}" class="button secondary">
                 Browse Documents
             </a>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
 {% endblock %}

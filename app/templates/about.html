@@ -1,105 +1,82 @@
 {% extends "base.html" %}
 
-{% block title %}About Us - LegalDraft India{% endblock %}
+{% block title %}About Us - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">About LegalDraft India</h1>
-        <p class="lead text-muted">
-            Making legal document drafting accessible, affordable, and simple.
-        </p>
+<!-- Top Architectural Banner from Prototype -->
+<div class="relative h-64 overflow-hidden">
+    <img class="canva-image w-full h-full object-cover" loading="lazy"
+         src="https://images.pexels.com/photos/13038593/pexels-photo-13038593.jpeg?auto=compress&cs=tinysrgb&w=1280"
+         alt="Neoclassical architecture with columns and ornate details">
+    <div class="absolute inset-0 bg-gradient-to-t from-[#142D4E] via-[#142D4E]/60 to-transparent flex items-end">
+        <div class="shell pb-8 text-white">
+            <p class="text-xs uppercase tracking-widest text-[#c5a253] font-bold">ABOUT NYAYADRAFT</p>
+            <h1 class="font-serif font-bold text-3xl mt-1">Reliable Legal Drafting. Clear Documentation.</h1>
+        </div>
     </div>
+</div>
 
-    <div class="row g-5">
-        <div class="col-lg-8">
+<div class="shell section-pad max-w-5xl">
+    <div class="grid lg:grid-cols-[1fr_320px] gap-10">
+        <!-- Main Column -->
+        <div>
             <!-- Mission -->
-            <div class="mb-5">
-                <h3 class="fw-bold"><i class="bi bi-bullseye text-primary"></i> Our Mission</h3>
-                <p class="text-secondary">
-                    Access to legal documentation should not be limited by geography, cost, or
-                    complexity. LegalDraft India helps individuals and small businesses generate
-                    properly formatted legal documents quickly and affordably.
+            <div class="mb-10">
+                <p class="eyebrow">OUR COMMITMENT</p>
+                <h2 class="font-serif font-bold text-2xl text-[#142D4E] mt-2 mb-3">Our Mission</h2>
+                <div class="rule mb-5"></div>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Access to reliable legal documentation in India should not be constrained by cost, geographic location, or complex procedural barriers. NyayaDraft empowers individuals, professionals, and small businesses to generate properly formatted, statutory legal drafts quickly, affordably, and with complete confidence.
                 </p>
-                <p class="text-secondary">
-                    We provide standard legal document templates that have been reviewed by
-                    qualified Indian advocates. Users fill in a guided form, preview the
-                    generated draft, and download it in editable Word or PDF format.
+                <p class="text-slate-700 leading-relaxed">
+                    We provide standard legal document templates that have been structured according to Indian statutory requirements and judicial precedents. Users follow an intuitive guided questionnaire, preview the completed draft in real time, and download editable Word and print-ready PDF formats.
                 </p>
             </div>
 
             <!-- What We Do -->
-            <div class="mb-5">
-                <h3 class="fw-bold"><i class="bi bi-gear text-primary"></i> What We Do</h3>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="fw-bold"><i class="bi bi-file-earmark-text text-primary"></i> Standard Templates</h6>
-                                <p class="small text-muted mb-0">
-                                    Pre-reviewed legal document templates for common needs
-                                    such as legal notices, agreements, and affidavits.
-                                </p>
-                            </div>
-                        </div>
+            <div class="mb-10">
+                <h3 class="font-serif font-bold text-xl text-[#142D4E] mb-5">How NyayaDraft Operates</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block font-serif">Statutory Templates</strong>
+                        <p class="text-xs text-slate-600 mt-2">
+                            Pre-engineered templates covering statutory legal notices, agreements, affidavits, and formal applications.
+                        </p>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="fw-bold"><i class="bi bi-ui-checks text-primary"></i> Guided Forms</h6>
-                                <p class="small text-muted mb-0">
-                                    Step-by-step forms that ask the right questions and
-                                    validate your input before generating the document.
-                                </p>
-                            </div>
-                        </div>
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block font-serif">Guided Validation</strong>
+                        <p class="text-xs text-slate-600 mt-2">
+                            Step-by-step questionnaires that check statutory dates, limitation periods, and mandatory particulars.
+                        </p>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="fw-bold"><i class="bi bi-eye text-primary"></i> Preview & Download</h6>
-                                <p class="small text-muted mb-0">
-                                    Review your completed draft before paying. Download in
-                                    Word format for further editing or in PDF for printing.
-                                </p>
-                            </div>
-                        </div>
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block font-serif">Instant Dual Downloads</strong>
+                        <p class="text-xs text-slate-600 mt-2">
+                            Download print-ready PDF for immediate postal dispatch and editable Microsoft Word (.docx) for legal customization.
+                        </p>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="fw-bold"><i class="bi bi-shield-check text-primary"></i> Secure & Private</h6>
-                                <p class="small text-muted mb-0">
-                                    Your personal and legal information is kept secure.
-                                    Documents are accessible only through your account.
-                                </p>
-                            </div>
-                        </div>
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block font-serif">Permanent Access</strong>
+                        <p class="text-xs text-slate-600 mt-2">
+                            Your drafted notices and orders remain accessible in your dashboard for future reference and re-download.
+                        </p>
                     </div>
                 </div>
             </div>
 
             <!-- What We Don't Do -->
-            <div class="mb-5">
-                <h3 class="fw-bold"><i class="bi bi-exclamation-circle text-warning"></i> What We Don't Do</h3>
-                <div class="alert alert-light border">
-                    <ul class="mb-0">
-                        <li class="mb-2">
-                            We <strong>do not provide legal advice</strong>. Our templates are
-                            standard formats, not personalised legal opinions.
+            <div class="mb-8">
+                <h3 class="font-serif font-bold text-xl text-[#6F1D2C] mb-4">Platform Transparency: What We Do NOT Do</h3>
+                <div class="notice">
+                    <ul class="space-y-2 text-xs text-slate-700 list-disc pl-4 m-0">
+                        <li>
+                            We <strong>do not provide legal advice</strong>. Our templates are standard procedural formats, not personalised legal counsel or strategic case evaluation.
                         </li>
-                        <li class="mb-2">
-                            We <strong>do not replace advocates</strong>. For disputed matters,
-                            court proceedings, or complex legal questions, consult a qualified advocate.
+                        <li>
+                            We <strong>do not replace advocates</strong>. For contested disputes, complex contracts, or court litigation, always consult an independent enrolled advocate.
                         </li>
-                        <li class="mb-2">
-                            We <strong>do not guarantee legal outcomes</strong>. A properly drafted
-                            document is a necessary step, but outcomes depend on many factors.
-                        </li>
-                        <li class="mb-0">
-                            We <strong>do not file documents</strong> on your behalf. You are
-                            responsible for sending, filing, or executing the generated document.
+                        <li>
+                            We <strong>do not guarantee legal outcomes</strong>. A properly drafted demand notice is a mandatory procedural step under statutes such as the NI Act, but legal determinations rest with judicial forums.
                         </li>
                     </ul>
                 </div>
@@ -107,41 +84,45 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Contact Card -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold"><i class="bi bi-envelope text-primary"></i> Contact Us</h5>
-                    <p class="text-muted small">
-                        Have questions, suggestions, or need help? Reach out to us.
-                    </p>
-                    <ul class="list-unstyled small">
-                        <li class="mb-2">
-                            <i class="bi bi-envelope me-2 text-primary"></i>
-                            support@legaldraftindia.com
+        <aside class="self-start">
+            <div class="card p-6 shadow-sm">
+                <p class="eyebrow">STATUTORY GOVERNANCE</p>
+                <h4 class="font-serif font-bold text-base text-[#142D4E] mt-2">Indian Statutory Framework</h4>
+                <div class="border-t border-slate-200 mt-4 pt-3 text-xs text-slate-600 space-y-3">
+                    <p>Designed for compliance with:</p>
+                    <ul class="space-y-1.5 list-none p-0 text-slate-700">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-emerald-700"></i> Negotiable Instruments Act, 1881
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-emerald-700"></i> Indian Contract Act, 1872
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-emerald-700"></i> Transfer of Property Act, 1882
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-emerald-700"></i> Notaries Act, 1952
                         </li>
                     </ul>
-                    <p class="text-muted small mb-0">
-                        We typically respond within 24 hours on business days.
-                    </p>
                 </div>
-            </div>
 
-            <!-- CTA Card -->
-            <div class="card border-0 bg-primary text-white">
-                <div class="card-body p-4 text-center">
-                    <i class="bi bi-file-earmark-plus display-4 mb-3"></i>
-                    <h5 class="fw-bold">Ready to Get Started?</h5>
-                    <p class="small opacity-75">
-                        Browse our document templates and generate your first draft today.
-                    </p>
-                    <a href="{{ url_for('main.document_list') }}"
-                       class="btn btn-light fw-bold">
-                        Browse Documents
+                <div class="mt-6 pt-5 border-t border-slate-200">
+                    <a href="{{ url_for('main.document_list') }}" class="button primary w-full text-center block text-sm">
+                        Explore Document Library
                     </a>
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
 {% endblock %}

@@ -1,114 +1,422 @@
-/* LegalDraft India - Custom Styles */
+/* NyayaDraft - Core Brand Styling */
 
-/* ===== Body & Layout ===== */
+:root {
+    --navy: #142d4e;
+    --navy-hover: #0f223b;
+    --maroon: #6f1d2c;
+    --maroon-hover: #541521;
+    --gold: #c5a253;
+    --pale: #f3f5f7;
+    --ink: #23354a;
+    --line: #d8e0e7;
+    --slate: #526478;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    width: 100%;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #ffffff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    color: #333;
 }
 
-/* Push footer to the bottom */
 main {
     flex: 1;
 }
 
-/* ===== Hero Section ===== */
-.hero-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 2rem 0;
+h1, h2, h3, h4, h5, h6, .brand-font {
+    font-family: 'Merriweather', Georgia, serif;
+    color: var(--navy);
+    line-height: 1.35;
+    font-weight: 700;
 }
 
-.display-5 {
-    line-height: 1.3;
+p {
+    line-height: 1.65;
+}
+
+/* ===== Layout Container ===== */
+.shell {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding-inline: 24px;
+}
+
+.section-pad {
+    padding-block: 60px;
+}
+
+/* ===== Buttons ===== */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: center;
+    text-decoration: none !important;
+    transition: background 0.15s, transform 0.15s, border-color 0.15s;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+}
+
+.button.primary, .btn-nyaya-primary {
+    background: var(--maroon) !important;
+    color: #ffffff !important;
+    border-color: var(--maroon) !important;
+}
+
+.button.primary:hover, .btn-nyaya-primary:hover {
+    background: var(--maroon-hover) !important;
+    border-color: var(--maroon-hover) !important;
+}
+
+.button.secondary, .btn-nyaya-secondary {
+    background: #ffffff !important;
+    color: var(--navy) !important;
+    border-color: #9eafbd !important;
+}
+
+.button.secondary:hover, .btn-nyaya-secondary:hover {
+    background: #edf1f5 !important;
+    color: var(--navy) !important;
+}
+
+.button.gold {
+    background: var(--gold) !important;
+    color: var(--navy) !important;
+    font-weight: 800;
+}
+
+.navlink {
+    color: var(--navy);
+    font-weight: 600;
+    padding: 8px 12px;
+    white-space: nowrap;
+    text-decoration: none !important;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.navlink:hover, .navlink.active {
+    color: var(--maroon);
+    background: #f8fafc;
 }
 
 /* ===== Cards ===== */
 .card {
-    transition: all 0.3s ease;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(20, 45, 78, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(20, 45, 78, 0.1);
 }
 
 .document-card {
-    border-left: 4px solid transparent !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .document-card:hover {
-    border-left: 4px solid #0d6efd !important;
+    transform: translateY(-2px);
 }
 
-/* ===== Step Icons (How It Works) ===== */
-.step-icon {
-    width: 80px;
-    height: 80px;
+/* ===== Visual Badges & Rules ===== */
+.eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: var(--maroon);
+}
+
+.rule {
+    height: 2px;
+    width: 48px;
+    background: var(--gold);
+    margin: 14px 0 20px;
+}
+
+.notice {
+    background: #fbf8ef;
+    border-left: 4px solid var(--gold);
+    padding: 16px 20px;
+    border-radius: 4px;
+    font-size: 0.92rem;
+}
+
+/* ===== Photos & Overlays ===== */
+.photo {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(20, 45, 78, 0.25), transparent);
+    pointer-events: none;
+}
+
+.doc-photo {
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+    background: #e5e9ed;
+}
+
+.doc-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+}
+
+.card:hover .doc-photo img {
+    transform: scale(1.05);
+}
+
+.doc-photo:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(20, 45, 78, 0.3), transparent 70%);
+    pointer-events: none;
+}
+
+/* ===== Form Fields ===== */
+.field {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--navy);
+    font-size: 0.92rem;
+    font-weight: 700;
 }
 
-/* ===== Navbar ===== */
-.navbar-brand {
-    font-size: 1.25rem;
+.field input, .field textarea, .field select, .search-box {
+    width: 100%;
+    border: 1px solid #aab9c6;
+    border-radius: 4px;
+    background: #ffffff;
+    color: var(--ink);
+    padding: 11px 14px;
+    font-weight: 400;
+    font-size: 0.95rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.nav-link.active {
-    font-weight: 600;
+.field input:focus, .field textarea:focus, .field select:focus, .search-box:focus {
+    border-color: var(--navy);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 45, 78, 0.15);
 }
 
-/* ===== Footer ===== */
-footer a {
-    transition: color 0.2s ease;
+.field textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
-footer a:hover {
+.field small {
+    font-size: 0.8rem;
+    color: var(--slate);
+    font-weight: 400;
+}
+
+/* ===== Category Chips & Pills ===== */
+.chip {
+    border: 1px solid #b9c7d2;
+    border-radius: 4px;
+    background: #ffffff;
+    color: var(--navy);
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: all 0.15s ease;
+}
+
+.chip.active, .chip:hover {
+    background: var(--navy);
+    border-color: var(--navy);
     color: #ffffff !important;
 }
 
-/* ===== Breadcrumbs ===== */
-.breadcrumb {
-    background: transparent;
-    padding: 0;
+/* ===== Stepper Progress ===== */
+.step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--slate);
 }
 
-.breadcrumb-item a {
+.number {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    flex: none;
+    border-radius: 50%;
+    background: #e5e9ed;
+    color: var(--navy);
+    font-size: 0.82rem;
+}
+
+.step.active .number, .step.done .number {
+    background: var(--maroon);
+    color: #ffffff;
+}
+
+.step.active {
+    color: var(--navy);
+}
+
+/* ===== Realistic Simulated Legal Document Page ===== */
+.legal-page {
+    max-width: 794px;
+    margin: auto;
+    min-height: 900px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 35px rgba(20, 45, 78, 0.08);
+    padding: clamp(24px, 6vw, 64px);
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 0.92rem;
+    line-height: 1.85;
+    color: #26323c;
+    border-radius: 4px;
+}
+
+.legal-page p {
+    margin: 1.2em 0;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.legal-page .address {
+    text-align: left;
+}
+
+/* ===== Sub-Navbar Category Strip ===== */
+.category-strip {
+    background: var(--navy);
+    color: #ffffff;
+}
+
+.category-strip a, .category-strip button {
+    color: #ffffff;
     text-decoration: none;
-    color: #0d6efd;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    opacity: 0.9;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s, color 0.15s;
 }
 
-.breadcrumb-item a:hover {
+.category-strip a:hover, .category-strip button:hover {
+    opacity: 1;
+    color: var(--gold);
     text-decoration: underline;
 }
 
-/* ===== Sticky Sidebar ===== */
-@media (max-width: 991.98px) {
-    .sticky-top {
-        position: relative !important;
-        top: 0 !important;
+/* ===== Mobile Navigation ===== */
+.mobile-menu {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.mobile-links {
+    background: #ffffff;
+    border-top: 1px solid var(--line);
+    padding: 12px 24px 20px;
+}
+
+.mobile-links a, .mobile-links button {
+    display: block;
+    text-align: left;
+    width: 100%;
+    padding: 10px 0;
+    color: var(--navy);
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+}
+
+/* ===== Responsive Breakpoints ===== */
+@media (max-width: 900px) {
+    .desktop-nav, .category-strip {
+        display: none !important;
+    }
+    .mobile-menu {
+        display: block;
+    }
+    .hero-grid, .work-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .hero-photo {
+        height: 280px;
+        margin-top: 0;
     }
 }
 
-/* ===== Alerts ===== */
-.alert {
-    border-radius: 10px;
-}
-
-/* ===== Buttons ===== */
-.btn {
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-}
-
-/* ===== Utility ===== */
-.shadow-sm {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+@media (max-width: 640px) {
+    .shell {
+        padding-inline: 16px;
+    }
+    .section-pad {
+        padding-block: 40px;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .legal-page {
+        min-height: 0;
+        font-size: 0.85rem;
+        padding: 20px;
+    }
 }

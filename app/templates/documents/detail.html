@@ -1,175 +1,171 @@
 {% extends "base.html" %}
 
-{% block title %}{{ document.title }} - LegalDraft India{% endblock %}
+{% block title %}{{ document.title }} - NyayaDraft{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('main.document_list') }}">Documents</a></li>
-            <li class="breadcrumb-item active">{{ document.title }}</li>
-        </ol>
+<div class="shell section-pad">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="text-sm text-slate-600 mb-7 flex items-center gap-2">
+        <a href="{{ url_for('main.home') }}" class="textlink hover:text-[#142D4E]">Home</a>
+        <span>/</span>
+        <a href="{{ url_for('main.document_list') }}" class="textlink hover:text-[#142D4E]">Legal Documents</a>
+        <span>/</span>
+        <span class="text-slate-800 font-semibold">{{ document.title }}</span>
     </nav>
 
-    <div class="row g-5">
-        <!-- Main Content Column -->
-        <div class="col-lg-8">
-            <!-- Document Header -->
-            <div class="mb-4">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="badge {{ document.badge_class }}">{{ document.badge_text }}</span>
-                    {% if document.version %}
-                    <span class="badge bg-light text-dark border">{{ document.version }}</span>
-                    {% endif %}
-                </div>
-                <h1 class="fw-bold display-6">{{ document.title }}</h1>
-                <p class="lead text-muted">{{ document.subtitle }}</p>
-            </div>
-
-            <!-- Statutory Notice Warning (Special for Cheque Bounce) -->
+    <div class="grid work-grid lg:grid-cols-[1fr_380px] gap-10">
+        <!-- Main Document Details Column -->
+        <div>
+            <p class="eyebrow">{{ document.category | upper }} · STATUTORY TEMPLATE</p>
+            <h1 class="canva-text mt-3 font-serif font-bold text-3xl text-[#142D4E]">{{ document.title }}</h1>
             {% if document.id == 'cheque-bounce-notice' %}
-            <div class="alert alert-warning border-start border-warning border-4 shadow-sm mb-4">
-                <div class="d-flex align-items-start">
-                    <i class="bi bi-clock-history fs-3 text-warning me-3 mt-1"></i>
-                    <div>
-                        <h5 class="fw-bold mb-1">Strict 30-Day Statutory Limitation Period</h5>
-                        <p class="mb-0 small text-secondary">
-                            Under <strong>Section 138(b) of the Negotiable Instruments Act, 1881</strong>, this demand notice 
-                            must be formally dispatched within <strong>30 days</strong> of receiving the cheque return memo 
-                            from your bank. Missing this statutory deadline may forfeit your right to initiate criminal proceedings.
-                        </p>
-                    </div>
-                </div>
+            <p class="text-sm text-slate-500 mt-1 font-medium">Statutory Cheque Bounce Notice under Section 138 NI Act</p>
+            {% endif %}
+            <p class="text-slate-600 mt-1">{{ document.subtitle }}</p>
+
+            <div class="rule my-6"></div>
+
+            <!-- Statutory Limitation Alert -->
+            {% if document.id == 'cheque-bounce-notice' %}
+            <div class="notice mb-8" style="background: #fff7ed; border-left: 4px solid #ea580c;">
+                <strong style="color: #9a3412;">Strict 30-Day Statutory Limitation Period</strong>
+                <p class="mt-1 text-sm text-slate-700">
+                    Under <strong>Section 138(b) of the Negotiable Instruments Act, 1881</strong>, this demand notice must be issued and dispatched within <strong>30 days</strong> of receiving the cheque dishonour return memo from your bank. Missing this statutory deadline may forfeit your legal remedy to initiate criminal proceedings.
+                </p>
             </div>
             {% endif %}
 
             <!-- Description -->
-            <div class="mb-4">
-                <h4 class="fw-bold mb-3"><i class="bi bi-file-text text-primary me-2"></i> About This Legal Draft</h4>
+            <div class="mb-8">
+                <h2 class="font-serif font-bold text-xl text-[#142D4E] mb-3">About This Legal Draft</h2>
                 {% for paragraph in document.long_description.split('\n\n') %}
-                    <p class="text-secondary">{{ paragraph }}</p>
+                <p class="text-slate-700 leading-relaxed mb-4">{{ paragraph }}</p>
                 {% endfor %}
             </div>
 
-            <!-- What You Get -->
-            <div class="mb-4">
-                <h4 class="fw-bold mb-3"><i class="bi bi-box-seam text-primary me-2"></i> Deliverables Included</h4>
-                <div class="row g-2">
-                    {% for item in document.what_you_get %}
-                    <div class="col-12">
-                        <div class="p-3 bg-light rounded-3 d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-5 me-3"></i>
-                            <span class="text-dark">{{ item }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Information Needed -->
-            <div class="mb-4">
-                <h4 class="fw-bold mb-3"><i class="bi bi-pencil-square text-primary me-2"></i> Information You Will Need</h4>
-                <p class="text-muted small">
-                    Please keep the following documents and details ready before launching the drafting questionnaire:
-                </p>
-                <div class="list-group list-group-flush">
+            <!-- Information You Will Need -->
+            <div class="mb-8">
+                <h2 class="font-serif font-bold text-xl text-[#142D4E] mb-4">Information You Will Need</h2>
+                <p class="text-sm text-slate-600 mb-3">Please keep the following documents and particulars ready before filling out the guided questionnaire:</p>
+                <div class="grid md:grid-cols-2 gap-3">
                     {% for item in document.information_needed %}
-                    <div class="list-group-item bg-transparent px-0 py-2 d-flex align-items-start">
-                        <i class="bi bi-arrow-right-circle text-primary me-2 mt-1"></i>
-                        <span>{{ item }}</span>
+                    <div class="card p-4 flex items-start gap-3 bg-white">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                        <span class="text-sm text-slate-700">{{ item }}</span>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Important Statutory Notes -->
-            <div class="mb-4">
-                <div class="card border-0 bg-light p-3">
-                    <h5 class="fw-bold mb-2">
-                        <i class="bi bi-info-circle text-primary me-1"></i> Important Notes & Statutory Compliance
-                    </h5>
-                    <ul class="mb-0 small text-secondary ps-3">
+            <!-- Preparation Process -->
+            <div class="mb-8">
+                <h2 class="font-serif font-bold text-xl text-[#142D4E] mb-4">Preparation process</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block">01 · Provide details</strong>
+                        <p class="text-sm text-slate-600 mt-2">Enter cheque, party, and transaction particulars through the guided form.</p>
+                    </div>
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block">02 · Review the draft</strong>
+                        <p class="text-sm text-slate-600 mt-2">Inspect the complete statutory legal draft in our interactive document previewer.</p>
+                    </div>
+                    <div class="card p-5">
+                        <strong class="text-[#142D4E] block">03 · Download & Issue</strong>
+                        <p class="text-sm text-slate-600 mt-2">Receive ready-to-print PDF and editable Word formats with dispatch guidelines.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notes & Statutory Guidelines -->
+            <div class="mb-8">
+                <h2 class="font-serif font-bold text-xl text-[#142D4E] mb-4">Important Notes & Statutory Guidelines</h2>
+                <div class="card p-5 bg-[#F8FAFC]">
+                    <ul class="space-y-3 list-none p-0 m-0">
                         {% for note in document.important_notes %}
-                        <li class="mb-1">{{ note }}</li>
+                        <li class="flex items-start gap-2.5 text-sm text-slate-700">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-[#6F1D2C] shrink-0 mt-0.5"></i>
+                            <span>{{ note }}</span>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
-        </div>
 
-        <!-- Sidebar - Pricing & Action -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow sticky-top" style="top: 80px;">
-                <div class="card-body text-center p-4">
-                    <i class="bi {{ document.icon }} display-3 text-primary mb-3"></i>
-                    <h5 class="fw-bold">{{ document.title }}</h5>
-
-                    <hr>
-
-                    <!-- Price -->
-                    <div class="my-4">
-                        <span class="display-6 fw-bold text-success">₹{{ document.price }}</span>
-                        <p class="text-muted small mt-1">One-time fee • Includes Word & PDF formats</p>
+            <!-- Deliverables Included -->
+            <div class="mb-8">
+                <h2 class="font-serif font-bold text-xl text-[#142D4E] mb-4">Deliverables Included</h2>
+                <div class="grid md:grid-cols-2 gap-3">
+                    {% for item in document.what_you_get %}
+                    <div class="card p-4 flex items-center gap-3">
+                        <i data-lucide="file-check" class="w-5 h-5 text-indigo-600 shrink-0"></i>
+                        <span class="text-sm text-slate-700">{{ item }}</span>
                     </div>
-
-                    <!-- Included Features -->
-                    <ul class="list-unstyled text-start small mb-4">
-                        <li class="mb-2">
-                            <i class="bi bi-check-lg text-success"></i> Word format (.docx - fully editable)
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-lg text-success"></i> Print-ready PDF (.pdf format)
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-lg text-success"></i> Guided questionnaire with live validation
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-lg text-success"></i> Free preview before payment
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-lg text-success"></i> Permanent access in Order History
-                        </li>
-                    </ul>
-
-                    {% if document.status == 'active' %}
-                        {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('generator.cheque_bounce_form') }}" class="btn btn-success btn-lg w-100 mb-2 fw-semibold">
-                                <i class="bi bi-pencil-square"></i> Start Drafting Now
-                            </a>
-                        {% else %}
-                            <a href="{{ url_for('auth.login', next=url_for('generator.cheque_bounce_form')) }}" class="btn btn-primary btn-lg w-100 mb-2 fw-semibold">
-                                <i class="bi bi-box-arrow-in-right"></i> Log in to Draft
-                            </a>
-                        {% endif %}
-                        <p class="text-muted small mb-0">Fill details & preview free before paying</p>
-                    {% elif document.status == 'coming_soon' %}
-                        <button class="btn btn-secondary btn-lg w-100 mb-2" disabled>
-                            <i class="bi bi-hourglass-split"></i> Template Under Review
-                        </button>
-                        <p class="text-muted small mb-0">
-                            This template is being prepared by legal advocates.
-                        </p>
-                    {% else %}
-                        <button class="btn btn-secondary btn-lg w-100" disabled>
-                            In Development
-                        </button>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Legal Disclaimer -->
-    <div class="alert alert-info mt-5 d-flex align-items-start" role="alert">
-        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
-        <div>
-            <strong>Legal Disclaimer:</strong> LegalDraft India generates standard document drafts based on user-provided inputs. 
-            This does not constitute personal legal advice or create an advocate-client relationship. If your matter is subject to complex litigation 
-            or disputed facts, please consult a qualified advocate before issuing formal notices.
-        </div>
+        <!-- Sidebar / Action Card -->
+        <aside class="self-start sticky top-6">
+            <div class="photo h-56 rounded-t overflow-hidden">
+                <img class="canva-image w-full h-full object-cover" loading="lazy"
+                     src="{{ document.image_url }}" alt="{{ document.title }}">
+            </div>
+            <div class="card rounded-t-none p-6 shadow-md border-t-0">
+                <p class="eyebrow">TRANSPARENT PRICING · NO HIDDEN FEES</p>
+                <p class="font-bold text-3xl text-[#142D4E] mt-2">₹{{ document.price }}</p>
+                <p class="text-sm text-slate-600 mt-2">
+                    One-time drafting fee • Includes both editable Microsoft Word (.docx) and print-ready PDF formats.
+                </p>
+
+                <div class="border-t border-slate-200 my-5 pt-4 text-xs text-slate-600 space-y-2">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i>
+                        <span>Approx. 10–15 minutes to fill</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4 text-slate-500"></i>
+                        <span>Instant free preview before payment</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="archive" class="w-4 h-4 text-slate-500"></i>
+                        <span>Permanent access in your dashboard</span>
+                    </div>
+                </div>
+
+                {% if document.status == 'active' %}
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('generator.cheque_bounce_form') }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
+                        Start Guided Drafting
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('auth.login', next=url_for('generator.cheque_bounce_form')) }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
+                        Log in to Draft
+                    </a>
+                    {% endif %}
+                    <p class="text-xs text-center text-slate-500 mt-3">Fill particulars and preview draft completely free before paying.</p>
+                {% else %}
+                    <button class="button secondary w-full text-center block mt-4 py-3 cursor-not-allowed opacity-75" disabled>
+                        Template Under Review
+                    </button>
+                    <p class="text-xs text-center text-slate-500 mt-3">This template is currently being finalized by legal advocates.</p>
+                {% endif %}
+
+                <p class="canva-text mt-5 pt-4 border-t border-slate-200 text-xs text-slate-500 leading-normal">
+                    This illustrative document generator is not a substitute for personalised legal advice.
+                </p>
+            </div>
+        </aside>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
 {% endblock %}
