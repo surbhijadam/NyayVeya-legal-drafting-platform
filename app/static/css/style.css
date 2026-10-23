@@ -241,10 +241,24 @@ p {
 
 /* Header Corner-to-Corner Container */
 .header-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     width: 100%;
     margin: 0;
     padding-inline: clamp(16px, 3.5vw, 40px);
     box-sizing: border-box;
+}
+
+.brand-logo-link {
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0;
+}
+
+.desktop-nav {
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* Compact Nav links for Header */

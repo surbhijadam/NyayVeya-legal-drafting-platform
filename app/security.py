@@ -150,18 +150,18 @@ def init_security(app):
                 "max-age=31536000; includeSubDomains; preload"
             )
 
-        # Content-Security-Policy (Permits trusted CDNs for Bootstrap, Chart.js, Lucide, Google Fonts, and Razorpay)
+        # Content-Security-Policy (Permits trusted CDNs for Tailwind JIT, Bootstrap, Chart.js, Lucide, Google Fonts, and Razorpay)
         csp_directives = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.razorpay.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://checkout.razorpay.com",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com",
             "font-src 'self' https://fonts.gstatic.com data:",
-            "img-src 'self' data: https://images.pexels.com https://api.qrserver.com",
-            "connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com",
+            "img-src 'self' data: blob: https:",
+            "connect-src 'self' https: wss: https://cdn.tailwindcss.com https://api.razorpay.com https://lumberjack.razorpay.com",
             "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com",
             "frame-ancestors 'self'",
             "base-uri 'self'",
-            "form-action 'self' https://api.razorpay.com"
+            "form-action 'self' https: https://api.razorpay.com"
         ]
         response.headers['Content-Security-Policy'] = "; ".join(csp_directives)
 
