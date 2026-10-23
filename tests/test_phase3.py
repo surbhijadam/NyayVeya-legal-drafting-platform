@@ -214,6 +214,33 @@ def test_logout(client, registered_user):
     assert b'Please log in to access this page.' in dash_response.data
 
 
+def test_dashboard_with_orders(client, registered_user, app):
+    """Dashboard renders properly when user has historical orders."""
+    from app.models import Order, DocumentTemplate
+    with app.app_context():
+        tmpl = DocumentTemplate.query.first()
+        order = Order(
+            order_number='ORD-DASH-TEST-1',
+            user_id=registered_user,
+            document_template_id=tmpl.id,
+            amount=199,
+            status='paid'
+        )
+        db.session.add(order)
+        db.session.commit()
+
+    # Log in
+    client.post('/auth/login', data={
+        'email': 'aarav@example.com',
+        'password': 'SecurePass123',
+    })
+
+    response = client.get('/auth/dashboard')
+    assert response.status_code == 200
+    assert b'ORD-DASH-TEST-1' in response.data
+    assert b'/generator/preview/' in response.data
+
+
 def test_navbar_changes_on_auth_state(client, registered_user):
     """Navbar displays Register/Login when anonymous, and Username/Logout when logged in."""
     # Anonymous view

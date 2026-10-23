@@ -94,7 +94,8 @@ def cheque_bounce_form():
     )
 
 
-@generator_bp.route('/preview/<int:order_id>')
+@generator_bp.route('/preview/<int:order_id>', endpoint='preview')
+@generator_bp.route('/preview/<int:order_id>', endpoint='preview_draft')
 @login_required
 def preview(order_id):
     """Preview the generated legal document draft before payment."""
