@@ -243,3 +243,57 @@ def test_download_draft(client, test_user, valid_notice_data):
     pdf_resp = client.get(f'/generator/download/{order.id}/pdf')
     assert pdf_resp.status_code == 200
     assert 'application/pdf' in pdf_resp.content_type
+
+
+def test_format_cheque_bounce_notice_resilient_to_missing_data():
+    """Verify format_cheque_bounce_notice safely handles empty or partial input data."""
+    # Test completely empty dict
+    formatted_empty = format_cheque_bounce_notice({})
+    assert 'SECTION 138' in formatted_empty['subject']
+    assert formatted_empty['amount_formatted'] == '₹[Amount]'
+    assert '[Drawer / Noticee Name]' in formatted_empty['recipient_block']
+
+    # Test None
+    formatted_none = format_cheque_bounce_notice(None)
+    assert 'SECTION 138' in formatted_none['subject']
+
+    # Test numeric string cheque amount
+    formatted_str = format_cheque_bounce_notice({'cheque_amount': '75000'})
+    assert '₹75,000' in formatted_str['amount_formatted']
+
+
+def test_preview_and_download_with_empty_order_form_data(client, app, test_user):
+    """Orders with empty or missing form_data render in preview and can be downloaded."""
+    with app.app_context():
+        order = Order(
+            order_number='ORD-EMPTY-DATA-1',
+            user_id=test_user,
+            document_template_id=1,
+            amount=199,
+            status='paid',
+            form_data_json=None,
+            docx_filename=None,
+            pdf_filename=None
+        )
+        db.session.add(order)
+        db.session.commit()
+        order_id = order.id
+
+    # Log in
+    client.post('/auth/login', data={'email': 'rajesh@example.com', 'password': 'TestPass123'})
+
+    # Preview
+    preview_resp = client.get(f'/generator/preview/{order_id}')
+    assert preview_resp.status_code == 200
+    assert b'ORD-EMPTY-DATA-1' in preview_resp.data
+
+    # On-demand docx download
+    docx_resp = client.get(f'/generator/download/{order_id}/docx')
+    assert docx_resp.status_code == 200
+    assert 'wordprocessingml.document' in docx_resp.content_type
+
+    # On-demand pdf download
+    pdf_resp = client.get(f'/generator/download/{order_id}/pdf')
+    assert pdf_resp.status_code == 200
+    assert 'application/pdf' in pdf_resp.content_type
+

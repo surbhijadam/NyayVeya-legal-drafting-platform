@@ -107,7 +107,13 @@ def preview(order_id):
     if order.user_id != current_user.id:
         abort(403)
 
-    formatted_notice = format_cheque_bounce_notice(order.form_data)
+    data = dict(order.form_data or {})
+    if not data.get('payee_name') and current_user.full_name:
+        data['payee_name'] = current_user.full_name
+    if not data.get('cheque_amount') and order.amount:
+        data['cheque_amount'] = order.amount
+
+    formatted_notice = format_cheque_bounce_notice(data)
 
     return render_template(
         'generator/preview.html',
@@ -129,18 +135,39 @@ def download_draft(order_id, file_type):
         abort(403)
 
     folder = current_app.config['GENERATED_DOCUMENTS_FOLDER']
+    os.makedirs(folder, exist_ok=True)
 
-    if file_type == 'docx' and order.docx_filename:
+    data = dict(order.form_data or {})
+    if not data.get('payee_name') and current_user.full_name:
+        data['payee_name'] = current_user.full_name
+    if not data.get('cheque_amount') and order.amount:
+        data['cheque_amount'] = order.amount
+
+    formatted_notice = format_cheque_bounce_notice(data)
+
+    if file_type == 'docx':
+        docx_name = order.docx_filename or f"{order.order_number}_draft.docx"
+        docx_path = os.path.join(folder, docx_name)
+        if not os.path.exists(docx_path):
+            build_cheque_bounce_docx(formatted_notice, docx_path)
+            order.docx_filename = docx_name
+            db.session.commit()
         return send_from_directory(
             folder,
-            order.docx_filename,
+            docx_name,
             as_attachment=True,
             download_name=f"Cheque_Bounce_Notice_{order.order_number}.docx"
         )
-    elif file_type == 'pdf' and order.pdf_filename:
+    elif file_type == 'pdf':
+        pdf_name = order.pdf_filename or f"{order.order_number}_draft.pdf"
+        pdf_path = os.path.join(folder, pdf_name)
+        if not os.path.exists(pdf_path):
+            build_cheque_bounce_pdf(formatted_notice, pdf_path)
+            order.pdf_filename = pdf_name
+            db.session.commit()
         return send_from_directory(
             folder,
-            order.pdf_filename,
+            pdf_name,
             as_attachment=True,
             download_name=f"Cheque_Bounce_Notice_{order.order_number}.pdf"
         )
