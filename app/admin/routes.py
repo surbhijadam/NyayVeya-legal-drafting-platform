@@ -28,6 +28,7 @@ from app.admin.forms import (
     AdminLoginForm, TemplateForm, OrderStatusForm,
     SupportInquiryUpdateForm, UserUpdateForm
 )
+from app.security import rate_limit
 
 
 # ==============================================================================
@@ -35,6 +36,7 @@ from app.admin.forms import (
 # ==============================================================================
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
+@rate_limit(max_requests=10, window_seconds=60)
 def login():
     """
     Dedicated admin login portal.

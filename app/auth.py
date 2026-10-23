@@ -13,11 +13,13 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models import User
 from app.forms import RegistrationForm, LoginForm
+from app.security import rate_limit
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
+@rate_limit(max_requests=10, window_seconds=60)
 def register():
     """User registration page."""
     # If already logged in, go to dashboard
@@ -48,6 +50,7 @@ def register():
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@rate_limit(max_requests=15, window_seconds=60)
 def login():
     """User login page."""
     # If already logged in, go to dashboard

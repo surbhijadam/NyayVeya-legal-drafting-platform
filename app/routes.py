@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, abort, request, flash, redirect, url_for
 from app import db
 from app.models import SupportInquiry
+from app.security import rate_limit
 from app.catalogue import (
     get_all_documents,
     get_document_by_id,
@@ -52,6 +53,7 @@ def policies():
 
 
 @main_bp.route('/contact', methods=['GET', 'POST'])
+@rate_limit(max_requests=10, window_seconds=60)
 def contact():
     """Contact page - platform support and inquiries."""
     if request.method == 'POST':

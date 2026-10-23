@@ -111,6 +111,10 @@ def create_app(test_config=None):
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    # Phase 8: Initialize security headers and cookie policies
+    from app.security import init_security
+    init_security(app)
+
     # Where to redirect unauthenticated users trying to access @login_required routes
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'

@@ -21,6 +21,7 @@ from app.payments.services import (
     record_failed_payment,
     generate_upi_qr_svg
 )
+from app.security import rate_limit
 
 
 @payments_bp.route('/checkout/<int:order_id>')
@@ -67,6 +68,7 @@ def checkout(order_id):
 
 @payments_bp.route('/process-checkout', methods=['POST'])
 @login_required
+@rate_limit(max_requests=15, window_seconds=60)
 def process_checkout():
     """
     Process instant checkout for UPI QR, UPI VPA, Card, Net Banking, or Wallet.

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Too Many Requests - NyayVeya{% endblock %}
+
+{% block content %}
+<div class="shell section-pad text-center max-w-lg mx-auto py-16">
+    <div class="card p-10 shadow-md">
+        <i data-lucide="shield-alert" class="w-16 h-16 text-amber-600 mx-auto mb-4"></i>
+        <h1 class="font-serif font-bold text-4xl text-[#142D4E]">429</h1>
+        <h2 class="font-serif font-semibold text-xl text-slate-700 mt-2">Too Many Requests</h2>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+            {{ message or "You have made too many requests in a short period to protect server security." }}
+        </p>
+        {% if retry_after %}
+        <p class="text-xs text-amber-800 font-semibold mt-3 bg-amber-50 p-2.5 rounded border border-amber-200">
+            ⏳ Please wait <span class="font-mono">{{ retry_after }}</span> seconds before attempting again.
+        </p>
+        {% endif %}
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a href="{{ url_for('main.home') }}" class="button primary">
+                Return to Home
+            </a>
+            <button onclick="window.location.reload()" class="button secondary">
+                Retry Now
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}
