@@ -239,6 +239,69 @@ p {
     background: #f8fafc;
 }
 
+/* Header Specific Responsive Shell & Spacing */
+.header-shell {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 24px);
+    box-sizing: border-box;
+}
+
+/* Compact Nav links for Header */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1.2vw, 16px);
+}
+
+.header-nav .navlink {
+    padding: 6px 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+/* Header Action Buttons */
+.header-btn {
+    min-height: 38px !important;
+    padding: 6px 14px !important;
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    border-radius: 4px !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+}
+
+.header-user-btn {
+    display: inline-block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+@media (min-width: 1200px) and (max-width: 1320px) {
+    .brand-tagline {
+        font-size: 0.65rem;
+    }
+    .header-nav {
+        gap: 6px;
+    }
+    .header-nav .navlink {
+        padding: 5px 8px;
+        font-size: 0.82rem;
+    }
+    .header-btn {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
 /* ===== Cards ===== */
 .card {
     background: #ffffff;
