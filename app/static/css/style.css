@@ -284,6 +284,60 @@ p {
     vertical-align: middle;
 }
 
+/* User Profile Dropdown Alignment & Proportions */
+.user-dropdown {
+    position: relative;
+    min-width: 215px;
+}
+
+.user-dropdown .user-menu-btn {
+    width: 100%;
+    min-width: 215px;
+    padding: 7px 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+}
+
+.user-dropdown .header-user-btn {
+    display: inline-block;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.user-dropdown .user-dropdown-menu {
+    width: 100%;
+    min-width: 215px;
+    right: 0 !important;
+    left: auto !important;
+    margin-top: 6px !important;
+    border-radius: 8px !important;
+    background: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(20, 45, 78, 0.12), 0 8px 10px -6px rgba(20, 45, 78, 0.08) !important;
+}
+
+.user-dropdown .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 0.88rem !important;
+    padding: 8px 12px !important;
+    transition: background 0.15s, color 0.15s;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background-color: #f1f5f9;
+}
+
+.user-dropdown .dropdown-item i,
+.user-dropdown .dropdown-item svg {
+    flex-shrink: 0;
+}
+
 @media (min-width: 1200px) and (max-width: 1320px) {
     .brand-tagline {
         font-size: 0.65rem;
