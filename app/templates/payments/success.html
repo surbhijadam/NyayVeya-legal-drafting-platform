@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful: {{ order.order_number }} - NyayVeya{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-b from-emerald-50 to-white border-b border-slate-200">
+    <div class="shell py-12 text-center max-w-2xl mx-auto">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-4 shadow-sm">
+            <i data-lucide="check" class="w-8 h-8 stroke-[2.5]"></i>
+        </div>
+        <p class="eyebrow text-emerald-800 font-bold tracking-wider">STEP 5 OF 5 · ORDER COMPLETE</p>
+        <h1 class="font-serif font-bold text-3xl md:text-4xl text-[#142D4E] mt-2">Payment Verified Successfully!</h1>
+        <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+            Your statutory legal notice has been generated, cryptographically verified, and is ready for download in editable Microsoft Word and Adobe PDF formats.
+        </p>
+
+        <!-- Direct Document Download Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3.5 mt-7">
+            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button primary flex items-center gap-2 py-3 px-5 text-sm shadow">
+                <i data-lucide="file-text" class="w-4 h-4 text-blue-200"></i>
+                <span>Download Word (.docx)</span>
+            </a>
+            <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button primary flex items-center gap-2 py-3 px-5 text-sm shadow" style="background: #991b1b;">
+                <i data-lucide="file" class="w-4 h-4 text-red-200"></i>
+                <span>Download PDF (.pdf)</span>
+            </a>
+            <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="button secondary flex items-center gap-2 py-3 px-5 text-sm">
+                <i data-lucide="eye" class="w-4 h-4 text-slate-600"></i>
+                <span>View Full Draft</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="shell section-pad max-w-3xl mx-auto">
+    <!-- Official Tax Invoice / Receipt Card -->
+    <div class="card p-8 shadow-md border border-slate-200 bg-white" id="invoice-card">
+        <!-- Invoice Header -->
+        <div class="flex flex-wrap justify-between items-start gap-4 border-b border-slate-200 pb-6">
+            <div>
+                <strong class="font-serif text-2xl text-[#142D4E] block">NyayVeya</strong>
+                <p class="text-xs text-slate-500 mt-0.5">Automated Online Legal Drafting Platform</p>
+                <p class="text-xs text-slate-500">LegalDraft India Technologies Pvt. Ltd.</p>
+            </div>
+            <div class="text-right">
+                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase rounded-full mb-1">
+                    PAID &amp; VERIFIED
+                </span>
+                <p class="text-xs font-mono text-slate-500">Invoice: <strong>{{ invoice_number }}</strong></p>
+                <p class="text-xs text-slate-500">Date: {{ order.updated_at.strftime('%d %B %Y, %I:%M %p UTC') }}</p>
+            </div>
+        </div>
+
+        <!-- Billed To & Transaction Details -->
+        <div class="grid sm:grid-cols-2 gap-6 py-6 border-b border-slate-200 text-sm">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Billed To</span>
+                <strong class="text-slate-800 block text-base">{{ current_user.full_name }}</strong>
+                <span class="text-slate-600 block text-xs">{{ current_user.email }}</span>
+                <span class="text-slate-500 block text-xs mt-1">Country: India</span>
+            </div>
+            <div class="space-y-1.5 text-xs text-slate-600">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Payment Information</span>
+                <div class="flex justify-between">
+                    <span>Order Number:</span>
+                    <strong class="font-mono text-slate-800">{{ order.order_number }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Gateway:</span>
+                    <strong class="text-slate-800">Razorpay (Authorized)</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Payment ID:</span>
+                    <strong class="font-mono text-slate-800">{{ payment.gateway_payment_id if payment else 'N/A' }}</strong>
+                </div>
+                {% if payment and payment.gateway_order_id %}
+                <div class="flex justify-between">
+                    <span>Gateway Order ID:</span>
+                    <strong class="font-mono text-slate-800">{{ payment.gateway_order_id }}</strong>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Line Item Table -->
+        <div class="py-6 border-b border-slate-200">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-2">
+                        <th class="pb-2">Description</th>
+                        <th class="text-center pb-2">Format</th>
+                        <th class="text-right pb-2">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr>
+                        <td class="py-3">
+                            <strong class="text-slate-800 block">
+                                {{ order.document_template.title if order.document_template else 'Cheque Bounce Legal Notice' }}
+                            </strong>
+                            <span class="text-xs text-slate-500">
+                                Section 138 Negotiable Instruments Act 1881 Statutory Demand
+                            </span>
+                        </td>
+                        <td class="py-3 text-center text-xs text-slate-600">Word (.docx) &amp; PDF</td>
+                        <td class="py-3 text-right font-medium text-slate-800">₹{{ order.amount }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="border-t border-slate-200 text-sm">
+                        <th colspan="2" class="pt-3 text-right text-slate-600 font-normal">Subtotal:</th>
+                        <td class="pt-3 text-right font-medium text-slate-800">₹{{ order.amount }}</td>
+                    </tr>
+                    <tr class="text-sm">
+                        <th colspan="2" class="pt-1 text-right text-slate-600 font-normal">GST (18% Included):</th>
+                        <td class="pt-1 text-right text-slate-500">₹0.00</td>
+                    </tr>
+                    <tr class="text-base font-bold text-[#142D4E]">
+                        <th colspan="2" class="pt-3 text-right">Total Paid:</th>
+                        <td class="pt-3 text-right text-emerald-700 text-lg">₹{{ order.amount }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Invoice Footer & Print Button -->
+        <div class="flex flex-wrap justify-between items-center gap-4 pt-6 text-xs text-slate-500">
+            <p>This is a computer-generated tax invoice and requires no physical signature.</p>
+            <div class="flex gap-2">
+                <button type="button" onclick="window.print()" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Receipt
+                </button>
+                <a href="{{ url_for('auth.dashboard') }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}

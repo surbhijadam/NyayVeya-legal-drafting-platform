@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Checkout: {{ order.order_number }} - NyayVeya{% endblock %}
+
+{% block content %}
+<!-- Checkout Header -->
+<div class="bg-[#F3F5F7] border-b border-slate-200">
+    <div class="shell py-8">
+        <p class="eyebrow">STEP 4 OF 5 · CHECKOUT · SECURE PAYMENT</p>
+        <h1 class="canva-text mt-2 font-serif font-bold text-3xl text-[#142D4E]">Complete your order</h1>
+        <p class="text-slate-600 mt-1">
+            Order <strong>{{ order.order_number }}</strong> · Instant access to your verified legal notice in Word &amp; PDF formats.
+        </p>
+    </div>
+</div>
+
+<div class="shell section-pad">
+    <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+
+        <!-- Left Column: Order & Document Summary -->
+        <div class="space-y-6">
+            <div class="card p-6 shadow-sm">
+                <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-5">
+                    <div>
+                        <span class="inline-block px-2.5 py-1 text-xs font-bold uppercase rounded bg-blue-50 text-[#0878C9] mb-2">
+                            {{ order.document_template.category if order.document_template else 'Legal Notice' }}
+                        </span>
+                        <h2 class="font-serif font-bold text-xl text-[#142D4E]">
+                            {{ order.document_template.title if order.document_template else 'Cheque Bounce Notice' }}
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Statutory Demand Notice under Section 138 of the Negotiable Instruments Act, 1881
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-2xl font-bold font-serif text-[#142D4E]">₹{{ order.amount }}</span>
+                        <span class="block text-xs text-slate-500">One-time fee</span>
+                    </div>
+                </div>
+
+                <!-- Included Features -->
+                <div class="mt-5 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">What's included with this draft</h3>
+                    <ul class="space-y-2.5 text-sm text-slate-700">
+                        <li class="flex items-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                            <span><strong>Editable Word (.docx) file</strong> with standard 1-inch court margins and legal layout</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                            <span><strong>Print-ready PDF (.pdf) document</strong> formatted for A4 printing and court submission</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                            <span>Mandatory 15-day statutory payment demand and NI Act Section 142 clauses</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                            <span>Permanent access and re-download capability from your customer dashboard</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Price Breakdown Table -->
+                <div class="border-t border-slate-200 mt-6 pt-5">
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between text-slate-600">
+                            <span>Document Drafting &amp; Formatting Fee</span>
+                            <span>₹{{ order.amount }}</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Word (.docx) &amp; PDF (.pdf) Compilation</span>
+                            <span class="text-emerald-700 font-semibold">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Goods &amp; Services Tax (GST 18%)</span>
+                            <span class="text-slate-500">Included</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-200 text-base font-bold text-[#142D4E]">
+                            <span>Total Payable Amount</span>
+                            <span class="text-xl text-[#6F1D2C]">₹{{ order.amount }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Details Card -->
+            <div class="card p-5 bg-slate-50/70 border border-slate-200 text-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-500 block">Billed To:</span>
+                        <strong class="text-slate-800">{{ current_user.full_name }}</strong>
+                        <span class="text-slate-500 block text-xs">{{ current_user.email }}</span>
+                    </div>
+                    <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="text-xs font-semibold text-[#0878C9] hover:underline">
+                        Review Draft Details →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Secure Payment Portal -->
+        <div class="card p-6 shadow-md border-t-4 border-t-[#0878C9]">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i>
+                    <h3 class="font-serif font-bold text-lg text-[#142D4E]">Payment Gateway</h3>
+                </div>
+                <span class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> 256-Bit SSL
+                </span>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed mb-5">
+                Transactions are processed securely through <strong>Razorpay</strong>, India's leading RBI-authorized payment gateway. Your payment credentials are encrypted end-to-end.
+            </p>
+
+            <!-- Supported Modes Icons -->
+            <div class="bg-slate-50 p-3.5 rounded border border-slate-200 mb-6 text-xs text-slate-600">
+                <span class="font-bold text-slate-700 block mb-2">Supported Payment Methods:</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>UPI (GPay, PhonePe, Paytm)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="credit-card" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Credit / Debit Cards</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="building" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>NetBanking (50+ Banks)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Wallets &amp; PayLater</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Razorpay Launch Button -->
+            <button id="rzp-button" type="button" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+                <span>Pay ₹{{ order.amount }} Securely</span>
+            </button>
+
+            <!-- Test / Sandbox Notice & Fast Simulation Button -->
+            {% if mode != 'production' %}
+            <div class="mt-6 p-4 rounded-lg bg-amber-50/80 border border-amber-200">
+                <div class="flex items-start gap-2.5">
+                    <i data-lucide="flask-conical" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-xs text-amber-900 block font-bold">Developer Sandbox Mode Active</strong>
+                        <p class="text-xs text-amber-800 mt-0.5">
+                            Use any test UPI / card in the modal, or click below for instant 1-click test checkout verification.
+                        </p>
+                        <a href="{{ url_for('payments.simulate_test_payment', order_id=order.id) }}" class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-200/80 hover:bg-amber-200 px-3 py-1.5 rounded transition">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-700"></i>
+                            <span>Simulate Instant Test Payment (Sandbox)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Security Trust Badges -->
+            <div class="border-t border-slate-200 mt-6 pt-5 text-center text-xs text-slate-500 space-y-1">
+                <p>🔒 PCI-DSS Level 1 Compliant · End-to-End Encrypted</p>
+                <p>Instant invoice &amp; tax receipt generated upon payment</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Hidden verification form submitted after Razorpay callback -->
+<form id="verify-form" method="POST" action="{{ url_for('payments.verify_payment') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="order_id" value="{{ order.id }}">
+    <input type="hidden" id="rzp_order_id" name="razorpay_order_id" value="">
+    <input type="hidden" id="rzp_payment_id" name="razorpay_payment_id" value="">
+    <input type="hidden" id="rzp_signature" name="razorpay_signature" value="">
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Razorpay Standard Checkout SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    var payBtn = document.getElementById('rzp-button');
+    if (!payBtn) return;
+
+    payBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Configure Razorpay Standard Checkout options
+        var options = {
+            "key": "{{ key_id }}",
+            "amount": "{{ amount_paise }}",
+            "currency": "INR",
+            "name": "NyayVeya",
+            "description": "{{ order.document_template.title if order.document_template else 'Legal Notice Draft' }}",
+            "order_id": "{{ rzp_order.id }}",
+            "handler": function (response) {
+                // Populate and submit form for server-side cryptographic signature verification
+                document.getElementById('rzp_order_id').value = response.razorpay_order_id || "{{ rzp_order.id }}";
+                document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('rzp_signature').value = response.razorpay_signature;
+                document.getElementById('verify-form').submit();
+            },
+            "prefill": {
+                "name": "{{ current_user.full_name }}",
+                "email": "{{ current_user.email }}"
+            },
+            "notes": {
+                "order_number": "{{ order.order_number }}",
+                "user_id": "{{ current_user.id }}"
+            },
+            "theme": {
+                "color": "#142D4E"
+            },
+            "modal": {
+                "ondismiss": function() {
+                    console.log('Payment modal dismissed by user.');
+                }
+            }
+        };
+
+        try {
+            var rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                alert('Payment Failed: ' + (response.error.description || 'Transaction declined.'));
+            });
+            rzp.open();
+        } catch (err) {
+            console.warn('Razorpay SDK error or offline environment:', err);
+            // Fallback for sandboxed / offline environments
+            if (confirm('The payment gateway modal is in Test Mode. Would you like to complete this test transaction now?')) {
+                window.location.href = "{{ url_for('payments.simulate_test_payment', order_id=order.id) }}";
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

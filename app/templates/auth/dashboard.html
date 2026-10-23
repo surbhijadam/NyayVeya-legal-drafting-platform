@@ -73,19 +73,25 @@
                     <p class="text-xs text-slate-600 mt-0.5">Fee: ₹{{ order.amount }} · Word & PDF Formats</p>
                 </div>
                 <div class="flex flex-wrap gap-2 items-center">
+                    {% if order.status != 'paid' %}
+                    <a href="{{ url_for('payments.checkout', order_id=order.id) }}" class="button primary text-xs py-2 px-3 flex items-center gap-1 font-bold">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Pay ₹{{ order.amount }}
+                    </a>
+                    {% endif %}
                     <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="button secondary text-xs py-2 px-3">
                         <i data-lucide="eye" class="w-3.5 h-3.5 inline mr-1"></i> Preview
                     </a>
-                    {% if order.docx_filename %}
+                    {% if order.status == 'paid' %}
+                    <a href="{{ url_for('payments.payment_success', order_id=order.id) }}" class="button secondary text-xs py-2 px-3 flex items-center gap-1">
+                        <i data-lucide="receipt" class="w-3.5 h-3.5 text-emerald-700"></i> Receipt
+                    </a>
+                    {% endif %}
                     <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='docx') }}" class="button secondary text-xs py-2 px-3">
-                        <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1 text-blue-700"></i> Word (.docx)
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1 text-blue-700"></i> Word
                     </a>
-                    {% endif %}
-                    {% if order.pdf_filename %}
                     <a href="{{ url_for('generator.download_draft', order_id=order.id, file_type='pdf') }}" class="button secondary text-xs py-2 px-3">
-                        <i data-lucide="file" class="w-3.5 h-3.5 inline mr-1 text-red-700"></i> PDF (.pdf)
+                        <i data-lucide="file" class="w-3.5 h-3.5 inline mr-1 text-red-700"></i> PDF
                     </a>
-                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -133,9 +139,20 @@
                                 </span>
                             </td>
                             <td class="p-4">
-                                <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="textlink text-xs">
-                                    View Draft
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    {% if order.status != 'paid' %}
+                                    <a href="{{ url_for('payments.checkout', order_id=order.id) }}" class="button primary text-xs py-1 px-2.5 font-bold">
+                                        Pay Now
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('payments.payment_success', order_id=order.id) }}" class="textlink text-xs">
+                                        Receipt
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="textlink text-xs">
+                                        View Draft
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

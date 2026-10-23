@@ -96,6 +96,11 @@ def create_app(test_config=None):
     os.makedirs(docs_folder, exist_ok=True)
     app.config['GENERATED_DOCUMENTS_FOLDER'] = docs_folder
 
+    # Razorpay Gateway Configuration
+    app.config['RAZORPAY_KEY_ID'] = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_sample_key')
+    app.config['RAZORPAY_KEY_SECRET'] = os.environ.get('RAZORPAY_KEY_SECRET', 'sample_secret_key_12345')
+    app.config['PAYMENT_MODE'] = os.environ.get('PAYMENT_MODE', 'test')
+
     # Apply test config BEFORE initializing db extension if provided
     if test_config:
         app.config.update(test_config)
@@ -129,6 +134,9 @@ def create_app(test_config=None):
 
     from app.admin import admin_bp
     app.register_blueprint(admin_bp)
+
+    from app.payments import payments_bp
+    app.register_blueprint(payments_bp)
 
     # Register CLI commands
     app.cli.add_command(create_admin_command)
