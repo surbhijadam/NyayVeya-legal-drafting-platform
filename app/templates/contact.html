@@ -31,6 +31,7 @@
                 </p>
 
                 <form method="POST" action="{{ url_for('main.contact') }}" class="space-y-5">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="grid small-grid md:grid-cols-2 gap-5">
                         <!-- Full Name -->
                         <div class="field">
@@ -109,7 +110,7 @@
                         <i data-lucide="map-pin" class="w-5 h-5 text-[#6F1D2C] shrink-0 mt-0.5"></i>
                         <div>
                             <span class="text-xs text-slate-500 block">Jurisdiction & Operations</span>
-                            <span>Connaught Place, New Delhi 110001, India</span>
+                            <span>South Tukoganj, Indore 452001, India</span>
                         </div>
                     </div>
                 </div>

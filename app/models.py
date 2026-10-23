@@ -14,7 +14,7 @@ from app import db
 class User(UserMixin, db.Model):
     """
     User account model.
-    Stores account credentials, profile information, and links to orders.
+    Stores account credentials, profile information, role, and links to orders.
     """
     __tablename__ = 'users'
 
@@ -22,6 +22,10 @@ class User(UserMixin, db.Model):
     full_name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(254), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
+
+    # Role & Account Status
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     # Metadata timestamps
     created_at = db.Column(
@@ -49,7 +53,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f'<User {self.email}>'
+        return f'<User {self.email} (admin={self.is_admin})>'
 
 
 class DocumentTemplate(db.Model):
@@ -66,6 +70,7 @@ class DocumentTemplate(db.Model):
     category = db.Column(db.String(100), nullable=False, default='notices')
     price = db.Column(db.Integer, nullable=False, default=199)  # In INR
     status = db.Column(db.String(50), nullable=False, default='coming_soon')  # 'active', 'coming_soon', 'draft'
+    language = db.Column(db.String(50), nullable=False, default='English')
 
     short_description = db.Column(db.Text, nullable=False)
     long_description = db.Column(db.Text, nullable=False)
@@ -74,6 +79,7 @@ class DocumentTemplate(db.Model):
     what_you_get_json = db.Column(db.Text, nullable=True, default='[]')
     information_needed_json = db.Column(db.Text, nullable=True, default='[]')
     important_notes_json = db.Column(db.Text, nullable=True, default='[]')
+    faqs_json = db.Column(db.Text, nullable=True, default='[]')
 
     # Visual Presentation
     icon = db.Column(db.String(100), default='bi-file-earmark-medical')
@@ -128,6 +134,17 @@ class DocumentTemplate(db.Model):
     @important_notes.setter
     def important_notes(self, value):
         self.important_notes_json = json.dumps(value or [])
+
+    @property
+    def faqs(self):
+        try:
+            return json.loads(self.faqs_json or '[]')
+        except (ValueError, TypeError):
+            return []
+
+    @faqs.setter
+    def faqs(self, value):
+        self.faqs_json = json.dumps(value or [])
 
     def __repr__(self):
         return f'<DocumentTemplate {self.slug} (₹{self.price})>'
@@ -230,3 +247,33 @@ class Payment(db.Model):
 
     def __repr__(self):
         return f'<Payment {self.id} for Order {self.order_id} ({self.status})>'
+
+
+class SupportInquiry(db.Model):
+    """
+    Customer support and contact inquiries submitted through website.
+    Supports administrative tracking, status triage, and resolution notes.
+    """
+    __tablename__ = 'support_inquiries'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(254), nullable=False, index=True)
+    phone = db.Column(db.String(30), nullable=True)
+    subject = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(30), nullable=False, default='open')  # open, in_progress, resolved
+    admin_notes = db.Column(db.Text, nullable=True)
+
+    created_at = db.Column(
+        db.DateTime, nullable=False,
+        default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = db.Column(
+        db.DateTime, nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
+
+    def __repr__(self):
+        return f'<SupportInquiry {self.id} {self.email} ({self.status})>'

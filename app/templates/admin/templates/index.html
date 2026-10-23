@@ -1,0 +1,189 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Legal Document Templates — NyayVeya Admin{% endblock %}
+{% block header_title %}Legal Document Templates{% endblock %}
+{% block header_subtitle %}Manage statutory legal drafting templates, pricing, categories, and publication status{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Top Action and Filter Bar -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+            <div>
+                <h2 class="font-serif font-bold text-base text-[#142D4E]">Statutory Drafts Catalogue</h2>
+                <p class="text-xs text-slate-500">Showing {{ pagination.total }} total templates</p>
+            </div>
+            <a href="{{ url_for('admin.template_create') }}"
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#07396B] to-[#0878C9] hover:from-[#061A35] hover:to-[#07396B] rounded-lg shadow-xs transition-all self-start md:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add New Template
+            </a>
+        </div>
+
+        <!-- Filter Form -->
+        <form method="GET" action="{{ url_for('admin.templates_list') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <!-- Search Text -->
+            <div class="lg:col-span-2">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ query_str }}"
+                           placeholder="Search title, slug, or keywords..."
+                           class="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div>
+                <select name="category" class="w-full py-2 px-3 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                    <option value="all">All Categories</option>
+                    {% for cat_key, cat in categories.items() %}
+                        <option value="{{ cat_key }}" {% if category == cat_key %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+                <select name="status" class="w-full py-2 px-3 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                    <option value="all" {% if status == 'all' or not status %}selected{% endif %}>All Statuses</option>
+                    <option value="active" {% if status == 'active' %}selected{% endif %}>Active (Published)</option>
+                    <option value="coming_soon" {% if status == 'coming_soon' %}selected{% endif %}>Coming Soon</option>
+                    <option value="draft" {% if status == 'draft' %}selected{% endif %}>Draft (Hidden)</option>
+                </select>
+            </div>
+
+            <!-- Submit & Reset Buttons -->
+            <div class="flex items-center gap-2">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-lg bg-[#142D4E] text-white text-xs font-bold hover:bg-[#071526] transition-colors">
+                    Filter
+                </button>
+                {% if query_str or (category and category != 'all') or (status and status != 'all') %}
+                    <a href="{{ url_for('admin.templates_list') }}" class="py-2 px-3 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200 transition-colors">
+                        Reset
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Templates Table Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200 font-bold">
+                        <th class="py-3 px-4">Template Title & Slug</th>
+                        <th class="py-3 px-4">Category</th>
+                        <th class="py-3 px-4">Price</th>
+                        <th class="py-3 px-4">Language</th>
+                        <th class="py-3 px-4">Publication Status</th>
+                        <th class="py-3 px-4">Orders</th>
+                        <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for tmpl in templates %}
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="py-3.5 px-4">
+                            <a href="{{ url_for('admin.template_detail', template_id=tmpl.id) }}" class="font-bold text-slate-900 text-sm hover:text-blue-700 block">
+                                {{ tmpl.title }}
+                            </a>
+                            <div class="text-[11px] font-mono text-slate-400 mt-0.5">
+                                /{{ tmpl.slug }}
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-700 capitalize font-medium">
+                            <span class="inline-flex items-center gap-1">
+                                <i data-lucide="tag" class="w-3 h-3 text-slate-400"></i>
+                                {{ tmpl.category }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900">
+                            ₹{{ tmpl.price }}
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-600 font-medium">
+                            {{ tmpl.language or 'English' }}
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <form method="POST" action="{{ url_for('admin.template_toggle_status', template_id=tmpl.id) }}" class="inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                {% if tmpl.status == 'active' %}
+                                    <button type="submit" title="Click to cycle status"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                    </button>
+                                {% elif tmpl.status == 'coming_soon' %}
+                                    <button type="submit" title="Click to cycle status"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Coming Soon
+                                    </button>
+                                {% else %}
+                                    <button type="submit" title="Click to cycle status"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors cursor-pointer">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Draft
+                                    </button>
+                                {% endif %}
+                            </form>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-600">
+                            <span class="font-bold text-slate-800">{{ tmpl.orders|length }}</span> orders
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="inline-flex items-center gap-1">
+                                <a href="{{ url_for('admin.template_detail', template_id=tmpl.id) }}"
+                                   class="p-1.5 text-slate-500 hover:text-slate-800 rounded hover:bg-slate-100" title="View details & preview">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </a>
+                                <a href="{{ url_for('admin.template_edit', template_id=tmpl.id) }}"
+                                   class="p-1.5 text-blue-600 hover:text-blue-800 rounded hover:bg-blue-50" title="Edit template">
+                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('admin.template_delete', template_id=tmpl.id) }}"
+                                      onsubmit="return confirm('Are you sure you want to delete or deactivate template: {{ tmpl.title }}?');" class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <button type="submit" class="p-1.5 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 cursor-pointer" title="Delete / Deactivate">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="py-10 text-center text-slate-400">
+                            <i data-lucide="file-question" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                            <p class="text-sm font-medium">No document templates match your filters.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        {% if pagination.pages > 1 %}
+        <div class="px-5 py-4 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <span class="text-xs text-slate-500">
+                Page <strong class="text-slate-800">{{ pagination.page }}</strong> of <strong class="text-slate-800">{{ pagination.pages }}</strong>
+            </span>
+            <div class="inline-flex items-center gap-1">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('admin.templates_list', page=pagination.prev_num, q=query_str, category=category, status=status) }}"
+                       class="px-2.5 py-1 text-xs font-semibold rounded border border-slate-300 bg-white hover:bg-slate-100 text-slate-700">
+                        &larr; Prev
+                    </a>
+                {% endif %}
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('admin.templates_list', page=pagination.next_num, q=query_str, category=category, status=status) }}"
+                       class="px-2.5 py-1 text-xs font-semibold rounded border border-slate-300 bg-white hover:bg-slate-100 text-slate-700">
+                        Next &rarr;
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

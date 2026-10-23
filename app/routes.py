@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, request, flash, redirect, url_for
-
+from app import db
+from app.models import SupportInquiry
 from app.catalogue import (
     get_all_documents,
     get_document_by_id,
@@ -54,6 +55,25 @@ def policies():
 def contact():
     """Contact page - platform support and inquiries."""
     if request.method == 'POST':
+        name = (request.form.get('name') or '').strip()
+        email = (request.form.get('email') or '').lower().strip()
+        subject = (request.form.get('subject') or '').strip()
+        message = (request.form.get('message') or '').strip()
+
+        if not name or not email or not message:
+            flash('Please complete all required fields.', 'danger')
+            return render_template('contact.html')
+
+        inquiry = SupportInquiry(
+            name=name,
+            email=email,
+            subject=subject or 'General Inquiry',
+            message=message,
+            status='open'
+        )
+        db.session.add(inquiry)
+        db.session.commit()
+
         flash('Thank you for reaching out! We have received your message and will respond shortly.', 'success')
         return redirect(url_for('main.contact'))
     return render_template('contact.html')

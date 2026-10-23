@@ -65,6 +65,14 @@
                             <i data-lucide="user" class="w-4 h-4"></i> {{ current_user.full_name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            {% if current_user.is_admin %}
+                            <li>
+                                <a class="dropdown-item py-2 text-[#0878C9] font-bold" href="{{ url_for('admin.dashboard') }}">
+                                    <i data-lucide="shield" class="w-4 h-4 inline me-2"></i> Admin Panel
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
                             <li>
                                 <a class="dropdown-item py-2" href="{{ url_for('auth.dashboard') }}">
                                     <i data-lucide="layout-dashboard" class="w-4 h-4 inline me-2"></i> Dashboard
@@ -108,6 +116,9 @@
             <a href="{{ url_for('main.contact') }}" class="navlink">Contact Us</a>
             <hr class="my-2 border-slate-200">
             {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="navlink font-bold text-[#0878C9]">Admin Control Panel</a>
+                {% endif %}
                 <a href="{{ url_for('auth.dashboard') }}" class="navlink font-bold">Dashboard ({{ current_user.full_name }})</a>
                 <a href="{{ url_for('auth.logout') }}" class="navlink text-danger">Logout</a>
             {% else %}
@@ -183,6 +194,7 @@
                     <a href="{{ url_for('main.policies') }}#privacy" class="text-white/80 hover:text-white text-decoration-none">Privacy Policy</a>
                     <a href="{{ url_for('main.policies') }}#terms" class="text-white/80 hover:text-white text-decoration-none">Terms of Service</a>
                     <a href="{{ url_for('main.policies') }}#refunds" class="text-white/80 hover:text-white text-decoration-none">Refund Policy</a>
+                    <a href="{{ url_for('admin.login') }}" class="text-white/40 hover:text-white/80 text-xs text-decoration-none pt-1">Admin Portal</a>
                 </nav>
             </div>
 

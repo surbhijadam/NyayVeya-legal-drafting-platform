@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Inquiry #{{ inquiry.id }} — NyayVeya Admin{% endblock %}
+{% block header_title %}Support Inquiry Resolution{% endblock %}
+{% block header_subtitle %}Review customer communication, assign status triage, and record resolution notes{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-4xl mx-auto">
+    <!-- Breadcrumb -->
+    <div class="flex items-center justify-between gap-4">
+        <a href="{{ url_for('admin.support_list') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Inquiries
+        </a>
+        <div class="text-xs text-slate-500">
+            Inquiry Ticket <strong class="font-mono text-slate-800">#{{ inquiry.id }}</strong>
+        </div>
+    </div>
+
+    <!-- Inquiry Header Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Customer Support Ticket</span>
+                    <span>&bull;</span>
+                    <span class="text-xs text-slate-500">{{ inquiry.created_at.strftime('%d %B %Y, %I:%M %p UTC') if inquiry.created_at }}</span>
+                </div>
+                <h2 class="font-serif font-bold text-xl text-[#142D4E]">{{ inquiry.subject }}</h2>
+                <div class="flex items-center gap-2 mt-1 text-xs text-slate-600">
+                    <span class="font-bold text-slate-800">{{ inquiry.name }}</span>
+                    <span>&bull;</span>
+                    <a href="mailto:{{ inquiry.email }}" class="font-mono text-blue-600 hover:underline">{{ inquiry.email }}</a>
+                </div>
+            </div>
+            <div>
+                {% if inquiry.status == 'open' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Open & Unresolved
+                    </span>
+                {% elif inquiry.status == 'in_progress' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> In Progress
+                    </span>
+                {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Resolved
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Customer Message Body -->
+        <div class="py-5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Message Body</span>
+            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-sm text-slate-800 leading-relaxed whitespace-pre-line">
+                {{ inquiry.message }}
+            </div>
+        </div>
+
+        <!-- Resolution & Notes Update Form -->
+        <div class="pt-5 border-t border-slate-100">
+            <h3 class="font-serif font-bold text-base text-[#142D4E] mb-3 flex items-center gap-2">
+                <i data-lucide="check-square" class="w-4 h-4 text-[#07396B]"></i> Administrative Triage & Notes
+            </h3>
+
+            <form method="POST" action="{{ url_for('admin.support_update_status', inquiry_id=inquiry.id) }}" class="space-y-4">
+                {{ form.hidden_tag() }}
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Status</label>
+                        {{ form.status(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#0878C9]") }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Internal Resolution Notes (Admin visible only)</label>
+                    {{ form.admin_notes(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0878C9]", rows="4", placeholder="Record details of communication, advocate referral, or resolution steps...") }}
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                    <span class="text-xs text-slate-400">
+                        Last updated: {{ inquiry.updated_at.strftime('%d %b %Y, %I:%M %p') if inquiry.updated_at }}
+                    </span>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-[#142D4E] hover:bg-[#071526] text-white transition-colors cursor-pointer flex items-center gap-1.5">
+                        <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Resolution Notes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

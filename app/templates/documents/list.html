@@ -43,7 +43,7 @@
             <article class="canva-card card overflow-hidden flex flex-col doc-card-item reveal-on-scroll reveal-delay-{{ (loop.index0 % 3) * 100 + 100 }}"
                      data-category="{{ cat_key }}"
                      data-title="{{ doc.title | lower }} {{ doc.short_description | lower }} {{ doc.category | lower }}"
-                     style="display: {{ 'flex' if active_cat_key == 'all' or active_cat_key == cat_key else 'none' }};">
+                     {% if active_cat_key != 'all' and active_cat_key != cat_key %}hidden{% endif %}>
                 <div class="doc-photo relative">
                     <img class="canva-image w-full h-44 object-cover" loading="lazy"
                          src="{{ doc.image_url }}" alt="{{ doc.title }}">

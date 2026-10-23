@@ -1,0 +1,145 @@
+{% extends "admin/base.html" %}
+
+{% block title %}User {{ user.email }} — NyayVeya Admin{% endblock %}
+{% block header_title %}User Account Profile{% endblock %}
+{% block header_subtitle %}Inspect customer account history, statutory drafts generated, and access permissions{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-5xl mx-auto">
+    <!-- Breadcrumb -->
+    <div class="flex items-center justify-between gap-4">
+        <a href="{{ url_for('admin.users_list') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to User Directory
+        </a>
+    </div>
+
+    <!-- User Header Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-6">
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-5 border-b border-slate-100">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#142D4E] to-[#0878C9] text-white flex items-center justify-center font-bold text-xl shadow-md shrink-0">
+                    {{ user.full_name[:2].upper() if user.full_name else 'US' }}
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Account ID #{{ user.id }}</span>
+                        <span>&bull;</span>
+                        <span class="text-xs text-slate-500">Member since {{ user.created_at.strftime('%d %B %Y') if user.created_at }}</span>
+                    </div>
+                    <h2 class="font-serif font-bold text-2xl text-[#142D4E]">{{ user.full_name }}</h2>
+                    <p class="text-xs font-mono text-slate-500 mt-0.5">{{ user.email }}</p>
+                </div>
+            </div>
+
+            <!-- Role & Status Badges -->
+            <div class="flex flex-col items-end gap-2">
+                <div class="flex items-center gap-2">
+                    {% if user.is_admin %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#142D4E] text-[#c5a253]">
+                            Administrator
+                        </span>
+                    {% else %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                            Customer Account
+                        </span>
+                    {% endif %}
+
+                    {% if user.is_active %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            Active
+                        </span>
+                    {% else %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                            Suspended
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Action Controls -->
+                {% if user.id != current_user.id %}
+                    <div class="flex items-center gap-2 pt-2">
+                        <form method="POST" action="{{ url_for('admin.user_toggle_role', user_id=user.id) }}" class="inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="px-3 py-1 text-xs font-bold rounded border border-slate-300 hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer">
+                                {{ 'Demote to Customer' if user.is_admin else 'Promote to Admin' }}
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('admin.user_toggle_status', user_id=user.id) }}" class="inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="px-3 py-1 text-xs font-bold rounded {{ 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100' if user.is_active else 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' }} transition-colors cursor-pointer">
+                                {{ 'Suspend Access' if user.is_active else 'Activate Access' }}
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <span class="text-xs text-slate-400 italic">Self-protection: Cannot alter own administrative privileges.</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-5 text-center">
+            <div class="p-3 bg-slate-50 rounded-lg">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Total Orders Logged</span>
+                <span class="text-xl font-black text-[#142D4E]">{{ orders|length }}</span>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Total Spend (Verified)</span>
+                <span class="text-xl font-black text-emerald-600">₹{{ '{:,}'.format(total_spent) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Order History Table -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-6">
+        <h3 class="font-serif font-bold text-base text-[#142D4E] mb-4 flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-4 h-4 text-[#07396B]"></i> Associated Orders & Draft History
+        </h3>
+
+        {% if orders %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200 font-bold">
+                        <th class="py-2.5 px-3">Order Number</th>
+                        <th class="py-2.5 px-3">Document Template</th>
+                        <th class="py-2.5 px-3">Amount</th>
+                        <th class="py-2.5 px-3">Status</th>
+                        <th class="py-2.5 px-3">Date</th>
+                        <th class="py-2.5 px-3 text-right">Inspection</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for order in orders %}
+                    <tr class="hover:bg-slate-50/70">
+                        <td class="py-3 px-3 font-mono font-bold text-slate-800">{{ order.order_number }}</td>
+                        <td class="py-3 px-3 text-slate-700">{{ order.document_template.title if order.document_template else 'Custom Draft' }}</td>
+                        <td class="py-3 px-3 font-bold text-slate-900">₹{{ order.amount }}</td>
+                        <td class="py-3 px-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                                {% if order.status == 'paid' %} bg-emerald-50 text-emerald-700
+                                {% elif order.status == 'pending' %} bg-amber-50 text-amber-700
+                                {% else %} bg-rose-50 text-rose-700 {% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-500">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') if order.created_at }}</td>
+                        <td class="py-3 px-3 text-right">
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="text-blue-700 hover:underline font-bold">
+                                View Order &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded text-center">
+            This customer has not generated any legal draft orders yet.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

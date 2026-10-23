@@ -1,0 +1,184 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} — NyayVeya Admin{% endblock %}
+{% block header_title %}{{ title }}{% endblock %}
+{% block header_subtitle %}Configure statutory legal template details, statutory descriptions, pricing, and questionnaire metadata{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="mb-4">
+        <a href="{{ url_for('admin.templates_list') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Templates
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-6 md:p-8">
+        <form method="POST" novalidate class="space-y-6">
+            {{ form.hidden_tag() }}
+
+            <!-- Section 1: Basic Identifiers -->
+            <div class="space-y-4">
+                <h3 class="font-serif font-bold text-base text-[#142D4E] pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4 text-[#07396B]"></i> Primary Information & Identification
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                            Document Title <span class="text-rose-500">*</span>
+                        </label>
+                        {{ form.title(class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]" + (" border-red-500" if form.title.errors else ""), placeholder="e.g. Cheque Bounce Legal Notice") }}
+                        {% for error in form.title.errors %}
+                            <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- URL Slug -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                            URL Slug <span class="text-rose-500">*</span>
+                        </label>
+                        {{ form.slug(class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-[#0878C9]" + (" border-red-500" if form.slug.errors else ""), placeholder="e.g. cheque-bounce-notice") }}
+                        <span class="text-[11px] text-slate-400">Unique lowercase identifier used in links.</span>
+                        {% for error in form.slug.errors %}
+                            <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Subtitle / Statutory Reference -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        Subtitle / Statutory Act Reference
+                    </label>
+                    {{ form.subtitle(class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", placeholder="e.g. Demand Notice under Section 138 of the Negotiable Instruments Act, 1881") }}
+                    {% for error in form.subtitle.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Category, Price, Language, Status Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Category <span class="text-rose-500">*</span></label>
+                        {{ form.category(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0878C9]") }}
+                    </div>
+
+                    <!-- Price -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Price (₹ INR) <span class="text-rose-500">*</span></label>
+                        {{ form.price(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", type="number") }}
+                        {% for error in form.price.errors %}
+                            <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Language -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Language <span class="text-rose-500">*</span></label>
+                        {{ form.language(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0878C9]") }}
+                    </div>
+
+                    <!-- Publication Status -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Status <span class="text-rose-500">*</span></label>
+                        {{ form.status(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0878C9]") }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Visual Badges & Icons -->
+            <div class="space-y-4 pt-4">
+                <h3 class="font-serif font-bold text-base text-[#142D4E] pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i data-lucide="palette" class="w-4 h-4 text-[#C5A253]"></i> Visual Customization & Card Badges
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Card Badge Text</label>
+                        {{ form.badge_text(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", placeholder="e.g. Essential, Popular") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Badge Color Style</label>
+                        {{ form.badge_class(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#0878C9]") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Icon Identifier</label>
+                        {{ form.icon(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", placeholder="e.g. bi-file-earmark-medical") }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Statutory Descriptions -->
+            <div class="space-y-4 pt-4">
+                <h3 class="font-serif font-bold text-base text-[#142D4E] pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i data-lucide="align-left" class="w-4 h-4 text-[#0878C9]"></i> Descriptions & Statutory Text
+                </h3>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        Short Summary (Shown on Catalogue Cards) <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.short_description(class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="2", placeholder="Concise overview of the document's legal scope.") }}
+                    {% for error in form.short_description.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        Full Statutory Legal Description <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.long_description(class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="6", placeholder="Detailed explanation of the applicable statute, legal preconditions, and jurisdiction.") }}
+                    {% for error in form.long_description.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Section 4: Questionnaire Lists & Metadata -->
+            <div class="space-y-4 pt-4">
+                <h3 class="font-serif font-bold text-base text-[#142D4E] pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i data-lucide="list-checks" class="w-4 h-4 text-[#10B981]"></i> Lists & Statutory Instructions (One per line)
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">What You Get (Features)</label>
+                        {{ form.what_you_get(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="4", placeholder="Print-ready PDF\nEditable Word (.docx) file\nDispatch guidelines") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Information Needed from User</label>
+                        {{ form.information_needed(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="4", placeholder="Party details\nCheque number and memo date\nTransaction details") }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Important Notes & Statutory Warnings</label>
+                    {{ form.important_notes(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="3", placeholder="Strict 30-Day Deadline: Notice must be dispatched within 30 days.\nMandatory Dispatch: Must be sent via RPAD / Speed Post.") }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        Frequently Asked Questions (Format: Question | Answer)
+                    </label>
+                    {{ form.faqs(class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-[#0878C9]", rows="4", placeholder="What is the limitation period? | The notice must be dispatched within 30 days from receiving the bank memo.\nIs an advocate mandatory? | No, an aggrieved person can issue the notice directly.") }}
+                    <span class="text-[11px] text-slate-400">Separate the question and answer with a vertical pipe symbol (|) on each line.</span>
+                </div>
+            </div>
+
+            <!-- Form Action Buttons -->
+            <div class="pt-6 border-t border-slate-200 flex items-center justify-end gap-3">
+                <a href="{{ url_for('admin.templates_list') }}" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#061A35] via-[#07396B] to-[#0878C9] hover:from-[#07396B] hover:to-[#0878C9] rounded-lg shadow-md hover:shadow-lg transition-all cursor-pointer">
+                    <i data-lucide="check" class="w-4 h-4 inline mr-1"></i> Save Document Template
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

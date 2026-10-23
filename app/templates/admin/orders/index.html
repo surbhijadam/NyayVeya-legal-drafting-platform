@@ -1,0 +1,169 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Orders & Payments — NyayVeya Admin{% endblock %}
+{% block header_title %}Orders & Payments Management{% endblock %}
+{% block header_subtitle %}Inspect customer drafting requests, verified transactions, and fulfillment files{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Filter Bar Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5">
+        <form method="GET" action="{{ url_for('admin.orders_list') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Search Text -->
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Search Orders</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ query_str }}"
+                           placeholder="Order #, name, or email..."
+                           class="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-slate-300 text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                </div>
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Payment Status</label>
+                <select name="status" class="w-full py-2 px-3 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                    <option value="all" {% if status == 'all' or not status %}selected{% endif %}>All Payment Statuses</option>
+                    <option value="paid" {% if status == 'paid' %}selected{% endif %}>Paid (Verified)</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="failed" {% if status == 'failed' %}selected{% endif %}>Failed</option>
+                    <option value="refunded" {% if status == 'refunded' %}selected{% endif %}>Refunded</option>
+                </select>
+            </div>
+
+            <!-- Template Filter -->
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Document Template</label>
+                <select name="template_id" class="w-full py-2 px-3 text-xs rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#0878C9]">
+                    <option value="">All Legal Templates</option>
+                    {% for tmpl in templates %}
+                        <option value="{{ tmpl.id }}" {% if template_id == tmpl.id %}selected{% endif %}>{{ tmpl.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit / Reset Buttons -->
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-lg bg-[#142D4E] text-white text-xs font-bold hover:bg-[#071526] transition-colors">
+                    Filter Orders
+                </button>
+                {% if query_str or (status and status != 'all') or template_id %}
+                    <a href="{{ url_for('admin.orders_list') }}" class="py-2 px-3 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200 transition-colors">
+                        Reset
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Orders Table Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200 font-bold">
+                        <th class="py-3 px-4">Order Number</th>
+                        <th class="py-3 px-4">Customer Details</th>
+                        <th class="py-3 px-4">Document Type</th>
+                        <th class="py-3 px-4">Amount</th>
+                        <th class="py-3 px-4">Payment Status</th>
+                        <th class="py-3 px-4">Generated Files</th>
+                        <th class="py-3 px-4">Date & Time</th>
+                        <th class="py-3 px-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for order in orders %}
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="py-3.5 px-4 font-mono font-bold text-slate-900">
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="text-blue-700 hover:underline">
+                                {{ order.order_number }}
+                            </a>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-slate-800">{{ order.user.full_name }}</div>
+                            <div class="text-[11px] text-slate-400">{{ order.user.email }}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-700 font-medium">
+                            {{ order.document_template.title if order.document_template else 'Custom Draft' }}
+                        </td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900 text-sm">
+                            ₹{{ order.amount }}
+                        </td>
+                        <td class="py-3.5 px-4">
+                            {% if order.status == 'paid' %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i data-lucide="check" class="w-3 h-3"></i> Paid
+                                </span>
+                            {% elif order.status == 'pending' %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <i data-lucide="clock" class="w-3 h-3"></i> Pending
+                                </span>
+                            {% elif order.status == 'refunded' %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                                    Refunded
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    Failed
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-500">
+                            <div class="flex items-center gap-2">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {{ 'bg-blue-50 text-blue-700' if order.docx_filename else 'bg-slate-100 text-slate-400' }}">DOCX</span>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {{ 'bg-red-50 text-red-700' if order.pdf_filename else 'bg-slate-100 text-slate-400' }}">PDF</span>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-500">
+                            <div>{{ order.created_at.strftime('%d %b %Y') if order.created_at }}</div>
+                            <div class="text-[10px] text-slate-400">{{ order.created_at.strftime('%I:%M %p') if order.created_at }}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
+                               class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-colors">
+                                View <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="py-10 text-center text-slate-400">
+                            <i data-lucide="shopping-cart" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                            <p class="text-sm font-medium">No orders found matching your search criteria.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        {% if pagination.pages > 1 %}
+        <div class="px-5 py-4 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <span class="text-xs text-slate-500">
+                Page <strong class="text-slate-800">{{ pagination.page }}</strong> of <strong class="text-slate-800">{{ pagination.pages }}</strong> ({{ pagination.total }} orders total)
+            </span>
+            <div class="inline-flex items-center gap-1">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('admin.orders_list', page=pagination.prev_num, q=query_str, status=status, template_id=template_id) }}"
+                       class="px-2.5 py-1 text-xs font-semibold rounded border border-slate-300 bg-white hover:bg-slate-100 text-slate-700">
+                        &larr; Prev
+                    </a>
+                {% endif %}
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('admin.orders_list', page=pagination.next_num, q=query_str, status=status, template_id=template_id) }}"
+                       class="px-2.5 py-1 text-xs font-semibold rounded border border-slate-300 bg-white hover:bg-slate-100 text-slate-700">
+                        Next &rarr;
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -65,6 +65,10 @@ def login():
             flash('Invalid email address or password. Please try again.', 'danger')
             return render_template('auth/login.html', form=form)
 
+        if not user.is_active:
+            flash('Your account has been suspended. Please contact customer support.', 'danger')
+            return render_template('auth/login.html', form=form)
+
         # Log the user in
         login_user(user, remember=form.remember_me.data)
         flash(f'Welcome back, {user.full_name}!', 'success')

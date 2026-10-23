@@ -1,5 +1,7 @@
 import os
+import click
 from flask import Flask
+from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -14,6 +16,63 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect()
+
+
+def _run_sqlite_column_migrations(app):
+    """Safely apply non-destructive schema additions to existing SQLite tables."""
+    from sqlalchemy import inspect, text
+    with app.app_context():
+        try:
+            inspector = inspect(db.engine)
+            tables = inspector.get_table_names()
+            with db.engine.connect() as conn:
+                if 'users' in tables:
+                    cols = [c['name'] for c in inspector.get_columns('users')]
+                    if 'is_admin' not in cols:
+                        conn.execute(text("ALTER TABLE users ADD COLUMN is_admin BOOLEAN NOT NULL DEFAULT 0"))
+                    if 'is_active' not in cols:
+                        conn.execute(text("ALTER TABLE users ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT 1"))
+                    conn.commit()
+
+                if 'document_templates' in tables:
+                    cols = [c['name'] for c in inspector.get_columns('document_templates')]
+                    if 'language' not in cols:
+                        conn.execute(text("ALTER TABLE document_templates ADD COLUMN language VARCHAR(50) NOT NULL DEFAULT 'English'"))
+                    if 'faqs_json' not in cols:
+                        conn.execute(text("ALTER TABLE document_templates ADD COLUMN faqs_json TEXT DEFAULT '[]'"))
+                    conn.commit()
+        except Exception:
+            pass
+
+
+@click.command('create-admin')
+@click.option('--email', prompt=True, help='Administrator email')
+@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Administrator password')
+@click.option('--name', default='NyayVeya Admin', help='Administrator full name')
+@with_appcontext
+def create_admin_command(email, password, name):
+    """CLI command to safely create or promote an administrator account."""
+    from app.models import User
+    email = email.lower().strip()
+    user = User.query.filter_by(email=email).first()
+    if user:
+        user.is_admin = True
+        user.is_active = True
+        user.full_name = name or user.full_name
+        user.set_password(password)
+        db.session.commit()
+        click.echo(f"Success: Existing user '{email}' promoted to Administrator.")
+    else:
+        user = User(
+            full_name=name or 'NyayVeya Administrator',
+            email=email,
+            is_admin=True,
+            is_active=True
+        )
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        click.echo(f"Success: Administrator account created for '{email}'.")
 
 
 def create_app(test_config=None):
@@ -68,11 +127,38 @@ def create_app(test_config=None):
     from app.generator import generator_bp
     app.register_blueprint(generator_bp)
 
-    # Ensure models are imported and tables are created in development
+    from app.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+    # Register CLI commands
+    app.cli.add_command(create_admin_command)
+
+    # Ensure models are imported and tables/columns are migrated
     with app.app_context():
         from app import models
         db.create_all()
+        _run_sqlite_column_migrations(app)
         from app.catalogue import seed_initial_templates
         seed_initial_templates()
+
+        # Optional: Auto-seed initial admin from environment variables if present
+        admin_email = os.environ.get('ADMIN_EMAIL')
+        admin_pass = os.environ.get('ADMIN_PASSWORD')
+        if admin_email and admin_pass:
+            admin_user = models.User.query.filter_by(email=admin_email.lower().strip()).first()
+            if not admin_user:
+                admin_user = models.User(
+                    full_name=os.environ.get('ADMIN_NAME', 'NyayVeya Admin'),
+                    email=admin_email.lower().strip(),
+                    is_admin=True,
+                    is_active=True
+                )
+                admin_user.set_password(admin_pass)
+                db.session.add(admin_user)
+                db.session.commit()
+            elif not admin_user.is_admin:
+                admin_user.is_admin = True
+                admin_user.is_active = True
+                db.session.commit()
 
     return app

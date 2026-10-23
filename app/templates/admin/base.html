@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration — NyayVeya{% endblock %}</title>
+
+    <!-- Google Fonts: Merriweather (headings) + Lato (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+
+    <!-- Chart.js for interactive analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" type="text/javascript"></script>
+
+    <!-- Base NyayVeya Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+
+    <style>
+        :root {
+            --admin-navy: #0f223b;
+            --admin-dark: #071526;
+            --admin-gold: #c5a253;
+            --admin-maroon: #6f1d2c;
+        }
+        .admin-sidebar {
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .admin-sidebar.collapsed {
+            width: 5rem !important;
+        }
+        .admin-sidebar.collapsed .sidebar-text,
+        .admin-sidebar.collapsed .sidebar-badge {
+            display: none !important;
+        }
+        .admin-sidebar.collapsed .sidebar-brand-text {
+            display: none !important;
+        }
+        .admin-sidebar.collapsed .sidebar-nav-item {
+            justify-content: center !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        .stat-card-gradient {
+            background: linear-gradient(135deg, rgba(20,45,78,0.03) 0%, rgba(197,162,83,0.05) 100%);
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full antialiased font-sans text-slate-800 bg-[#f8fafc] flex flex-col min-h-screen">
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 z-40 hidden md:hidden transition-opacity" onclick="toggleMobileSidebar()"></div>
+
+    <div class="flex flex-1 min-h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="admin-sidebar" class="admin-sidebar fixed inset-y-0 left-0 z-50 w-64 bg-[#071526] text-slate-300 flex flex-col justify-between -translate-x-full md:translate-x-0 md:static shrink-0 shadow-xl border-r border-slate-800">
+            <!-- Brand & Portal Banner -->
+            <div class="flex flex-col">
+                <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                    <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3">
+                        <img src="{{ url_for('static', filename='images/logo-icon.png') }}"
+                             alt="NyayVeya Seal" class="h-9 w-9 object-contain rounded shrink-0">
+                        <div class="sidebar-brand-text">
+                            <span class="font-bold text-lg tracking-tight text-white block leading-tight">
+                                <span class="text-[#38bdf8]">Nyay</span><span class="text-[#fbbf24]">Veya</span>
+                            </span>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-[#c5a253]">Admin Console</span>
+                        </div>
+                    </a>
+                    <!-- Mobile close button -->
+                    <button class="md:hidden text-slate-400 hover:text-white p-1" onclick="toggleMobileSidebar()">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="p-3 space-y-1.5 text-sm font-medium">
+                    <p class="sidebar-text px-3 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Core Management</p>
+
+                    <a href="{{ url_for('admin.dashboard') }}"
+                       class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {{ 'bg-gradient-to-r from-[#0878C9] to-[#07396B] text-white shadow-sm font-semibold' if request.endpoint == 'admin.dashboard' else 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 text-[#38bdf8]"></i>
+                        <span class="sidebar-text">Dashboard & Analytics</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.templates_list') }}"
+                       class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {{ 'bg-gradient-to-r from-[#0878C9] to-[#07396B] text-white shadow-sm font-semibold' if request.endpoint and request.endpoint.startswith('admin.template') else 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <i data-lucide="file-text" class="w-5 h-5 shrink-0 text-[#f59e0b]"></i>
+                        <span class="sidebar-text">Legal Templates</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.orders_list') }}"
+                       class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {{ 'bg-gradient-to-r from-[#0878C9] to-[#07396B] text-white shadow-sm font-semibold' if request.endpoint and request.endpoint.startswith('admin.order') else 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 shrink-0 text-[#10b981]"></i>
+                        <span class="sidebar-text">Orders & Payments</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.users_list') }}"
+                       class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {{ 'bg-gradient-to-r from-[#0878C9] to-[#07396B] text-white shadow-sm font-semibold' if request.endpoint and request.endpoint.startswith('admin.user') else 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <i data-lucide="users" class="w-5 h-5 shrink-0 text-[#a855f7]"></i>
+                        <span class="sidebar-text">Users Directory</span>
+                    </a>
+
+                    <p class="sidebar-text px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Customer Relations</p>
+
+                    <a href="{{ url_for('admin.support_list') }}"
+                       class="sidebar-nav-item flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors {{ 'bg-gradient-to-r from-[#0878C9] to-[#07396B] text-white shadow-sm font-semibold' if request.endpoint and request.endpoint.startswith('admin.support') else 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="message-square" class="w-5 h-5 shrink-0 text-[#ec4899]"></i>
+                            <span class="sidebar-text">Support Inquiries</span>
+                        </div>
+                    </a>
+
+                    <p class="sidebar-text px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Shortcuts</p>
+
+                    <a href="{{ url_for('main.home') }}" target="_blank"
+                       class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                        <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
+                        <span class="sidebar-text text-xs">View Public Website</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar User & Logout Footer -->
+            <div class="p-3 border-t border-slate-800 bg-[#06111f]">
+                <div class="flex items-center gap-3 p-2 rounded-lg bg-slate-800/50">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#6F1D2C] to-[#C5A253] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow">
+                        {{ current_user.full_name[:2].upper() if current_user.full_name else 'AD' }}
+                    </div>
+                    <div class="sidebar-text overflow-hidden flex-1">
+                        <p class="text-xs font-bold text-white truncate">{{ current_user.full_name }}</p>
+                        <p class="text-[11px] text-slate-400 truncate">{{ current_user.email }}</p>
+                    </div>
+                    <a href="{{ url_for('admin.logout') }}" title="Sign Out"
+                       class="text-slate-400 hover:text-rose-400 p-1.5 rounded transition-colors shrink-0">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Viewport Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+            <!-- Top Navigation Bar -->
+            <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+                <div class="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <!-- Mobile Hamburger Button -->
+                        <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900 p-2 rounded-lg hover:bg-slate-100">
+                            <i data-lucide="menu" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Desktop Sidebar Collapse Toggle -->
+                        <button onclick="toggleDesktopSidebar()" class="hidden md:inline-flex text-slate-500 hover:text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="Toggle Sidebar Width">
+                            <i data-lucide="panel-left" class="w-5 h-5"></i>
+                        </button>
+
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-serif font-bold text-lg md:text-xl text-[#142D4E]">
+                                    {% block header_title %}Admin Control Panel{% endblock %}
+                                </h1>
+                                <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    Live Database
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 hidden md:block">
+                                {% block header_subtitle %}NyayVeya Statutory Drafting Administration & Governance{% endblock %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Top Bar Right Actions -->
+                    <div class="flex items-center gap-3">
+                        <a href="{{ url_for('main.home') }}" target="_blank"
+                           class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                            <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-600"></i>
+                            <span>View Store</span>
+                        </a>
+
+                        <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-700 hidden sm:inline">{{ current_user.full_name }}</span>
+                            <span class="text-[10px] font-bold bg-[#142D4E] text-[#c5a253] px-2 py-0.5 rounded uppercase tracking-wider">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Alert Messages -->
+            <div class="px-4 sm:px-6 lg:px-8 pt-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="mb-4 p-4 rounded-lg flex items-start justify-between shadow-xs border transition-all
+                                {% if category == 'success' %} bg-emerald-50 text-emerald-800 border-emerald-200
+                                {% elif category == 'danger' %} bg-rose-50 text-rose-800 border-rose-200
+                                {% elif category == 'warning' %} bg-amber-50 text-amber-800 border-amber-200
+                                {% else %} bg-blue-50 text-blue-800 border-blue-200 {% endif %}" role="alert">
+                                <div class="flex items-center gap-2.5 text-sm font-medium">
+                                    {% if category == 'success' %}
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 shrink-0"></i>
+                                    {% elif category == 'danger' %}
+                                        <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600 shrink-0"></i>
+                                    {% elif category == 'warning' %}
+                                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0"></i>
+                                    {% else %}
+                                        <i data-lucide="info" class="w-5 h-5 text-blue-600 shrink-0"></i>
+                                    {% endif %}
+                                    <span>{{ message }}</span>
+                                </div>
+                                <button type="button" class="text-slate-400 hover:text-slate-600 p-1" onclick="this.parentElement.remove()">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Main Page Content -->
+            <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6">
+                {% block content %}{% endblock %}
+            </main>
+
+            <!-- Admin Footer -->
+            <footer class="mt-auto border-t border-slate-200 bg-white py-4 px-4 sm:px-6 lg:px-8 text-xs text-slate-500 flex flex-wrap justify-between items-center gap-2">
+                <div>
+                    <strong>NyayVeya™</strong> Online Legal Drafting Portal &copy; 2026. All rights reserved.
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-emerald-700 flex items-center gap-1 font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Operational
+                    </span>
+                    <span>Admin Security v2.4</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Admin JS Scripts -->
+    <script>
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function toggleDesktopSidebar() {
+            const sidebar = document.getElementById('admin-sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
