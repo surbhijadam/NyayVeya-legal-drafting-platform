@@ -39,18 +39,22 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
 
-    # Where to redirect unauthenticated users (route created in Phase 3)
-    login_manager.login_view = 'main.home'
+    # Where to redirect unauthenticated users trying to access @login_required routes
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
 
-    # Placeholder user loader - will be replaced with a real one in Phase 3
-    # Flask-Login requires this callback to work, even on public pages
+    # User loader callback - Flask-Login calls this to reload the user from the session
     @login_manager.user_loader
     def load_user(user_id):
-        return None  # No User model yet; returns None (anonymous)
+        from app.models import User
+        return db.session.get(User, int(user_id))
 
     # --- Register blueprints (route groups) ---
     from app.routes import main_bp
     app.register_blueprint(main_bp)
+
+    from app.auth import auth_bp
+    app.register_blueprint(auth_bp)
 
     return app
