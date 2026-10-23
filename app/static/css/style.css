@@ -489,8 +489,9 @@ p {
 /* ===== RESPONSIVE MEDIA QUERIES ===== */
 /* ======================================================== */
 
-/* --- Tablet Landscape / Small Desktop (<= 1024px) --- */
-@media (max-width: 1024px) {
+/* --- Tablets & Small Desktops (<= 1199px) --- */
+/* Covers iPad Pro 13" (1032px), iPad Pro 12.9" (1024px), Surface Pro (912px), iPad Air (820px) */
+@media (max-width: 1199px) {
     .desktop-nav {
         display: none !important;
     }
@@ -502,23 +503,34 @@ p {
     }
 
     .work-grid {
-        grid-template-columns: 1fr 320px;
-        gap: 28px;
+        grid-template-columns: 1fr !important;
+        gap: 32px;
     }
 
     .hero-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
+        grid-template-columns: 1fr !important;
+        gap: 32px;
+    }
+
+    .hero-photo {
+        height: 320px;
+        margin-top: 0;
     }
 
     .small-grid, .catalogue-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 24px;
     }
 
     .dashboard-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px;
+    }
+
+    .category-strip .shell {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -529,17 +541,13 @@ p {
         gap: 32px;
     }
 
-    .work-grid aside {
-        order: -1; /* Place action card / price above or neatly stacked */
-    }
-
     .hero-grid {
         grid-template-columns: 1fr !important;
         gap: 24px;
     }
 
     .hero-photo {
-        height: 300px;
+        height: 280px;
         margin-top: 0;
     }
 
