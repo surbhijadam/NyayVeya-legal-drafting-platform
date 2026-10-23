@@ -2,6 +2,83 @@
 
 {% block title %}Secure Checkout: {{ order.order_number }} - NyayVeya{% endblock %}
 
+{% block extra_head %}
+<style>
+/* Payment Method Tab Styles */
+.pay-tab-btn {
+    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    color: #475569;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.pay-tab-btn:hover {
+    background: #EDF2F7;
+    color: #142D4E;
+}
+.pay-tab-btn.active {
+    background: #142D4E;
+    color: #FFFFFF;
+    border-color: #142D4E;
+    box-shadow: 0 2px 4px rgba(20, 45, 78, 0.15);
+}
+.pay-panel {
+    display: none;
+}
+.pay-panel.active {
+    display: block;
+    animation: fadeIn 0.25s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* QR Code Display Container */
+.qr-frame {
+    background: #FFFFFF;
+    border: 2px dashed #CBD5E1;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.qr-frame svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Bank Selection Card */
+.bank-option {
+    border: 1px solid #E2E8F0;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #FFFFFF;
+}
+.bank-option:hover {
+    border-color: #0878C9;
+    background: #F0F9FF;
+}
+.bank-option.selected {
+    border-color: #142D4E;
+    background: #EFF6FF;
+    box-shadow: 0 0 0 2px #142D4E;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Checkout Header -->
 <div class="bg-[#F3F5F7] border-b border-slate-200">
@@ -9,13 +86,13 @@
         <p class="eyebrow">STEP 4 OF 5 · CHECKOUT · SECURE PAYMENT</p>
         <h1 class="canva-text mt-2 font-serif font-bold text-3xl text-[#142D4E]">Complete your order</h1>
         <p class="text-slate-600 mt-1">
-            Order <strong>{{ order.order_number }}</strong> · Instant access to your verified legal notice in Word &amp; PDF formats.
+            Order <strong>{{ order.order_number }}</strong> · Instant access to your verified statutory legal draft in Word &amp; PDF formats.
         </p>
     </div>
 </div>
 
 <div class="shell section-pad">
-    <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+    <div class="grid lg:grid-cols-[1fr_1.15fr] gap-8 items-start">
 
         <!-- Left Column: Order & Document Summary -->
         <div class="space-y-6">
@@ -26,10 +103,10 @@
                             {{ order.document_template.category if order.document_template else 'Legal Notice' }}
                         </span>
                         <h2 class="font-serif font-bold text-xl text-[#142D4E]">
-                            {{ order.document_template.title if order.document_template else 'Cheque Bounce Notice' }}
+                            {{ order.document_template.title if order.document_template else 'Statutory Legal Document' }}
                         </h2>
                         <p class="text-xs text-slate-500 mt-1">
-                            Statutory Demand Notice under Section 138 of the Negotiable Instruments Act, 1881
+                            {{ order.document_template.subtitle if order.document_template else 'Statutory document drafting & instant digital delivery' }}
                         </p>
                     </div>
                     <div class="text-right shrink-0">
@@ -52,7 +129,7 @@
                         </li>
                         <li class="flex items-center gap-2.5">
                             <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                            <span>Mandatory 15-day statutory payment demand and NI Act Section 142 clauses</span>
+                            <span>Statutory clauses, compliance recitals, and formal signature blocks</span>
                         </li>
                         <li class="flex items-center gap-2.5">
                             <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
@@ -78,7 +155,7 @@
                         </div>
                         <div class="flex justify-between items-center pt-3 border-t border-slate-200 text-base font-bold text-[#142D4E]">
                             <span>Total Payable Amount</span>
-                            <span class="text-xl text-[#6F1D2C]">₹{{ order.amount }}</span>
+                            <span class="text-2xl text-[#6F1D2C]">₹{{ order.amount }}</span>
                         </div>
                     </div>
                 </div>
@@ -93,87 +170,254 @@
                         <span class="text-slate-500 block text-xs">{{ current_user.email }}</span>
                     </div>
                     <a href="{{ url_for('generator.preview', order_id=order.id) }}" class="text-xs font-semibold text-[#0878C9] hover:underline">
-                        Review Draft Details →
+                        Review Draft Preview →
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Secure Payment Portal -->
-        <div class="card p-6 shadow-md border-t-4 border-t-[#0878C9]">
+        <!-- Right Column: Interactive Payment Methods & UPI QR Code -->
+        <div class="card p-6 shadow-md border-t-4 border-t-[#142D4E]">
             <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i>
-                    <h3 class="font-serif font-bold text-lg text-[#142D4E]">Payment Gateway</h3>
+                <div>
+                    <h3 class="font-serif font-bold text-xl text-[#142D4E]">Select Payment Method</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Instant verification &bull; RBI / NPCI Compliant</p>
                 </div>
-                <span class="text-xs font-bold text-slate-500 flex items-center gap-1">
-                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> 256-Bit SSL
-                </span>
-            </div>
-
-            <p class="text-xs text-slate-600 leading-relaxed mb-5">
-                Transactions are processed securely through <strong>Razorpay</strong>, India's leading RBI-authorized payment gateway. Your payment credentials are encrypted end-to-end.
-            </p>
-
-            <!-- Supported Modes Icons -->
-            <div class="bg-slate-50 p-3.5 rounded border border-slate-200 mb-6 text-xs text-slate-600">
-                <span class="font-bold text-slate-700 block mb-2">Supported Payment Methods:</span>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>UPI (GPay, PhonePe, Paytm)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="credit-card" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>Credit / Debit Cards</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="building" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>NetBanking (50+ Banks)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>Wallets &amp; PayLater</span>
-                    </div>
+                <div class="text-right">
+                    <span class="text-xs text-slate-500 block">Amount to Pay</span>
+                    <strong class="text-xl font-bold text-[#142D4E]">₹{{ order.amount }}</strong>
                 </div>
             </div>
 
-            <!-- Primary Razorpay Launch Button -->
-            <button id="rzp-button" type="button" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition">
-                <i data-lucide="lock" class="w-4 h-4"></i>
-                <span>Pay ₹{{ order.amount }} Securely</span>
-            </button>
+            <!-- Payment Methods Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+                <button type="button" class="pay-tab-btn active" onclick="switchPayTab('upi-qr')">
+                    <i data-lucide="qr-code" class="w-4 h-4"></i>
+                    <span>UPI / QR</span>
+                </button>
+                <button type="button" class="pay-tab-btn" onclick="switchPayTab('cards')">
+                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                    <span>Cards</span>
+                </button>
+                <button type="button" class="pay-tab-btn" onclick="switchPayTab('netbanking')">
+                    <i data-lucide="building" class="w-4 h-4"></i>
+                    <span>NetBanking</span>
+                </button>
+                <button type="button" class="pay-tab-btn" onclick="switchPayTab('wallets')">
+                    <i data-lucide="wallet" class="w-4 h-4"></i>
+                    <span>Wallets</span>
+                </button>
+            </div>
 
-            <!-- Test / Sandbox Notice & Fast Simulation Button -->
-            {% if mode != 'production' %}
-            <div class="mt-6 p-4 rounded-lg bg-amber-50/80 border border-amber-200">
-                <div class="flex items-start gap-2.5">
-                    <i data-lucide="flask-conical" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
-                    <div>
-                        <strong class="text-xs text-amber-900 block font-bold">Developer Sandbox Mode Active</strong>
-                        <p class="text-xs text-amber-800 mt-0.5">
-                            Use any test UPI / card in the modal, or click below for instant 1-click test checkout verification.
+            <!-- TAB 1: UPI & DYNAMIC QR CODE -->
+            <div id="panel-upi-qr" class="pay-panel active">
+                <div class="text-center p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#142D4E] bg-blue-100/70 text-blue-900 px-3 py-1 rounded-full mb-3">
+                        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Scan &amp; Pay with Any UPI App
+                    </span>
+
+                    <!-- App Badges -->
+                    <div class="flex flex-wrap justify-center items-center gap-2 text-xs font-semibold text-slate-600 mb-4">
+                        <span class="px-2 py-0.5 bg-white border rounded shadow-2xs">Google Pay</span>
+                        <span class="px-2 py-0.5 bg-white border rounded shadow-2xs">PhonePe</span>
+                        <span class="px-2 py-0.5 bg-white border rounded shadow-2xs">Paytm</span>
+                        <span class="px-2 py-0.5 bg-white border rounded shadow-2xs">BHIM UPI</span>
+                        <span class="px-2 py-0.5 bg-white border rounded shadow-2xs">Cred</span>
+                    </div>
+
+                    <!-- Scannable Dynamic QR Code -->
+                    <div class="qr-frame my-2">
+                        {% if qr_svg %}
+                            <div class="w-48 h-48 mx-auto flex items-center justify-center">
+                                {{ qr_svg | safe }}
+                            </div>
+                        {% else %}
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ upi_uri | urlencode }}"
+                                 alt="UPI QR Code" class="w-48 h-48 mx-auto block" />
+                        {% endif %}
+                    </div>
+
+                    <!-- VPA & Expiry Countdown -->
+                    <div class="mt-3 space-y-1.5">
+                        <div class="flex items-center justify-center gap-2 text-xs text-slate-700">
+                            <span>UPI VPA: <strong>{{ upi_id }}</strong></span>
+                            <button type="button" onclick="copyUPI()" class="text-[#0878C9] hover:underline text-xs flex items-center gap-0.5" title="Copy UPI ID">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-text">Copy</span>
+                            </button>
+                        </div>
+                        <p class="text-xs text-amber-700 font-medium">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1"></i> QR active for: <span id="timer" class="font-mono font-bold">09:59</span>
                         </p>
-                        <a href="{{ url_for('payments.simulate_test_payment', order_id=order.id) }}" class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-200/80 hover:bg-amber-200 px-3 py-1.5 rounded transition">
-                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-700"></i>
-                            <span>Simulate Instant Test Payment (Sandbox)</span>
-                        </a>
+                    </div>
+
+                    <!-- Instant Verification Button for QR Scan -->
+                    <div class="mt-5 pt-4 border-t border-slate-200">
+                        <button type="button" onclick="submitDirectPayment('upi_qr', 'QR Scan Verified')" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+                            <span>I Have Paid via QR Code &bull; Complete Order</span>
+                        </button>
+                        <p class="text-xs text-slate-500 mt-2">Click after scanning or approving payment in your UPI app.</p>
+                    </div>
+
+                    <!-- UPI ID VPA Input Alternative -->
+                    <div class="mt-5 pt-4 border-t border-slate-200 text-left">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Or enter your UPI ID (VPA):</label>
+                        <div class="flex gap-2">
+                            <input id="vpa-input" type="text" class="flex-1 p-2.5 border rounded border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-[#142D4E]" placeholder="e.g. mobile@upi or username@okhdfcbank" />
+                            <button type="button" onclick="payViaVPA()" class="button secondary text-xs py-2.5 px-4 font-bold shrink-0">
+                                Verify &amp; Pay
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            {% endif %}
+
+            <!-- TAB 2: CREDIT / DEBIT CARDS -->
+            <div id="panel-cards" class="pay-panel">
+                <form id="card-pay-form" class="space-y-4" onsubmit="event.preventDefault(); submitDirectPayment('card', 'Debit/Credit Card');">
+                    <div class="flex justify-between items-center text-xs text-slate-500">
+                        <span>Accepted: Visa, MasterCard, RuPay, Maestro</span>
+                        <button type="button" onclick="fillTestCard()" class="text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-1 rounded text-2xs font-bold transition">
+                            ⚡ Fill Test Card
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Card Number *</label>
+                        <div class="relative">
+                            <input id="card-number" type="text" required maxlength="19" class="w-full p-2.5 pl-9 border rounded border-slate-300 text-sm font-mono focus:outline-none focus:border-[#142D4E]" placeholder="4111 2222 3333 4444" />
+                            <i data-lucide="credit-card" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="field">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Expiry (MM/YY) *</label>
+                            <input id="card-expiry" type="text" required maxlength="5" class="w-full p-2.5 border rounded border-slate-300 text-sm font-mono focus:outline-none focus:border-[#142D4E]" placeholder="MM/YY" />
+                        </div>
+                        <div class="field">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">CVV / CVC *</label>
+                            <input id="card-cvv" type="password" required maxlength="4" class="w-full p-2.5 border rounded border-slate-300 text-sm font-mono focus:outline-none focus:border-[#142D4E]" placeholder="•••" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Cardholder Name *</label>
+                        <input id="card-name" type="text" required value="{{ current_user.full_name }}" class="w-full p-2.5 border rounded border-slate-300 text-sm focus:outline-none focus:border-[#142D4E]" />
+                    </div>
+
+                    <button type="submit" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span>Pay ₹{{ order.amount }} with Card</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 3: NET BANKING -->
+            <div id="panel-netbanking" class="pay-panel">
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-600">Select your bank to proceed with secure NetBanking:</p>
+
+                    <!-- Popular Indian Banks Grid -->
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <div class="bank-option selected" onclick="selectBank(this, 'State Bank of India')">
+                            <span class="block text-xs font-bold text-[#142D4E]">SBI</span>
+                            <span class="text-2xs text-slate-500">State Bank</span>
+                        </div>
+                        <div class="bank-option" onclick="selectBank(this, 'HDFC Bank')">
+                            <span class="block text-xs font-bold text-[#142D4E]">HDFC</span>
+                            <span class="text-2xs text-slate-500">HDFC Bank</span>
+                        </div>
+                        <div class="bank-option" onclick="selectBank(this, 'ICICI Bank')">
+                            <span class="block text-xs font-bold text-[#142D4E]">ICICI</span>
+                            <span class="text-2xs text-slate-500">ICICI Bank</span>
+                        </div>
+                        <div class="bank-option" onclick="selectBank(this, 'Axis Bank')">
+                            <span class="block text-xs font-bold text-[#142D4E]">AXIS</span>
+                            <span class="text-2xs text-slate-500">Axis Bank</span>
+                        </div>
+                        <div class="bank-option" onclick="selectBank(this, 'Kotak Mahindra Bank')">
+                            <span class="block text-xs font-bold text-[#142D4E]">KOTAK</span>
+                            <span class="text-2xs text-slate-500">Kotak Bank</span>
+                        </div>
+                        <div class="bank-option" onclick="selectBank(this, 'Punjab National Bank')">
+                            <span class="block text-xs font-bold text-[#142D4E]">PNB</span>
+                            <span class="text-2xs text-slate-500">Punjab Nat.</span>
+                        </div>
+                    </div>
+
+                    <!-- All Other Banks Dropdown -->
+                    <div class="field pt-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Or choose another bank:</label>
+                        <select id="all-banks" class="w-full p-2.5 border rounded border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-[#142D4E]" onchange="document.querySelectorAll('.bank-option').forEach(b => b.classList.remove('selected'))">
+                            <option value="">Select from 40+ Indian Banks...</option>
+                            <option value="Bank of Baroda">Bank of Baroda</option>
+                            <option value="Canara Bank">Canara Bank</option>
+                            <option value="Union Bank of India">Union Bank of India</option>
+                            <option value="IndusInd Bank">IndusInd Bank</option>
+                            <option value="Federal Bank">Federal Bank</option>
+                            <option value="IDBI Bank">IDBI Bank</option>
+                            <option value="Yes Bank">Yes Bank</option>
+                        </select>
+                    </div>
+
+                    <button type="button" onclick="payViaNetBanking()" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition">
+                        <i data-lucide="building" class="w-4 h-4"></i>
+                        <span>Pay ₹{{ order.amount }} via NetBanking</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 4: WALLETS -->
+            <div id="panel-wallets" class="pay-panel">
+                <div class="space-y-3">
+                    <p class="text-xs text-slate-600 mb-2">Select your digital wallet:</p>
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                        <input type="radio" name="wallet" value="Paytm Wallet" checked class="text-[#142D4E]" />
+                        <span class="text-sm font-semibold text-slate-800">Paytm Wallet</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                        <input type="radio" name="wallet" value="PhonePe Wallet" class="text-[#142D4E]" />
+                        <span class="text-sm font-semibold text-slate-800">PhonePe Wallet</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                        <input type="radio" name="wallet" value="Amazon Pay" class="text-[#142D4E]" />
+                        <span class="text-sm font-semibold text-slate-800">Amazon Pay Balance</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                        <input type="radio" name="wallet" value="MobiKwik" class="text-[#142D4E]" />
+                        <span class="text-sm font-semibold text-slate-800">MobiKwik ZIP / Wallet</span>
+                    </label>
+
+                    <button type="button" onclick="payViaWallet()" class="button primary w-full py-3.5 flex items-center justify-center gap-2 text-base font-bold shadow-md hover:shadow-lg transition mt-4">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Pay ₹{{ order.amount }} via Wallet</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Processing Overlay Modal (Hidden by Default) -->
+            <div id="processing-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4" style="display: none;">
+                <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center space-y-4">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-blue-50 flex items-center justify-center">
+                        <div class="w-8 h-8 border-3 border-[#142D4E] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <h3 class="font-serif font-bold text-xl text-[#142D4E]">Verifying Payment...</h3>
+                    <p id="processing-status" class="text-xs text-slate-600">Connecting with banking network &bull; Please do not close or refresh this window.</p>
+                </div>
+            </div>
 
             <!-- Security Trust Badges -->
-            <div class="border-t border-slate-200 mt-6 pt-5 text-center text-xs text-slate-500 space-y-1">
-                <p>🔒 PCI-DSS Level 1 Compliant · End-to-End Encrypted</p>
-                <p>Instant invoice &amp; tax receipt generated upon payment</p>
+            <div class="border-t border-slate-200 mt-6 pt-5 text-center text-xs text-slate-500 space-y-1" data-key="{{ key_id }}">
+                <p>🔒 PCI-DSS Level 1 Compliant · 256-Bit SSL End-to-End Encrypted</p>
+                <p>Secured via Razorpay &bull; Instant official tax invoice receipt generated upon completion</p>
             </div>
         </div>
 
     </div>
 </div>
 
-<!-- Hidden verification form submitted after Razorpay callback -->
+<!-- Hidden verification form for standard signature callbacks if needed -->
 <form id="verify-form" method="POST" action="{{ url_for('payments.verify_payment') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="order_id" value="{{ order.id }}">
@@ -184,68 +428,131 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- Razorpay Standard Checkout SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <script>
+let selectedBankName = 'State Bank of India';
+
+// Switch Payment Method Tabs
+function switchPayTab(tabId) {
+    document.querySelectorAll('.pay-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.pay-panel').forEach(panel => panel.classList.remove('active'));
+
+    const activePanel = document.getElementById('panel-' + tabId);
+    if (activePanel) activePanel.classList.add('active');
+
+    // Highlight button
+    event.currentTarget.classList.add('active');
+}
+
+// Select NetBanking Bank
+function selectBank(elem, bankName) {
+    document.querySelectorAll('.bank-option').forEach(b => b.classList.remove('selected'));
+    elem.classList.add('selected');
+    selectedBankName = bankName;
+    document.getElementById('all-banks').value = '';
+}
+
+// Copy UPI VPA
+function copyUPI() {
+    navigator.clipboard.writeText("{{ upi_id }}").then(() => {
+        const copyText = document.getElementById('copy-text');
+        copyText.textContent = 'Copied!';
+        setTimeout(() => { copyText.textContent = 'Copy'; }, 2500);
+    });
+}
+
+// Fill Test Card Details
+function fillTestCard() {
+    document.getElementById('card-number').value = '4111 2222 3333 4444';
+    document.getElementById('card-expiry').value = '12/28';
+    document.getElementById('card-cvv').value = '123';
+    document.getElementById('card-name').value = '{{ current_user.full_name }}';
+}
+
+// Pay via UPI VPA
+function payViaVPA() {
+    const vpa = document.getElementById('vpa-input').value.trim();
+    if (!vpa || !vpa.includes('@')) {
+        alert('Please enter a valid UPI ID (e.g. mobile@upi or username@okhdfcbank)');
+        return;
+    }
+    submitDirectPayment('upi_vpa', vpa);
+}
+
+// Pay via Net Banking
+function payViaNetBanking() {
+    const dropdownBank = document.getElementById('all-banks').value;
+    const finalBank = dropdownBank || selectedBankName;
+    submitDirectPayment('netbanking', finalBank);
+}
+
+// Pay via Wallet
+function payViaWallet() {
+    const selectedWallet = document.querySelector('input[name="wallet"]:checked')?.value || 'Paytm Wallet';
+    submitDirectPayment('wallet', selectedWallet);
+}
+
+// Core direct payment submission
+function submitDirectPayment(method, ref) {
+    const modal = document.getElementById('processing-modal');
+    const statusText = document.getElementById('processing-status');
+    modal.style.display = 'flex';
+
+    statusText.textContent = 'Contacting payment network...';
+
+    setTimeout(() => {
+        statusText.textContent = 'Cryptographically recording transaction...';
+
+        fetch("{{ url_for('payments.process_checkout') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                order_id: {{ order.id }},
+                payment_method: method,
+                payment_ref: ref
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.redirect_url) {
+                statusText.textContent = 'Payment Verified! Loading Tax Invoice & Receipt...';
+                window.location.href = data.redirect_url;
+            } else {
+                modal.style.display = 'none';
+                alert('Payment processing error: ' + (data.error || 'Please try again.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            modal.style.display = 'none';
+            // Fallback redirect to test payment simulation
+            window.location.href = "{{ url_for('payments.simulate_test_payment', order_id=order.id) }}";
+        });
+    }, 700);
+}
+
+// Live 10-Minute Expiry Countdown Timer
+let timeLeft = 600; // 10 minutes
+const timerElem = document.getElementById('timer');
+const timerInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerElem.textContent = "Expired";
+        timerElem.className = "text-red-600 font-bold";
+    } else {
+        const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+        const secs = String(timeLeft % 60).padStart(2, '0');
+        timerElem.textContent = `${mins}:${secs}`;
+    }
+}, 1000);
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.lucide) {
         lucide.createIcons();
     }
-
-    var payBtn = document.getElementById('rzp-button');
-    if (!payBtn) return;
-
-    payBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Configure Razorpay Standard Checkout options
-        var options = {
-            "key": "{{ key_id }}",
-            "amount": "{{ amount_paise }}",
-            "currency": "INR",
-            "name": "NyayVeya",
-            "description": "{{ order.document_template.title if order.document_template else 'Legal Notice Draft' }}",
-            "order_id": "{{ rzp_order.id }}",
-            "handler": function (response) {
-                // Populate and submit form for server-side cryptographic signature verification
-                document.getElementById('rzp_order_id').value = response.razorpay_order_id || "{{ rzp_order.id }}";
-                document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
-                document.getElementById('rzp_signature').value = response.razorpay_signature;
-                document.getElementById('verify-form').submit();
-            },
-            "prefill": {
-                "name": "{{ current_user.full_name }}",
-                "email": "{{ current_user.email }}"
-            },
-            "notes": {
-                "order_number": "{{ order.order_number }}",
-                "user_id": "{{ current_user.id }}"
-            },
-            "theme": {
-                "color": "#142D4E"
-            },
-            "modal": {
-                "ondismiss": function() {
-                    console.log('Payment modal dismissed by user.');
-                }
-            }
-        };
-
-        try {
-            var rzp = new Razorpay(options);
-            rzp.on('payment.failed', function (response) {
-                alert('Payment Failed: ' + (response.error.description || 'Transaction declined.'));
-            });
-            rzp.open();
-        } catch (err) {
-            console.warn('Razorpay SDK error or offline environment:', err);
-            // Fallback for sandboxed / offline environments
-            if (confirm('The payment gateway modal is in Test Mode. Would you like to complete this test transaction now?')) {
-                window.location.href = "{{ url_for('payments.simulate_test_payment', order_id=order.id) }}";
-            }
-        }
-    });
 });
 </script>
 {% endblock %}

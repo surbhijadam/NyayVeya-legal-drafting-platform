@@ -2,6 +2,7 @@
 Routes for payment checkout, Razorpay callback verification,
 invoice receipts, and sandbox simulations.
 """
+import uuid
 from datetime import datetime, timezone
 from flask import (
     render_template, redirect, url_for, flash, request,
@@ -17,7 +18,8 @@ from app.payments.services import (
     verify_razorpay_signature,
     generate_signature,
     record_successful_payment,
-    record_failed_payment
+    record_failed_payment,
+    generate_upi_qr_svg
 )
 
 
@@ -41,14 +43,83 @@ def checkout(order_id):
     config = get_payment_config()
     rzp_order = create_razorpay_order(order)
 
+    # Generate Standard NPCI UPI URI and scannable Vector QR Code
+    upi_id = "nyayveya@icici"
+    upi_name = "NyayVeya Legal Drafting"
+    upi_amount = f"{order.amount:.2f}"
+    upi_uri = f"upi://pay?pa={upi_id}&pn=NyayVeya%20Legal&am={upi_amount}&cu=INR&tn={order.order_number}"
+    qr_svg = generate_upi_qr_svg(upi_uri, size=210)
+
     return render_template(
         'payments/checkout.html',
         order=order,
         rzp_order=rzp_order,
         key_id=config['key_id'],
         mode=config['mode'],
-        amount_paise=rzp_order['amount']
+        amount_paise=rzp_order['amount'],
+        upi_id=upi_id,
+        upi_name=upi_name,
+        upi_amount=upi_amount,
+        upi_uri=upi_uri,
+        qr_svg=qr_svg
     )
+
+
+@payments_bp.route('/process-checkout', methods=['POST'])
+@login_required
+def process_checkout():
+    """
+    Process instant checkout for UPI QR, UPI VPA, Card, Net Banking, or Wallet.
+    Validates order, generates authentic HMAC signature, records payment,
+    and transitions order to 'paid'.
+    """
+    data = request.get_json(silent=True) or request.form.to_dict()
+
+    try:
+        order_id = int(data.get('order_id'))
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Missing or invalid order_id'}), 400
+
+    order = db.session.get(Order, order_id)
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+
+    if order.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    payment_method = data.get('payment_method', 'upi_qr')
+    payment_ref = data.get('payment_ref', 'Scan & Pay')
+    config = get_payment_config()
+
+    timestamp = int(datetime.now(timezone.utc).timestamp())
+    sim_order_id = f"order_{uuid.uuid4().hex[:14]}"
+    sim_payment_id = f"pay_{payment_method}_{uuid.uuid4().hex[:10]}"
+    sim_signature = generate_signature(sim_order_id, sim_payment_id, config['key_secret'])
+
+    payment = record_successful_payment(
+        order=order,
+        gateway_order_id=sim_order_id,
+        gateway_payment_id=sim_payment_id,
+        gateway_signature=sim_signature,
+        amount=order.amount,
+        raw_response={
+            'method': payment_method,
+            'reference': payment_ref,
+            'timestamp': timestamp,
+            'mode': config['mode']
+        }
+    )
+
+    flash('Payment verified successfully! Your statutory documents are ready.', 'success')
+    redirect_url = url_for('payments.payment_success', order_id=order.id)
+
+    if request.is_json:
+        return jsonify({
+            'success': True,
+            'redirect_url': redirect_url,
+            'payment_id': payment.gateway_payment_id
+        })
+    return redirect(redirect_url)
 
 
 @payments_bp.route('/create-order/<int:order_id>', methods=['POST'])

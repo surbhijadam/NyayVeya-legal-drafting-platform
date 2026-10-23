@@ -16,6 +16,34 @@ from app import db
 from app.models import Order, Payment
 
 
+def generate_upi_qr_svg(upi_uri, size=220):
+    """
+    Generate an authentic, scannable inline SVG QR Code for standard Indian UPI URIs
+    using built-in ReportLab barcode QR generator. Works 100% offline.
+    """
+    try:
+        from reportlab.graphics.barcode import qr
+        from reportlab.graphics.shapes import Drawing
+        from reportlab.graphics import renderSVG
+
+        widget = qr.QrCodeWidget(upi_uri)
+        bounds = widget.getBounds()
+        width = bounds[2] - bounds[0]
+        height = bounds[3] - bounds[1]
+        scale_x = size / width
+        scale_y = size / height
+        d = Drawing(size, size, transform=[scale_x, 0, 0, scale_y, 0, 0])
+        d.add(widget)
+        svg_str = renderSVG.drawToString(d)
+        # Strip xml declaration if present for clean inline HTML embedding
+        if '<?xml' in svg_str:
+            svg_str = svg_str[svg_str.find('?>') + 2:].strip()
+        return svg_str
+    except Exception as e:
+        current_app.logger.warning(f"Error generating UPI QR SVG with reportlab: {e}")
+        return ""
+
+
 def get_payment_config():
     """Retrieve payment gateway settings from application configuration."""
     key_id = current_app.config.get('RAZORPAY_KEY_ID') or 'rzp_test_sample_key'

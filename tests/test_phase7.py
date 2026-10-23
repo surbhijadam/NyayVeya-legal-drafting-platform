@@ -278,3 +278,40 @@ def test_success_page_unpaid_order_redirects(client, test_user, test_order):
     assert response.status_code == 200
     assert b'Payment is pending for this order' in response.data
     assert b'Complete your order' in response.data
+
+
+def test_checkout_renders_upi_qr_code_and_payment_methods(client, test_user, test_order):
+    """Checkout page renders dynamic UPI QR code, VPA, and payment method tabs."""
+    client.post('/auth/login', data={'email': 'vikram@example.com', 'password': 'SecurePass123'})
+
+    response = client.get(f'/payments/checkout/{test_order}')
+    assert response.status_code == 200
+    assert b'nyayveya@icici' in response.data
+    assert b'UPI / QR' in response.data
+    assert b'NetBanking' in response.data
+    assert b'Cards' in response.data
+    assert b'Wallets' in response.data
+    assert b'Scan &amp; Pay with Any UPI App' in response.data or b'Scan & Pay with Any UPI App' in response.data
+
+
+def test_process_checkout_upi_qr_payment(client, app, test_user, test_order):
+    """process_checkout endpoint completes UPI QR payment and redirects to receipt."""
+    client.post('/auth/login', data={'email': 'vikram@example.com', 'password': 'SecurePass123'})
+
+    response = client.post('/payments/process-checkout', json={
+        'order_id': test_order,
+        'payment_method': 'upi_qr',
+        'payment_ref': 'QR Scan Verified'
+    })
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['success'] is True
+    assert f'/payments/success/{test_order}' in data['redirect_url']
+
+    with app.app_context():
+        order = db.session.get(Order, test_order)
+        assert order.status == 'paid'
+        payment = Payment.query.filter_by(order_id=order.id).first()
+        assert payment is not None
+        assert payment.status == 'captured'
+        assert 'pay_upi_qr' in payment.gateway_payment_id
