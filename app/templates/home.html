@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}LegalDraft India - Professional Legal Documents Online{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center py-5">
+    <div class="col-lg-7">
+        <h1 class="display-5 fw-bold text-dark">
+            Professional Legal Documents,<br>
+            <span class="text-primary">Generated Online</span>
+        </h1>
+        <p class="lead text-secondary mt-3">
+            Create legally formatted documents in minutes. Fill in your details,
+            preview your draft, and download in Word or PDF format.
+        </p>
+        <p class="text-muted">
+            <i class="bi bi-shield-check"></i>
+            Templates reviewed by qualified Indian advocates.
+            Not a substitute for personalised legal advice.
+        </p>
+        <div class="mt-4">
+            <!-- This button will link to the document catalogue in Phase 5 -->
+            <a href="{{ url_for('main.home') }}" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-file-earmark-plus"></i> Browse Documents
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-5 text-center mt-4 mt-lg-0">
+        <div class="bg-light rounded-3 p-5">
+            <i class="bi bi-file-earmark-ruled display-1 text-primary"></i>
+            <h5 class="mt-3 text-dark">Cheque Bounce Notice</h5>
+            <p class="text-muted small">Our first available template</p>
+            <span class="badge bg-success">Coming Soon</span>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="row text-center py-5">
+    <h2 class="mb-4">How It Works</h2>
+
+    <div class="col-md-3">
+        <div class="p-3">
+            <i class="bi bi-person-plus display-4 text-primary"></i>
+            <h5 class="mt-3">1. Register</h5>
+            <p class="text-muted small">Create a free account to get started.</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-3">
+            <i class="bi bi-ui-checks-grid display-4 text-primary"></i>
+            <h5 class="mt-3">2. Fill Details</h5>
+            <p class="text-muted small">Answer guided questions about your case.</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-3">
+            <i class="bi bi-eye display-4 text-primary"></i>
+            <h5 class="mt-3">3. Preview</h5>
+            <p class="text-muted small">Review your generated draft before paying.</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-3">
+            <i class="bi bi-download display-4 text-primary"></i>
+            <h5 class="mt-3">4. Download</h5>
+            <p class="text-muted small">Pay and download in Word or PDF format.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Disclaimer Banner -->
+<div class="alert alert-info mt-3" role="alert">
+    <i class="bi bi-info-circle"></i>
+    <strong>Important:</strong> LegalDraft India provides standard legal document templates.
+    This service does not constitute legal advice. For complex matters or specific legal
+    questions, please consult a qualified advocate.
+</div>
+{% endblock %}

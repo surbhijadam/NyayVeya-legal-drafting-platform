@@ -1,0 +1,39 @@
+# Virtual environment
+venv/
+
+# Environment variables (secrets)
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Database files
+instance/
+*.db
+*.sqlite3
+
+# Generated documents (contain user data)
+generated_documents/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Pytest cache
+.pytest_cache/
+
+# Migration versions are tracked, but not the SQLite database

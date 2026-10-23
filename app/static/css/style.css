@@ -1,0 +1,35 @@
+/* LegalDraft India - Custom Styles */
+
+/* Body defaults */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Push footer to the bottom */
+main {
+    flex: 1;
+}
+
+/* Hero section styling */
+.display-5 {
+    line-height: 1.3;
+}
+
+/* Card hover effect for document cards (Phase 5) */
+.card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+/* Footer links */
+footer a:hover {
+    color: #ffffff !important;
+}
