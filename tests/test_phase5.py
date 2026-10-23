@@ -42,12 +42,14 @@ def test_cheque_bounce_notice_is_active():
     assert doc['category'] == 'notices'
 
 
-def test_upcoming_templates_are_coming_soon():
-    """Verify non-primary templates are flagged 'coming_soon' until reviewed."""
-    agreements = get_documents_by_category('agreements')
-    assert len(agreements) > 0
-    for doc in agreements:
-        assert doc['status'] == 'coming_soon'
+def test_all_templates_are_active():
+    """Verify all templates across categories are active and ready to draft."""
+    all_docs = get_all_documents()
+    assert len(all_docs) >= 8
+    for doc in all_docs:
+        assert doc['status'] == 'active'
+        assert doc['badge_text'] == 'Available Now'
+        assert doc['badge_class'] == 'bg-success'
 
 
 # --- Catalogue UI & Rendering Tests ---
@@ -90,4 +92,31 @@ def test_cheque_bounce_detail_shows_deliverables_and_requirements(client):
 def test_active_template_shows_draft_button(client):
     """Active template provides clear call-to-action button to begin drafting."""
     response = client.get('/documents/cheque-bounce-notice')
-    assert b'Start Drafting' in response.data or b'Log in to Draft' in response.data
+    assert b'Start Guided Drafting' in response.data or b'Log in to Draft' in response.data
+
+
+def test_rent_agreement_is_active_and_shows_draft_button(client):
+    """Rent Agreement is active and shows draft button instead of under review."""
+    response = client.get('/documents/rent')
+    assert response.status_code == 200
+    assert b'Template Under Review' not in response.data
+    assert b'Log in to Draft' in response.data or b'Start Guided Drafting' in response.data
+
+
+def test_affidavit_is_active_and_shows_draft_button(client):
+    """Affidavit is active and shows draft button instead of under review."""
+    response = client.get('/documents/affidavit')
+    assert response.status_code == 200
+    assert b'Template Under Review' not in response.data
+    assert b'Log in to Draft' in response.data or b'Start Guided Drafting' in response.data
+
+
+def test_catalogue_lists_all_active_ready_to_draft(client):
+    """All documents in catalogue listing show 'Ready to Draft' and 'ACTIVE'."""
+    response = client.get('/documents')
+    assert response.status_code == 200
+    # Should not have 'COMING SOON' or 'Sample Format'
+    assert b'COMING SOON' not in response.data
+    assert b'Sample Format' not in response.data
+    assert b'Ready to Draft' in response.data
+    assert b'Start Guided Drafting' in response.data

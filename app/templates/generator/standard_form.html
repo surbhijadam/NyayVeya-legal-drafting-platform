@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}Draft {{ template.title }} - NyayVeya{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="bg-[#F3F5F7] border-b">
+    <div class="shell py-10">
+        <p class="eyebrow">GUIDED DRAFTING · {{ template.category | upper }}</p>
+        <h1 class="canva-text mt-2 font-serif font-bold text-3xl text-[#142D4E]">{{ template.title }}</h1>
+        <p class="text-slate-600 mt-2 max-w-2xl">
+            {{ template.subtitle or template.short_description }}
+        </p>
+    </div>
+</div>
+
+<!-- Step Wizard Progress Bar -->
+<div class="shell pt-8">
+    <div id="draft-steps" class="steps flex gap-5 lg:gap-8 border-b border-slate-200 pb-5">
+        <button type="button" id="step-btn-0" class="step active text-left flex items-center gap-2 cursor-pointer transition-colors" onclick="goToStep(0)">
+            <span class="w-7 h-7 rounded-full bg-[#142D4E] text-white flex items-center justify-center font-bold text-sm step-num">1</span>
+            <span class="font-semibold text-[#142D4E] step-label">Parties &amp; Execution Place</span>
+        </button>
+        <button type="button" id="step-btn-1" class="step text-left flex items-center gap-2 cursor-pointer transition-colors text-slate-500" onclick="goToStep(1)">
+            <span class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm step-num">2</span>
+            <span class="font-medium text-slate-600 step-label">Terms, Covenants &amp; Particulars</span>
+        </button>
+    </div>
+    <div class="bg-slate-200 h-1.5 mt-4 rounded-full overflow-hidden">
+        <div id="progress" class="bg-[#6F1D2C] h-full transition-all duration-300" style="width: 50%;"></div>
+    </div>
+</div>
+
+<!-- Main Form Section -->
+<div class="shell grid work-grid xl:grid-cols-[1fr_320px] gap-9 section-pad">
+    <form id="draft-form" method="POST" action="{{ url_for('generator.draft_document', slug=template.slug) }}" novalidate>
+        {{ form.hidden_tag() }}
+
+        <!-- STEP 0: Parties & Place of Execution -->
+        <div id="form-step-0" class="card p-6 md:p-8 space-y-6 step-pane-animated">
+            <div>
+                <h2 class="font-serif font-bold text-2xl text-[#142D4E]">1. Execution Date &amp; Parties</h2>
+                <p class="text-slate-600 mt-1 text-sm">Specify the date, place, and particulars of the parties involved.</p>
+            </div>
+
+            <div class="grid small-grid md:grid-cols-2 gap-5">
+                <!-- Document Date -->
+                <div class="field">
+                    {{ form.document_date.label(class="block text-sm font-semibold text-[#142D4E] mb-1.5") }}
+                    {{ form.document_date(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.document_date.errors else "")) }}
+                    {% for error in form.document_date.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- City / Place -->
+                <div class="field">
+                    {{ form.city.label(class="block text-sm font-semibold text-[#142D4E] mb-1.5") }}
+                    {{ form.city(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.city.errors else ""), placeholder="e.g. Mumbai, New Delhi, Bengaluru") }}
+                    {% for error in form.city.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- First Party Card -->
+            <div class="border border-slate-200 rounded p-5 bg-[#FBFBFC] space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-[#142D4E] text-white flex items-center justify-center font-bold text-xs">A</span>
+                    <h3 class="font-bold text-[#142D4E] text-base">
+                        {% if 'rent' in template.slug %}
+                            First Party (Landlord / Lessor)
+                        {% elif 'affidavit' in template.slug %}
+                            Deponent (Person Swearing Affidavit)
+                        {% elif 'nda' in template.slug %}
+                            Disclosing Party
+                        {% elif 'notice' in template.slug %}
+                            Claimant / Sender
+                        {% elif 'business' in template.slug %}
+                            Service Provider / First Party
+                        {% elif 'application' in template.slug %}
+                            Applicant
+                        {% else %}
+                            First Party / Declarant
+                        {% endif %}
+                    </h3>
+                </div>
+
+                <div class="field">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                    {{ form.first_party_name(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.first_party_name.errors else ""), placeholder="Full legal name as per Aadhaar / PAN / Passport") }}
+                    {% for error in form.first_party_name.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="field">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Address &amp; Particulars (Father's/Spouse name, Address, Contact) *</label>
+                    {{ form.first_party_details(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.first_party_details.errors else ""), rows="3", placeholder="S/o or W/o, Age, Full residential address with PIN code, Phone number") }}
+                    {% for error in form.first_party_details.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Second Party Card -->
+            <div class="border border-slate-200 rounded p-5 bg-[#FBFBFC] space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-[#6F1D2C] text-white flex items-center justify-center font-bold text-xs">B</span>
+                    <h3 class="font-bold text-[#142D4E] text-base">
+                        {% if 'rent' in template.slug %}
+                            Second Party (Tenant / Lessee)
+                        {% elif 'affidavit' in template.slug %}
+                            Before Authority / Notary Public (Optional)
+                        {% elif 'nda' in template.slug %}
+                            Receiving Party
+                        {% elif 'notice' in template.slug %}
+                            Noticee / Recipient
+                        {% elif 'business' in template.slug %}
+                            Client / Second Party
+                        {% elif 'application' in template.slug %}
+                            Recipient Authority / Department
+                        {% else %}
+                            Second Party / Addressee (Optional)
+                        {% endif %}
+                    </h3>
+                </div>
+
+                <div class="field">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Name / Authority Name</label>
+                    {{ form.second_party_name(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.second_party_name.errors else ""), placeholder="Full name of second party or authority / department") }}
+                    {% for error in form.second_party_name.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="field">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Address &amp; Office Details</label>
+                    {{ form.second_party_details(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.second_party_details.errors else ""), rows="3", placeholder="Complete postal address or official office location with PIN code") }}
+                    {% for error in form.second_party_details.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Navigation Button -->
+            <div class="flex justify-end pt-4">
+                <button type="button" class="button primary flex items-center gap-2 py-3 px-6 font-bold" onclick="goToStep(1)">
+                    Next: Terms &amp; Particulars <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 1: Terms, Covenants & Key Particulars -->
+        <div id="form-step-1" class="card p-6 md:p-8 space-y-6 step-pane-animated" style="display: none;">
+            <div>
+                <h2 class="font-serif font-bold text-2xl text-[#142D4E]">2. Document Terms &amp; Covenants</h2>
+                <p class="text-slate-600 mt-1 text-sm">Enter the subject matter, consideration, duration, and specific legal clauses.</p>
+            </div>
+
+            <!-- Subject / Purpose -->
+            <div class="field">
+                <label class="block text-sm font-semibold text-[#142D4E] mb-1.5">
+                    {% if 'rent' in template.slug %}
+                        Premises Address &amp; Description *
+                    {% elif 'affidavit' in template.slug %}
+                        Purpose of Affidavit (e.g. Address Proof / Name Correction) *
+                    {% elif 'nda' in template.slug %}
+                        Project or Engagement Purpose *
+                    {% elif 'notice' in template.slug %}
+                        Subject &amp; Cause of Action *
+                    {% elif 'business' in template.slug %}
+                        Scope of Commercial Services *
+                    {% elif 'application' in template.slug %}
+                        Subject Matter of Application *
+                    {% else %}
+                        Subject / Purpose *
+                    {% endif %}
+                </label>
+                {{ form.subject_purpose(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.subject_purpose.errors else ""), placeholder="Brief summary or description") }}
+                {% for error in form.subject_purpose.errors %}
+                    <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="grid small-grid md:grid-cols-2 gap-5">
+                <!-- Amount in INR -->
+                <div class="field">
+                    <label class="block text-sm font-semibold text-[#142D4E] mb-1.5">
+                        {% if 'rent' in template.slug %}
+                            Monthly Rent in ₹
+                        {% elif 'notice' in template.slug %}
+                            Claimed / Demand Amount in ₹
+                        {% elif 'business' in template.slug %}
+                            Contract Fee / Value in ₹
+                        {% else %}
+                            Consideration / Value in ₹ (0 if not applicable)
+                        {% endif %}
+                    </label>
+                    {{ form.amount(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.amount.errors else ""), placeholder="e.g. 15000") }}
+                    {% for error in form.amount.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Duration / Period -->
+                <div class="field">
+                    <label class="block text-sm font-semibold text-[#142D4E] mb-1.5">
+                        {% if 'rent' in template.slug %}
+                            Tenure (e.g. 11 Months)
+                        {% elif 'notice' in template.slug %}
+                            Notice Period (e.g. 15 Days)
+                        {% elif 'nda' in template.slug %}
+                            Confidentiality Term (e.g. 2 Years)
+                        {% else %}
+                            Term / Duration / Period
+                        {% endif %}
+                    </label>
+                    {{ form.duration_period(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.duration_period.errors else ""), placeholder="e.g. 11 Months, 2 Years, 15 Days") }}
+                    {% for error in form.duration_period.errors %}
+                        <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Key Terms / Covenants / Sworn Statements -->
+            <div class="field">
+                <label class="block text-sm font-semibold text-[#142D4E] mb-1.5">
+                    {% if 'rent' in template.slug %}
+                        Specific Covenants (Security deposit terms, utility charges, maintenance obligations) *
+                    {% elif 'affidavit' in template.slug %}
+                        Sworn Statements &amp; Factual Points Affirmed Under Oath *
+                    {% elif 'nda' in template.slug %}
+                        Confidentiality Terms &amp; Permitted Disclosures *
+                    {% elif 'notice' in template.slug %}
+                        Chronology of Dispute, Breach Details &amp; Demand *
+                    {% elif 'business' in template.slug %}
+                        Deliverables, Payment Milestones &amp; Service Terms *
+                    {% elif 'application' in template.slug %}
+                        Grounds for Application &amp; Relief Requested *
+                    {% else %}
+                        Key Terms, Specific Clauses or Declaration Statements *
+                    {% endif %}
+                </label>
+                {{ form.key_terms(class="w-full p-2.5 border rounded border-slate-300 text-slate-800 focus:outline-none focus:border-[#142D4E]" + (" border-red-500" if form.key_terms.errors else ""), rows="6", placeholder="Enter specific terms, numbered clauses, or factual points...") }}
+                <p class="text-xs text-slate-500 mt-1">These clauses will be formatted into statutory legal paragraphs with proper numbering.</p>
+                {% for error in form.key_terms.errors %}
+                    <p class="text-xs text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center pt-6 border-t border-slate-200">
+                <button type="button" class="button secondary flex items-center gap-2 py-2.5 px-5" onclick="goToStep(0)">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Parties
+                </button>
+                <button type="submit" class="button primary flex items-center gap-2 py-3 px-8 text-base font-bold shadow-md">
+                    Generate Draft Preview <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sidebar Guidelines -->
+    <aside class="self-start sticky top-6 space-y-6">
+        <div class="card p-6 shadow-sm">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded mb-2">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i> READY TO DRAFT
+            </span>
+            <h3 class="font-serif font-bold text-lg text-[#142D4E]">{{ template.title }}</h3>
+            <p class="text-xs text-slate-500 mt-1">{{ template.category | upper }}</p>
+
+            <div class="mt-4 pt-4 border-t border-slate-200 space-y-2 text-xs text-slate-600">
+                <div class="flex justify-between">
+                    <span>Drafting Fee:</span>
+                    <strong class="text-emerald-700 text-sm font-bold">₹{{ template.price }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Preview:</span>
+                    <span class="text-slate-700 font-semibold">100% Free before payment</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Formats:</span>
+                    <span class="text-slate-700 font-semibold">Editable Word (.docx) &amp; PDF</span>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-200 text-xs text-slate-500 leading-normal space-y-2">
+                <p>✔ Compliant with Indian statutory standards and conventions.</p>
+                <p>✔ Review full draft preview on screen prior to unlocking final files.</p>
+                <p>✔ Permanent access and tax invoice receipt in your NyayVeya account.</p>
+            </div>
+        </div>
+
+        <!-- Help Notice -->
+        <div class="notice">
+            <strong class="text-[#142D4E]">Need Assistance?</strong>
+            <p class="mt-1 text-xs text-slate-700">
+                Ensure party names match official government ID records (Aadhaar / PAN) for maximum legal admissibility.
+            </p>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentStep = 0;
+
+function goToStep(stepIndex) {
+    // Show/hide step panels
+    const step0 = document.getElementById('form-step-0');
+    const step1 = document.getElementById('form-step-1');
+    const btn0 = document.getElementById('step-btn-0');
+    const btn1 = document.getElementById('step-btn-1');
+    const progress = document.getElementById('progress');
+
+    if (stepIndex === 0) {
+        step0.style.display = 'block';
+        step1.style.display = 'none';
+
+        btn0.classList.add('active');
+        btn0.querySelector('.step-num').className = 'w-7 h-7 rounded-full bg-[#142D4E] text-white flex items-center justify-center font-bold text-sm step-num';
+        btn0.querySelector('.step-label').className = 'font-semibold text-[#142D4E] step-label';
+
+        btn1.classList.remove('active');
+        btn1.querySelector('.step-num').className = 'w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm step-num';
+        btn1.querySelector('.step-label').className = 'font-medium text-slate-600 step-label';
+
+        progress.style.width = '50%';
+        currentStep = 0;
+    } else {
+        step0.style.display = 'none';
+        step1.style.display = 'block';
+
+        btn1.classList.add('active');
+        btn1.querySelector('.step-num').className = 'w-7 h-7 rounded-full bg-[#142D4E] text-white flex items-center justify-center font-bold text-sm step-num';
+        btn1.querySelector('.step-label').className = 'font-semibold text-[#142D4E] step-label';
+
+        progress.style.width = '100%';
+        currentStep = 1;
+    }
+
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}

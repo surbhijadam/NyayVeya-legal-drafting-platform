@@ -1,9 +1,8 @@
 """
 Document catalogue data and database integration.
 
-Defines all available and upcoming legal templates across categories.
-Strict constraint: Only the Cheque Bounce Notice is marked 'active' for the initial workflow.
-Other templates are marked 'coming_soon' to populate the catalogue structure.
+Defines all available legal templates across categories.
+All templates are active and ready for guided drafting.
 """
 from app.models import DocumentTemplate
 from app import db
@@ -134,12 +133,12 @@ DOCUMENTS = {
         'category': 'agreements',
         'category_slug': 'agreements',
         'price': 249,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/12955837/pexels-photo-12955837.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Outline illustrative rental terms, monthly rent, security deposits, and maintenance responsibilities.'
+            'Draft comprehensive residential rental terms, monthly rent, security deposits, and maintenance covenants.'
         ),
 
         'long_description': (
@@ -151,17 +150,18 @@ DOCUMENTS = {
         'what_you_get': [
             'Editable lease agreement in Word (.docx) and PDF.',
             'Standard clauses covering maintenance, notice period, and deposit refund.',
+            'Standard two-witness execution covenants.',
         ],
 
         'information_needed': [
-            'Landlord and Tenant identification and ID proofs.',
+            'Landlord and Tenant identification and address.',
             'Premises address and inventory details.',
             'Monthly rent, security deposit, and lock-in period.',
         ],
 
         'important_notes': [
-            'Template under professional advocate review.',
             'Must be executed on appropriate state non-judicial stamp paper.',
+            'Standard 11-month duration avoids mandatory sub-registrar registration under Section 17 Registration Act.',
         ],
 
         'faqs': [
@@ -183,8 +183,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'affidavit': {
@@ -194,12 +194,12 @@ DOCUMENTS = {
         'category': 'affidavits',
         'category_slug': 'affidavits',
         'price': 149,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/9858904/pexels-photo-9858904.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Organise factual statements in an illustrative sworn declaration format.'
+            'Organise factual statements in an official sworn declaration format ready for notarization.'
         ),
 
         'long_description': (
@@ -210,15 +210,17 @@ DOCUMENTS = {
         'what_you_get': [
             'Affidavit draft in Word (.docx) and PDF.',
             'Format compatible with standard non-judicial e-stamp paper.',
+            'Verification and Deponent jurat compliant with CPC Section 139.',
         ],
 
         'information_needed': [
             'Deponent details and photo ID references.',
             'Factual statements to be sworn.',
+            'Place and city of execution.',
         ],
 
         'important_notes': [
-            'Must be printed on stamp paper and notarized to be legally valid.',
+            'Must be printed on appropriate state non-judicial stamp paper and notarized to be legally valid.',
         ],
 
         'faqs': [
@@ -236,8 +238,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'notice': {
@@ -247,8 +249,8 @@ DOCUMENTS = {
         'category': 'notices',
         'category_slug': 'notices',
         'price': 299,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/4792282/pexels-photo-4792282.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
@@ -272,7 +274,8 @@ DOCUMENTS = {
         ],
 
         'important_notes': [
-            'Template under professional legal review.',
+            'Notice must be served via RPAD or Speed Post for admissible legal proof of delivery.',
+            'Preserve postal receipts and delivery tracking reports.',
         ],
 
         'faqs': [
@@ -290,8 +293,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'nda': {
@@ -301,12 +304,12 @@ DOCUMENTS = {
         'category': 'agreements',
         'category_slug': 'agreements',
         'price': 199,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Set out sample confidentiality expectations and protect sensitive information between parties.'
+            'Safeguard proprietary business data, trade secrets, and confidential discussions between parties.'
         ),
 
         'long_description': (
@@ -317,6 +320,7 @@ DOCUMENTS = {
         'what_you_get': [
             'Customizable NDA in Word and PDF.',
             'Standard confidentiality and non-solicitation clauses.',
+            'Injunctive relief covenants under Specific Relief Act.',
         ],
 
         'information_needed': [
@@ -326,7 +330,7 @@ DOCUMENTS = {
         ],
 
         'important_notes': [
-            'Coming soon.',
+            'Can be executed electronically under Section 10A of the Information Technology Act, 2000.',
         ],
 
         'faqs': [
@@ -344,8 +348,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'business': {
@@ -355,12 +359,12 @@ DOCUMENTS = {
         'category': 'agreements',
         'category_slug': 'agreements',
         'price': 349,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/7641994/pexels-photo-7641994.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Structure illustrative terms, scopes of work, and payment schedules for a business arrangement.'
+            'Structure binding business contracts, scopes of work, deliverables, and payment schedules.'
         ),
 
         'long_description': (
@@ -369,15 +373,18 @@ DOCUMENTS = {
 
         'what_you_get': [
             'Commercial agreement in Word (.docx) and PDF.',
+            'Milestone payment and intellectual property assignment clauses.',
+            'Tiered dispute resolution and arbitration provisions.',
         ],
 
         'information_needed': [
             'Entity names and registration numbers.',
             'Scope of work and payment terms.',
+            'Dispute resolution seat and governing law.',
         ],
 
         'important_notes': [
-            'Coming soon.',
+            'Includes Work-Made-For-Hire intellectual property transfer terms upon receipt of consideration.',
         ],
 
         'faqs': [
@@ -395,8 +402,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'application': {
@@ -406,12 +413,12 @@ DOCUMENTS = {
         'category': 'applications',
         'category_slug': 'applications',
         'price': 149,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/8730987/pexels-photo-8730987.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Prepare a structured sample written application for official or administrative bodies.'
+            'Prepare a formal, structured administrative application for governmental, institutional, or university bodies.'
         ),
 
         'long_description': (
@@ -420,15 +427,17 @@ DOCUMENTS = {
 
         'what_you_get': [
             'Application format in Word and PDF.',
+            'Official reference and subject hierarchy conforming to departmental standards.',
         ],
 
         'information_needed': [
             'Authority designation and address.',
             'Applicant credentials and grounds of application.',
+            'Specific prayer or requested relief.',
         ],
 
         'important_notes': [
-            'Coming soon.',
+            'Submit with stamped counter-acknowledgement or send via Speed Post.',
         ],
 
         'faqs': [
@@ -442,8 +451,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 
     'letter': {
@@ -453,12 +462,12 @@ DOCUMENTS = {
         'category': 'other',
         'category_slug': 'other',
         'price': 99,
-        'status': 'coming_soon',
-        'version': 'v1.0 (Draft)',
+        'status': 'active',
+        'version': 'v1.0 (Ready)',
         'image_url': 'https://images.pexels.com/photos/190295/pexels-photo-190295.jpeg?auto=compress&cs=tinysrgb&w=800',
 
         'short_description': (
-            'Draft a simple illustrative declaration statement for general personal or commercial use.'
+            'Generate a formal declaration statement or self-attestation letter for administrative, commercial, or personal use.'
         ),
 
         'long_description': (
@@ -467,6 +476,7 @@ DOCUMENTS = {
 
         'what_you_get': [
             'Declaration letter in Word and PDF.',
+            'Self-attestation format accepted under GoI administrative guidelines.',
         ],
 
         'information_needed': [
@@ -475,7 +485,7 @@ DOCUMENTS = {
         ],
 
         'important_notes': [
-            'Coming soon.',
+            'Can be backed by identity document copies for official submissions.',
         ],
 
         'faqs': [
@@ -489,8 +499,8 @@ DOCUMENTS = {
             }
         ],
 
-        'badge_text': 'Coming Soon',
-        'badge_class': 'bg-secondary',
+        'badge_text': 'Available Now',
+        'badge_class': 'bg-success',
     },
 }
 

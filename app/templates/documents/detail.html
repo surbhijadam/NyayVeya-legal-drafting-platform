@@ -157,21 +157,23 @@
                 </div>
 
                 {% if document.status == 'active' %}
+                    {% set draft_target = url_for('generator.cheque_bounce_form') if document.id == 'cheque-bounce-notice' else url_for('generator.draft_document', slug=document.id) %}
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('generator.cheque_bounce_form') }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
+                    <a href="{{ draft_target }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
                         Start Guided Drafting
                     </a>
                     {% else %}
-                    <a href="{{ url_for('auth.login', next=url_for('generator.cheque_bounce_form')) }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
+                    <a href="{{ url_for('auth.login', next=draft_target) }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
                         Log in to Draft
                     </a>
                     {% endif %}
                     <p class="text-xs text-center text-slate-500 mt-3">Fill particulars and preview draft completely free before paying.</p>
                 {% else %}
-                    <button class="button secondary w-full text-center block mt-4 py-3 cursor-not-allowed opacity-75" disabled>
-                        Template Under Review
-                    </button>
-                    <p class="text-xs text-center text-slate-500 mt-3">This template is currently being finalized by legal advocates.</p>
+                    {% set draft_target = url_for('generator.cheque_bounce_form') if document.id == 'cheque-bounce-notice' else url_for('generator.draft_document', slug=document.id) %}
+                    <a href="{{ draft_target }}" class="button primary w-full text-center block mt-4 py-3 text-base font-semibold">
+                        Start Guided Drafting
+                    </a>
+                    <p class="text-xs text-center text-slate-500 mt-3">Ready to draft online.</p>
                 {% endif %}
 
                 <p class="canva-text mt-5 pt-4 border-t border-slate-200 text-xs text-slate-500 leading-normal">

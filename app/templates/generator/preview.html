@@ -11,7 +11,7 @@
                 <p class="eyebrow">STEP 3 OF 5 · REVIEW · DRAFT PREVIEW</p>
                 <h1 class="canva-text mt-2 font-serif font-bold text-3xl text-[#142D4E]">Review your statutory draft</h1>
                 <p class="text-slate-600 mt-1">
-                    Order <strong>{{ order.order_number }}</strong> · Cheque Bounce Notice under Section 138 of the Negotiable Instruments Act, 1881.
+                    Order <strong>{{ order.order_number }}</strong> · {{ order.document_template.title if order.document_template else 'Legal Document Draft' }}.
                 </p>
             </div>
             <!-- Download & Edit Action Buttons -->
@@ -31,7 +31,8 @@
                     <i data-lucide="credit-card" class="w-4 h-4"></i> Pay ₹{{ order.amount }}
                 </a>
                 {% endif %}
-                <a href="{{ url_for('generator.cheque_bounce_form') }}" class="button secondary flex items-center gap-1.5 text-sm">
+                {% set edit_url = url_for('generator.cheque_bounce_form') if order.document_template and order.document_template.slug == 'cheque-bounce-notice' else url_for('generator.draft_document', slug=order.document_template.slug if order.document_template else 'rent') %}
+                <a href="{{ edit_url }}" class="button secondary flex items-center gap-1.5 text-sm">
                     <i data-lucide="edit" class="w-4 h-4 text-slate-600"></i> Edit Details
                 </a>
             </div>
@@ -47,17 +48,18 @@
             <div class="text-center border-b border-slate-300 pb-5 mb-8">
                 <strong class="tracking-widest text-[#142D4E] text-base block">{{ notice.header }}</strong>
                 <p class="!text-center text-xs text-slate-500 mt-1 uppercase tracking-wider">
-                    Statutory Demand Notice under Section 138 of the Negotiable Instruments Act, 1881
+                    {{ order.document_template.title if order.document_template else 'Statutory Legal Draft' }}
                 </p>
             </div>
 
             <!-- Date -->
             <div class="text-right mb-6">
                 <strong>Date:</strong> <span>{{ notice.notice_date }}</span>
+                {% if notice.city %}&nbsp;·&nbsp;<strong>Place:</strong> <span>{{ notice.city }}</span>{% endif %}
             </div>
 
-            <!-- Sender Block (if Advocate) -->
-            {% if 'Advocate' in notice.sender_block %}
+            <!-- Sender Block (if Advocate or Notice) -->
+            {% if notice.sender_block and ('Advocate' in notice.sender_block or 'NOTICE' in notice.header) %}
             <div class="mb-6 text-left text-sm text-slate-700">
                 {% for line in notice.sender_block.split('\n') %}
                 <div>{{ line }}</div>
@@ -66,23 +68,29 @@
             {% endif %}
 
             <!-- Recipient Block -->
+            {% if notice.recipient_block and ('NOTICE' in notice.header or 'APPLICATION' in notice.header or 'AFFIDAVIT' in notice.header) %}
             <div class="mb-6 text-left">
-                <strong>To,</strong><br>
+                <strong>{% if 'AFFIDAVIT' in notice.header %}BEFORE:{% elif 'APPLICATION' in notice.header %}TO:{% else %}TO,{% endif %}</strong><br>
                 {% for line in notice.recipient_block.split('\n') %}
-                    {% if loop.first %}
+                    {% if loop.first and not line.startswith(('TO:', 'BEFORE:')) %}
                         <strong>{{ line }}</strong><br>
                     {% else %}
                         <span>{{ line }}</span><br>
                     {% endif %}
                 {% endfor %}
             </div>
+            {% endif %}
 
             <!-- Subject -->
+            {% if notice.subject %}
             <div class="font-bold border-y border-slate-300 py-3 my-6 text-[#142D4E]">
                 {{ notice.subject }}
             </div>
+            {% endif %}
 
+            {% if 'NOTICE' in notice.header or 'APPLICATION' in notice.header %}
             <p class="mb-4">Sir / Madam,</p>
+            {% endif %}
 
             <!-- Numbered Paragraphs -->
             <div class="space-y-4 text-justify leading-relaxed">
@@ -92,7 +100,7 @@
             </div>
 
             <!-- Signoff -->
-            <div class="mt-12 pt-6 border-t border-slate-300 text-right">
+            <div class="mt-12 pt-6 border-t border-slate-300 {% if 'AFFIDAVIT' in notice.header or 'AGREEMENT' in notice.header %}text-left{% else %}text-right{% endif %}">
                 {% for line in notice.signoff.split('\n') %}
                 <div>{{ line }}</div>
                 {% endfor %}
@@ -100,12 +108,35 @@
         </article>
 
         <!-- Compliance Notice -->
+        {% if order.document_template and 'cheque' in order.document_template.slug %}
         <div class="notice mt-6">
             <strong>Mandatory Dispatch Guidelines</strong>
             <p class="mt-1 text-xs text-slate-700">
                 Under Section 138(b) of the Negotiable Instruments Act, 1881, this notice must be dispatched via <strong>Registered Post Acknowledgement Due (RPAD)</strong> or <strong>Speed Post</strong> within 30 days of the bank return memo. Preserve the postal booking receipt and tracking delivery report for court filing.
             </p>
         </div>
+        {% elif order.document_template and ('rent' in order.document_template.slug or 'lease' in order.document_template.slug) %}
+        <div class="notice mt-6">
+            <strong>Execution &amp; Stamp Duty Guidelines</strong>
+            <p class="mt-1 text-xs text-slate-700">
+                Execute this residential lease agreement on non-judicial stamp paper of appropriate state denomination (or e-stamp certificate). Signed by both Landlord and Tenant in the presence of two witnesses.
+            </p>
+        </div>
+        {% elif order.document_template and 'affidavit' in order.document_template.slug %}
+        <div class="notice mt-6">
+            <strong>Notarization Guidelines</strong>
+            <p class="mt-1 text-xs text-slate-700">
+                Print on appropriate state non-judicial stamp paper and attest before an authorized Notary Public, Oath Commissioner, or Executive Magistrate under Section 139 of the Code of Civil Procedure.
+            </p>
+        </div>
+        {% else %}
+        <div class="notice mt-6">
+            <strong>Execution Guidelines</strong>
+            <p class="mt-1 text-xs text-slate-700">
+                Verify all particulars and execute in duplicate. Dispatch statutory notices via Speed Post / RPAD to preserve legally admissible delivery proof.
+            </p>
+        </div>
+        {% endif %}
 
         <!-- Next Actions Bar -->
         <div class="card p-6 mt-6 bg-[#F8FAFC] border flex flex-wrap justify-between items-center gap-4">

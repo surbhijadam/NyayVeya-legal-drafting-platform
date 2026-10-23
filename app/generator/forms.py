@@ -122,3 +122,65 @@ class ChequeBounceNoticeForm(FlaskForm):
         """Validate that cheque date is not after memo date."""
         if field.data and self.memo_date.data and field.data > self.memo_date.data:
             raise ValidationError('Cheque date cannot be later than the bank dishonour memo date.')
+
+
+class StandardLegalDraftForm(FlaskForm):
+    """
+    Standard guided form for agreements, affidavits, notices, applications, and declarations.
+    """
+    document_date = DateField('Document / Execution Date', default=date.today, validators=[
+        DataRequired(message='Please specify the date of this document.')
+    ])
+
+    city = StringField('City / Place of Execution', validators=[
+        DataRequired(message='Please specify the city/place.'),
+        Length(min=2, max=100)
+    ])
+
+    # First Party (Landlord / Deponent / Sender / Disclosing Party / Service Provider / Applicant)
+    first_party_name = StringField('First Party / Declarant Full Name', validators=[
+        DataRequired(message='Please enter the primary party / applicant / declarant name.'),
+        Length(min=2, max=150)
+    ])
+
+    first_party_details = TextAreaField('First Party Details (Address, Father/Spouse name, Phone, ID)', validators=[
+        DataRequired(message='Please provide address and particulars for the first party.'),
+        Length(min=5, max=500)
+    ])
+
+    # Second Party (Tenant / Recipient / Receiving Party / Client / Department)
+    second_party_name = StringField('Second Party / Recipient / Authority Full Name', validators=[
+        Optional(),
+        Length(max=150)
+    ])
+
+    second_party_details = TextAreaField('Second Party Details (Address, Designation, Office)', validators=[
+        Optional(),
+        Length(max=500)
+    ])
+
+    # Subject / Purpose / Scope
+    subject_purpose = StringField('Subject / Purpose / Premises or Project Description', validators=[
+        DataRequired(message='Please specify the subject or purpose.'),
+        Length(min=3, max=300)
+    ])
+
+    # Monetary considerations (if applicable)
+    amount = IntegerField('Amount in ₹ (Rent / Consideration / Claim / Value - enter 0 if not applicable)', validators=[
+        Optional(),
+        NumberRange(min=0, message='Amount cannot be negative.')
+    ], default=0)
+
+    # Duration / Term (if applicable)
+    duration_period = StringField('Duration / Term / Compliance Period (e.g. 11 Months, 2 Years, 15 Days)', validators=[
+        Optional(),
+        Length(max=100)
+    ])
+
+    # Key terms / clauses / sworn statements / grievances
+    key_terms = TextAreaField('Terms, Specific Covenants, Sworn Statements, or Grievances', validators=[
+        DataRequired(message='Please enter the key clauses, statements, or terms.'),
+        Length(min=10, max=4000)
+    ])
+
+    submit = SubmitField('Generate Document Draft')
