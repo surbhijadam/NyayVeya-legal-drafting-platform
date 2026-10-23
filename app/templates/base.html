@@ -201,26 +201,8 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
 
-    <!-- Mobile Navigation Toggle Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.getElementById('menu-toggle');
-            const mobileLinks = document.getElementById('mobile-links');
-
-            if (menuToggle && mobileLinks) {
-                menuToggle.addEventListener('click', function() {
-                    const isHidden = mobileLinks.classList.contains('hidden');
-                    mobileLinks.classList.toggle('hidden', !isHidden);
-                    menuToggle.setAttribute('aria-expanded', String(isHidden));
-                });
-            }
-
-            // Initialize Lucide icons
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-        });
-    </script>
+    <!-- Global App & Animation Controller -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     {% block extra_scripts %}{% endblock %}
 </body>

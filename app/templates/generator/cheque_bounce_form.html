@@ -37,7 +37,7 @@
         {{ form.hidden_tag() }}
 
         <!-- STEP 0: Cheque & Dishonour Memo Particulars -->
-        <div id="form-step-0" class="card p-6 md:p-8 space-y-6">
+        <div id="form-step-0" class="card p-6 md:p-8 space-y-6 step-pane-animated">
             <div>
                 <h2 class="font-serif font-bold text-2xl text-[#142D4E]">1. Cheque & Dishonour Particulars</h2>
                 <p class="text-slate-600 mt-1 text-sm">Enter the exact particulars of the dishonoured cheque and the bank return memo.</p>
@@ -272,6 +272,7 @@ function goToStep(stepIndex) {
 
     if (stepIndex === 0) {
         step0.style.display = 'block';
+        step0.classList.add('step-pane-animated');
         step1.style.display = 'none';
         stepBtn0.classList.add('active');
         stepBtn0.querySelector('.step-num').classList.replace('bg-slate-200', 'bg-[#142D4E]');
@@ -284,6 +285,7 @@ function goToStep(stepIndex) {
     } else {
         step0.style.display = 'none';
         step1.style.display = 'block';
+        step1.classList.add('step-pane-animated');
         stepBtn1.classList.add('active');
         stepBtn1.querySelector('.step-num').classList.replace('bg-slate-200', 'bg-[#142D4E]');
         stepBtn1.querySelector('.step-num').classList.replace('text-slate-600', 'text-white');

@@ -16,16 +16,18 @@
 
 <div class="shell section-pad">
     <!-- Search Bar -->
-    <label for="docSearchInput" class="canva-text block font-semibold mb-2 text-[#142D4E]">Search the catalogue</label>
-    <div class="relative max-w-xl">
-        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5 pointer-events-none"></i>
-        <input id="docSearchInput" class="catalogue-search-input search w-full py-2.5 pr-4 pl-12 border border-slate-300 rounded text-slate-800 focus:outline-none focus:border-[#142D4E]"
-               style="padding-left: 48px !important; padding-right: 16px !important;"
-               type="search" placeholder="Search legal documents (e.g., cheque bounce notice, rent, affidavit)...">
+    <div class="reveal-on-scroll">
+        <label for="docSearchInput" class="canva-text block font-semibold mb-2 text-[#142D4E]">Search the catalogue</label>
+        <div class="relative max-w-xl">
+            <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5 pointer-events-none"></i>
+            <input id="docSearchInput" class="catalogue-search-input search w-full py-2.5 pr-4 pl-12 border border-slate-300 rounded text-slate-800 focus:outline-none focus:border-[#142D4E]"
+                   style="padding-left: 48px !important; padding-right: 16px !important;"
+                   type="search" placeholder="Search legal documents (e.g., cheque bounce notice, rent, affidavit)">
+        </div>
     </div>
 
     <!-- Category Filter Chips -->
-    <div id="filters" role="group" aria-label="Filter documents by category" class="chip-container flex-wrap sm:flex-nowrap my-6 pb-2">
+    <div id="filters" role="group" aria-label="Filter documents by category" class="chip-container flex-wrap sm:flex-nowrap my-6 pb-2 reveal-on-scroll reveal-delay-100">
         <button class="chip active category-filter-btn" data-category="all">All Documents</button>
         {% for cat_key, category in categories.items() %}
         <button class="chip category-filter-btn" data-category="{{ cat_key }}">{{ category.name }}</button>
@@ -36,7 +38,7 @@
     <div id="catalogue-grid" class="small-grid catalogue-grid">
         {% for cat_key, category in categories.items() %}
             {% for doc in category.documents %}
-            <article class="canva-card card overflow-hidden flex flex-col doc-card-item"
+            <article class="canva-card card overflow-hidden flex flex-col doc-card-item reveal-on-scroll reveal-delay-{{ (loop.index0 % 3) * 100 + 100 }}"
                      data-category="{{ cat_key }}"
                      data-title="{{ doc.title | lower }} {{ doc.short_description | lower }} {{ doc.category | lower }}">
                 <div class="doc-photo relative">

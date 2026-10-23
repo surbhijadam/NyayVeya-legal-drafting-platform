@@ -6,7 +6,7 @@
 <!-- Hero Section -->
 <section class="bg-[#F3F5F7] border-b border-slate-200">
     <div class="shell hero-grid grid grid-cols-1 xl:grid-cols-2 gap-9 items-stretch min-h-[480px]">
-        <div class="hero-copy py-16 xl:py-20 self-center">
+        <div class="hero-copy py-16 xl:py-20 self-center reveal-on-scroll">
             <p class="eyebrow">DOCUMENT PREPARATION, MADE CLEAR</p>
             <h1 class="mt-4 text-3xl sm:text-4xl xl:text-5xl font-bold leading-tight" style="color: #142D4E;">
                 Legal Documents, Drafted with Clarity and Care
@@ -25,7 +25,7 @@
                 </a>
             </div>
         </div>
-        <div class="photo hero-photo my-6 xl:my-8 rounded shadow-sm">
+        <div class="photo hero-photo my-6 xl:my-8 rounded shadow-sm reveal-on-scroll reveal-delay-150">
             <img loading="lazy" src="https://images.pexels.com/photos/8112502/pexels-photo-8112502.jpeg?auto=compress&cs=tinysrgb&w=1280" alt="Traditional Indian architectural columns and court hall">
         </div>
     </div>
@@ -34,19 +34,19 @@
 <!-- Trust Badges Bar -->
 <section class="border-b border-slate-200 bg-white">
     <div class="shell grid grid-cols-2 xl:grid-cols-4 gap-6 py-6">
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-3 items-center reveal-on-scroll">
             <i data-lucide="file-check-2" class="text-[#6F1D2C] w-6 h-6 shrink-0"></i>
             <span class="font-bold text-sm text-[#23354A]">Structured statutory formats</span>
         </div>
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-3 items-center reveal-on-scroll reveal-delay-100">
             <i data-lucide="list-checks" class="text-[#6F1D2C] w-6 h-6 shrink-0"></i>
             <span class="font-bold text-sm text-[#23354A]">Guided drafting assistant</span>
         </div>
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-3 items-center reveal-on-scroll reveal-delay-200">
             <i data-lucide="scan-eye" class="text-[#6F1D2C] w-6 h-6 shrink-0"></i>
             <span class="font-bold text-sm text-[#23354A]">Instant document review</span>
         </div>
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-3 items-center reveal-on-scroll reveal-delay-300">
             <i data-lucide="file-down" class="text-[#6F1D2C] w-6 h-6 shrink-0"></i>
             <span class="font-bold text-sm text-[#23354A]">Word (.docx) &amp; PDF (.pdf)</span>
         </div>
@@ -55,7 +55,7 @@
 
 <!-- Featured Document Library -->
 <section class="shell section-pad" aria-labelledby="featured-doc-title">
-    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-2">
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-2 reveal-on-scroll">
         <div>
             <p class="eyebrow">DOCUMENT LIBRARY</p>
             <h2 id="featured-doc-title" class="text-2xl sm:text-3xl font-bold mt-1">Browse Legal Documents</h2>
@@ -68,7 +68,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {% for doc in documents[:6] %}
-        <article class="card document-card overflow-hidden flex flex-col">
+        <article class="card document-card overflow-hidden flex flex-col reveal-on-scroll reveal-delay-{{ (loop.index0 % 3) * 100 + 100 }}">
             <div class="doc-photo">
                 <img loading="lazy" src="{{ doc.image_url }}" alt="{{ doc.title }}">
             </div>
@@ -109,11 +109,13 @@
 <!-- How It Works Section -->
 <section id="how-section" class="bg-[#F3F5F7] section-pad border-y border-slate-200">
     <div class="shell">
-        <p class="eyebrow">A CLEARER PROCESS</p>
-        <h2 class="text-2xl sm:text-3xl font-bold mt-1">How It Works</h2>
-        <div class="rule"></div>
+        <div class="reveal-on-scroll">
+            <p class="eyebrow">A CLEARER PROCESS</p>
+            <h2 class="text-2xl sm:text-3xl font-bold mt-1">How It Works</h2>
+            <div class="rule"></div>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            <article class="card p-6">
+            <article class="card p-6 reveal-on-scroll reveal-delay-100">
                 <span class="eyebrow">01</span>
                 <i data-lucide="files" class="w-9 h-9 my-4 text-[#6F1D2C]"></i>
                 <h3 class="text-lg font-bold" style="color: #142D4E;">Choose a Document</h3>
@@ -121,7 +123,7 @@
                     Select a format suited to your legal requirement, such as a Cheque Bounce Notice under Section 138.
                 </p>
             </article>
-            <article class="card p-6">
+            <article class="card p-6 reveal-on-scroll reveal-delay-200">
                 <span class="eyebrow">02</span>
                 <i data-lucide="list-checks" class="w-9 h-9 my-4 text-[#6F1D2C]"></i>
                 <h3 class="text-lg font-bold" style="color: #142D4E;">Fill in the Details</h3>
@@ -129,7 +131,7 @@
                     Follow clearly labelled, guided questionnaire fields with automatic validation.
                 </p>
             </article>
-            <article class="card p-6">
+            <article class="card p-6 reveal-on-scroll reveal-delay-300">
                 <span class="eyebrow">03</span>
                 <i data-lucide="scan-eye" class="w-9 h-9 my-4 text-[#6F1D2C]"></i>
                 <h3 class="text-lg font-bold" style="color: #142D4E;">Review Your Draft</h3>
@@ -137,7 +139,7 @@
                     Inspect the realistic legal draft preview on screen with statutory clauses inserted.
                 </p>
             </article>
-            <article class="card p-6">
+            <article class="card p-6 reveal-on-scroll reveal-delay-400">
                 <span class="eyebrow">04</span>
                 <i data-lucide="file-down" class="w-9 h-9 my-4 text-[#6F1D2C]"></i>
                 <h3 class="text-lg font-bold" style="color: #142D4E;">Download Documents</h3>
@@ -153,7 +155,7 @@
 <section class="relative min-h-[260px] overflow-hidden flex items-center">
     <img class="absolute inset-0 w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/159832/justice-law-case-hearing-159832.jpeg?auto=compress&cs=tinysrgb&w=1280" alt="Law and regulation books on a library shelf">
     <div class="absolute inset-0 bg-[#142D4E]/85"></div>
-    <div class="shell relative py-14">
+    <div class="shell relative py-14 reveal-on-scroll">
         <p class="uppercase tracking-[.2em] text-[#C5A253] text-xs font-bold">PREPARED WITH PURPOSE</p>
         <h2 class="text-white text-2xl sm:text-3xl max-w-2xl mt-3 font-serif leading-snug">
             A thoughtful, structured process for legal documents that deserve careful attention.
@@ -165,7 +167,7 @@
 </section>
 
 <!-- Final CTA Section -->
-<section class="shell py-14 flex flex-wrap justify-between items-center gap-6">
+<section class="shell py-14 flex flex-wrap justify-between items-center gap-6 reveal-on-scroll">
     <div>
         <h2 class="text-2xl font-bold" style="color: #142D4E;">Ready to prepare your document?</h2>
         <p class="text-slate-600 mt-1">Select a document format and follow our step-by-step guided questionnaire.</p>

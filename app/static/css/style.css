@@ -147,23 +147,58 @@ p {
     text-align: center;
     white-space: nowrap;
     text-decoration: none !important;
-    transition: background 0.15s, transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    transition: background 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-color 0.2s ease, 
+                box-shadow 0.2s ease;
     cursor: pointer;
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
 }
 
 .button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 45, 78, 0.12);
 }
 
 .button:active {
-    transform: translateY(0);
+    transform: scale(0.97) translateY(0);
+    box-shadow: 0 1px 4px rgba(20, 45, 78, 0.08);
 }
 
 .button.primary, .btn-nyaya-primary {
     background: var(--maroon) !important;
     color: #ffffff !important;
     border-color: var(--maroon) !important;
+}
+
+.button.primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.22),
+        transparent
+    );
+    transform: rotate(25deg);
+    pointer-events: none;
+    opacity: 0;
+}
+
+.button.primary:hover::after {
+    opacity: 1;
+    animation: ctaShineSweep 0.85s ease forwards;
+}
+
+@keyframes ctaShineSweep {
+    0% { left: -60%; }
+    100% { left: 140%; }
 }
 
 .button.primary:hover, .btn-nyaya-primary:hover {
@@ -210,11 +245,15 @@ p {
     border: 1px solid var(--line);
     border-radius: 6px;
     box-shadow: 0 3px 12px rgba(20, 45, 78, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+                box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-color 0.28s ease;
 }
 
 .card:hover {
-    box-shadow: 0 8px 24px rgba(20, 45, 78, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px -4px rgba(20, 45, 78, 0.12), 0 4px 10px -2px rgba(20, 45, 78, 0.06);
+    border-color: rgba(197, 162, 83, 0.45);
 }
 
 .doc-card-item {
@@ -357,14 +396,28 @@ p {
     white-space: nowrap;
     cursor: pointer;
     text-decoration: none !important;
-    transition: all 0.15s ease;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     touch-action: manipulation;
+}
+
+.chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(20, 45, 78, 0.08);
+}
+
+.chip:active {
+    transform: scale(0.96);
 }
 
 .chip.active, .chip:hover {
     background: var(--navy);
     border-color: var(--navy);
     color: #ffffff !important;
+}
+
+.chip.active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(20, 45, 78, 0.15);
 }
 
 /* Swipeable horizontal container for chips on mobile */
@@ -481,6 +534,21 @@ p {
     border-top: 1px solid var(--line);
     padding: 16px 24px 24px;
     box-shadow: 0 10px 25px rgba(20, 45, 78, 0.08);
+}
+
+.mobile-links.animate-drawer {
+    animation: drawerSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawerSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .mobile-links a, .mobile-links button {
@@ -745,5 +813,87 @@ p {
 @media (max-width: 349px) {
     .brand-tagline {
         display: none !important;
+    }
+}
+
+/* ==========================================================================
+   ===== NyayVeya Motion & Animation System (Subtle & Professional) =====
+   ========================================================================== */
+
+/* Header elevation on scroll */
+header.sticky-top {
+    transition: box-shadow 0.28s ease, background-color 0.28s ease;
+}
+
+header.header-scrolled {
+    box-shadow: 0 4px 20px -2px rgba(20, 45, 78, 0.08);
+}
+
+/* Scroll Reveal Framework */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Staggered Delay Utilities */
+.reveal-delay-100 { transition-delay: 0.1s; }
+.reveal-delay-150 { transition-delay: 0.15s; }
+.reveal-delay-200 { transition-delay: 0.2s; }
+.reveal-delay-250 { transition-delay: 0.25s; }
+.reveal-delay-300 { transition-delay: 0.3s; }
+.reveal-delay-400 { transition-delay: 0.4s; }
+
+/* Wizard Step Transition Animation */
+.step-pane-animated {
+    animation: stepSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stepSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Legal simulation document paper entrance */
+.legal-page {
+    animation: documentFloatIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes documentFloatIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .reveal-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
     }
 }
