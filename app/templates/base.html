@@ -23,7 +23,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
 
     <!-- Custom NyayVeya CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8">
 
     {% block extra_head %}{% endblock %}
 </head>
@@ -135,7 +135,7 @@
 
         <!-- Sub-Header Category Strip -->
         <nav aria-label="Document categories" class="category-strip bg-[#142D4E] text-white">
-            <div class="header-container flex gap-8 py-2.5 text-sm overflow-x-auto">
+            <div class="header-container category-strip-container flex items-center justify-start gap-3 md:gap-4 py-2 text-sm overflow-x-auto">
                 <a href="{{ url_for('main.document_list') }}?category=notices" data-category="notices">Legal Notices</a>
                 <a href="{{ url_for('main.document_list') }}?category=agreements" data-category="agreements">Agreements</a>
                 <a href="{{ url_for('main.document_list') }}?category=affidavits" data-category="affidavits">Affidavits</a>

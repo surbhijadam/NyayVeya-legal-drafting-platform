@@ -629,10 +629,19 @@ p {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.category-strip .header-container,
+.category-strip-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding-block: 6px !important;
+}
+
 .category-strip a, .category-strip button {
     color: #ffffff;
     text-decoration: none;
-    padding: 8px 14px;
+    padding: 6px 12px;
     font-size: 0.88rem;
     font-weight: 500;
     white-space: nowrap;
@@ -640,19 +649,22 @@ p {
     background: transparent;
     border: none;
     cursor: pointer;
-    transition: opacity 0.15s, color 0.15s;
+    border-radius: 4px;
+    transition: opacity 0.15s, color 0.15s, background-color 0.15s;
 }
 
 .category-strip a:hover, .category-strip button:hover {
     opacity: 1;
     color: var(--gold);
-    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.08);
+    text-decoration: none;
 }
 
 .category-strip a.active-category-link {
     opacity: 1;
     color: var(--gold) !important;
-    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.12);
+    text-decoration: none;
     font-weight: 700;
 }
 
