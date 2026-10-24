@@ -78,3 +78,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+/**
+ * 6. Global Password Visibility Toggle
+ * Toggles input type between 'password' and 'text' and swaps eye/eye-off icons.
+ */
+window.togglePasswordVisibility = function (fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const eye = btn.querySelector('.eye-icon');
+    const eyeOff = btn.querySelector('.eye-off-icon');
+    if (eye && eyeOff) {
+        eye.classList.toggle('hidden', isPassword);
+        eyeOff.classList.toggle('hidden', !isPassword);
+    }
+};
