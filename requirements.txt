@@ -31,3 +31,4 @@ Werkzeug==3.1.9
 WTForms==3.2.2
 gunicorn
 PyMySQL
+psycopg2-binary

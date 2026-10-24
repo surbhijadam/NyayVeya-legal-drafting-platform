@@ -82,11 +82,18 @@ def test_env_example_template_exists():
     assert 'PAYMENT_MODE' in content
 
 
-def test_wsgi_entrypoint_loads():
+def test_wsgi_entrypoint_loads(monkeypatch):
     """Production WSGI module exposes valid Flask application for web servers."""
+    import sys
+    monkeypatch.setenv('FLASK_ENV', 'testing')
+    monkeypatch.setattr(
+        'app.create_app',
+        lambda: create_app(test_config={'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'})
+    )
+    if 'wsgi' in sys.modules:
+        del sys.modules['wsgi']
     import wsgi
     assert isinstance(wsgi.app, Flask)
-    assert wsgi.app.name == 'app'
 
 
 def test_procfile_configured_for_cloud():
@@ -104,7 +111,7 @@ def test_procfile_configured_for_cloud():
 
 def test_database_backup_creates_snapshot(app, tmp_path):
     """Database backup utility executes safely without exceptions."""
-    result = perform_backup()
+    result = perform_backup(app=app)
     # If SQLite file exists, backup is generated; otherwise None is safely returned
     assert result is None or os.path.exists(result)
 

@@ -16,8 +16,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from app import create_app
 
 
-def perform_backup():
-    app = create_app()
+def perform_backup(app=None):
+    if app is None:
+        app = create_app()
     with app.app_context():
         timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
         backups_dir = os.path.abspath(os.path.join(app.root_path, '..', 'backups'))

@@ -30,12 +30,18 @@ class Config:
     REMEMBER_COOKIE_SAMESITE = 'Lax'
 
 
+def _normalize_db_url(url: str | None) -> str | None:
+    """Normalize legacy postgres:// URIs supplied by cloud PaaS (Render/Heroku) to postgresql://."""
+    if url and url.startswith('postgres://'):
+        return url.replace('postgres://', 'postgresql://', 1)
+    return url
+
+
 class DevelopmentConfig(Config):
     """Local development configuration (uses SQLite by default)."""
     DEBUG = True
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL',
+    SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get('DATABASE_URL')) or (
         f"sqlite:///{os.path.join(basedir, 'instance', 'app.db').replace(os.sep, '/')}"
     )
     SESSION_COOKIE_SECURE = False
@@ -56,10 +62,8 @@ class ProductionConfig(Config):
     """Production deployment configuration (enforces HTTPS, secure cookies, and MySQL/Postgres URI)."""
     DEBUG = False
     TESTING = False
-    # In production, DATABASE_URL should be set to:
-    # mysql+pymysql://<user>:<password>@<host>:<port>/<dbname>
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL',
+    # In production, DATABASE_URL is normalized to handle Render's postgres:// or MySQL mysql+pymysql://
+    SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get('DATABASE_URL')) or (
         f"sqlite:///{os.path.join(basedir, 'instance', 'app.db').replace(os.sep, '/')}"
     )
     SESSION_COOKIE_SECURE = True
