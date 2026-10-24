@@ -44,6 +44,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get('DATABASE_URL')) or (
         f"sqlite:///{os.path.join(basedir, 'instance', 'app.db').replace(os.sep, '/')}"
     )
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 280,
+    }
     SESSION_COOKIE_SECURE = False
     REMEMBER_COOKIE_SECURE = False
 
@@ -66,6 +70,11 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get('DATABASE_URL')) or (
         f"sqlite:///{os.path.join(basedir, 'instance', 'app.db').replace(os.sep, '/')}"
     )
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 280,
+        'pool_timeout': 30,
+    }
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
     PREFERRED_URL_SCHEME = 'https'
